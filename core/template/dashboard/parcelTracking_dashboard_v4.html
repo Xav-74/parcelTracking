@@ -1,0 +1,135 @@
+<div id="parcelTracking_widget_ID" class="eqLogic-widget eqLogic  parcelTracking_widget parcelTracking_widget_#id# parcelTracking" style="min-width:518px !important; max-width:518px !important; min-height:357px; max-height:357px; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
+
+	<div class="text-center widget-name">
+		<span class="reportModeVisible">#name_display# <span class="object_name">#object_name#</span></span>
+	   	<a href="#eqLink#" class="reportModeHidden" style="color:var(--eqTitle-color)!important;">#name_display#<span class="object_name">#object_name#</span></a>
+	   	<span class="cmd refresh pull-right cursor" data-cmd_id="#refresh_id#" onclick="jeedom.cmd.execute({id: #refresh_id#});">
+		   <i class="fas fa-sync" style="color:var(--eqTitle-color)!important;"></i>
+	   	</span>
+	</div>
+			
+	<div class="container-fluid">
+		
+		<div>
+			
+			<div class="col-xs-4" id="tile" style="height:130px; width:150px;">
+				<div class="col-xs-12" id="icon_tile" style="height:130px; "><span class="Cmd#status_id#"></span></div>
+			</div>
+			
+			<div class="col-xs-8" id="tile" style="height:130px; width:350px;">
+				<div class="col-xs-4" id="titre_tile" style="height:25px;">N° Colis</div>
+				<div class="col-xs-8" id="value_tile" style="height:25px;">#trackingId#id##</div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">Transporteur</div>
+				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#carrier_id#"></span></div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">Origine</div>
+				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#origin_id#"></span></span></div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">Destination</div>
+				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#destination_id#"></span></div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">Date de livraison</div>
+				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#deliveryDate_id#"></span></div>
+			</div>
+			
+			<div class="col-xs-12" id="tile" style="height:185px; width:506px;">
+				<div id="list_states" class="label Cmd#states_id# table_states#id# "></div>
+			</div>
+					
+		</div>
+		
+	</div>
+	
+	#divGraphInfo#
+	
+	<script>
+    
+		//----- Theme colors & optional parameters
+		function setTheme#id#() {
+			var link = document.createElement('link');
+			link.type = 'text/css';
+			link.rel = 'stylesheet';
+			
+			if ($('body').attr('data-theme').endsWith('Dark')) {
+				link.href = 'plugins/parcelTracking/core/template/dashboard/parcelTracking_dashboard_style_dark.css';
+			}
+			else if ($('body').attr('data-theme').endsWith('Light') || $('body').attr('data-theme').endsWith('Legacy')) {
+				link.href = 'plugins/parcelTracking/core/template/dashboard/parcelTracking_dashboard_style_light.css';
+			}
+			document.head.appendChild(link);
+		}
+
+		function timedSetTheme#id#(occurence = 0){
+			if ($('.parcelTracking_widget_#id#').length == 0) {
+				return;
+			}
+			if ( $('body')[0].hasAttribute('data-theme') != true )  {
+				occurence++;
+				if (occurence > 40){
+					return;
+				}
+				setTimeout( () => { timedSetTheme#id#(occurence); }, 500 );
+				return;
+			}
+			setTheme#id#();
+		}
+		
+		if ( $('body')[0].hasAttribute('data-theme') == true )  {
+			setTheme#id#();
+		}
+		else  {
+			timedSetTheme#id#(0);
+		}
+			
+		$('body').on('changeThemeEvent', function (event,theme) {
+			setTheme#id#();
+		});
+		
+		//----- Icon status
+		jeedom.cmd.update['#status_id#'] = function(_options) {
+			
+			if ( _options.display_value == 'delivered') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delivered.png" height="80" title="Délivré"/></span>'); }
+			else if ( _options.display_value == 'transit') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="En transit"/></span>'); }
+			else if ( _options.display_value == 'pickup') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="Pris en charge"/></span>'); }
+			else if ( _options.display_value == 'arrived') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="Arrivé au centre de tri"/></span>'); }
+			else if ( _options.display_value == 'archive') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-archive.png" height="80" title="Archivé"/></span>'); }
+			else { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="Retardé"/></span>'); }
+		}
+		jeedom.cmd.update['#status_id#']({display_value:'#status#'});		
+		
+		//----- Infos
+		jeedom.cmd.update['#carrier_id#'] = function(_options) {
+			$('.Cmd#carrier_id#').empty().append('<span>'+_options.display_value+'</span>');
+		}
+		jeedom.cmd.update['#carrier_id#']({display_value:'#carrier#'});
+
+		jeedom.cmd.update['#origin_id#'] = function(_options) {
+			$('.Cmd#origin_id#').empty().append('<span>'+_options.display_value+'</span>');
+		}
+		jeedom.cmd.update['#origin_id#']({display_value:'#origin#'});
+		
+		jeedom.cmd.update['#destination_id#'] = function(_options) {
+			$('.Cmd#destination_id#').empty().append('<span>'+_options.display_value+'</span>');
+		}
+		jeedom.cmd.update['#destination_id#']({display_value:'#destination#'});
+
+		jeedom.cmd.update['#deliveryDate_id#'] = function(_options) {
+			$('.Cmd#deliveryDate_id#').empty().append('<span>'+_options.display_value+'</span>');
+		}
+		jeedom.cmd.update['#deliveryDate_id#']({display_value:'#deliveryDate#'});
+		
+		//----- States
+		jeedom.cmd.update['#states_id#'] = function(_options) {
+			var table = jQuery.parseJSON(_options.display_value);
+			var nb_state = Object.keys(table.states).length
+								
+			var table_html= "";
+			table_html += '<ul class="list-group" style="text-align: left">';
+			jQuery.each(table.states,function(key,state){
+				table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;"">'+state.date+'<br>'+state.hour+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>'+state.location+'</span></li>'
+			});
+			table_html += '</ul>';
+			$('.table_states#id#').empty().append(table_html);	
+		}
+		jeedom.cmd.update['#states_id#']({display_value:'#states#'});
+			
+	</script>
+
+</div>

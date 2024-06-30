@@ -1,0 +1,58 @@
+.parcelTracking_widget .container-fluid {
+	margin : 3px 3px 3px 3px !important;
+	padding : 0px 0px 0px 0px !important;
+}
+
+.parcelTracking_widget #tile {
+    margin : 3px 3px 3px 3px !important;
+	padding : 0px 0px 0px 0px !important;
+	background-color : rgb(var(--bg-color)) !important;
+	filter : contrast(105%);
+	border : solid;
+	border-width: 2px;
+	border-radius: 10px;
+	border-color: rgb(225,225,225);
+}
+
+.parcelTracking_widget #titre_tile {
+	font-size : 12px;
+	color : var(--txt-color) !important;
+	text-align: left;
+	margin : 0px 0px 0px 0px !important;
+	padding : 5px 0px 0px 0px !important;
+}
+
+.parcelTracking_widget #icon_tile {
+	margin : 0px 0px 0px 0px !important;
+	padding : 23.5px 0px 0px 0px !important;
+}
+
+.parcelTracking_widget #value_tile {
+	font-size : 12px;
+	color : #000000 !important;
+	text-align: right;
+	margin : 0px 0px 0px 0px !important;
+	padding : 5px 5px 0px 0px !important;
+}
+
+.parcelTracking_widget #list_states {
+	height: 170px;
+	width: 506px;
+	margin: 5px 0px;
+	overflow: auto;
+}
+
+.parcelTracking_widget .list-group-item {
+	background-color: transparent !important;
+	height:60px;
+	width:480px;
+	margin-bottom: 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+.parcelTracking_widget .span-item {
+	height: 60px;
+	padding: 10px 0px 0px 0px;
+	white-space: normal;
+	vertical-align: middle;
+}

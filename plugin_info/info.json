@@ -1,0 +1,35 @@
+{
+	"id": "parcelTracking",
+	"name": "Suivi Colis",
+	"pluginVersion": "1.0",
+	"description": {
+		"fr_FR": "Ce plugin vous permet de suivre vos colis en provenance des principaux transporteurs français et internationaux (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ..."
+	},
+	"licence": "AGPL",
+	"author": "Xav-74",
+	"require": "4.2",
+	"category": "organization",
+	"hasDependency": false,
+	"hasOwnDeamon": false,
+	"maxDependancyInstallTime": 0,
+	"changelog_beta": "",
+	"changelog": "",
+	"documentation_beta": "",
+	"documentation": "",
+	"link": {
+		"forum": "Lien vers le forum",
+		"video": "Lien vers une video"
+	},
+	"language": [
+		"fr_FR"
+	],
+	"compatibility": [
+		"smart",
+		"luna",
+		"atlas",
+		"rpi",
+		"docker",
+		"diy",
+		"mobile"
+	]
+}
