@@ -3,7 +3,7 @@
 	"name": "Suivi Colis",
 	"pluginVersion": "1.0",
 	"description": {
-		"fr_FR": "Ce plugin vous permet de suivre vos colis en provenance des principaux transporteurs français et internationaux (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ..."
+		"fr_FR": "Ce plugin vous permet de suivre vos colis en provenance des principaux transporteurs français et internationaux (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ...)"
 	},
 	"licence": "AGPL",
 	"author": "Xav-74",
