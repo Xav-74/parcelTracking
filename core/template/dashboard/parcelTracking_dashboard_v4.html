@@ -117,16 +117,18 @@
 		
 		//----- States
 		jeedom.cmd.update['#states_id#'] = function(_options) {
-			var table = jQuery.parseJSON(_options.display_value);
-			var nb_state = Object.keys(table.states).length
-								
-			var table_html= "";
-			table_html += '<ul class="list-group" style="text-align: left">';
-			jQuery.each(table.states,function(key,state){
-				table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;"">'+state.date+'<br>'+state.hour+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>'+state.location+'</span></li>'
-			});
-			table_html += '</ul>';
-			$('.table_states#id#').empty().append(table_html);	
+			if ( _options.display_value != 'not available' || _options.display_value != null ) {
+				var table = jQuery.parseJSON(_options.display_value);
+				var nb_state = Object.keys(table.states).length
+									
+				var table_html= "";
+				table_html += '<ul class="list-group" style="text-align: left">';
+				jQuery.each(table.states,function(key,state){
+					table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;"">'+state.date+'<br>'+state.hour+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>'+state.location+'</span></li>'
+				});
+				table_html += '</ul>';
+				$('.table_states#id#').empty().append(table_html);
+			}
 		}
 		jeedom.cmd.update['#states_id#']({display_value:'#states#'});
 			
