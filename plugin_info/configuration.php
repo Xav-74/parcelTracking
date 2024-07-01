@@ -29,7 +29,7 @@ if (!isConnect()) {
     <legend><i class="fas fa-wrench"></i> {{Paramètres API Parcelsapp}}</legend>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Clé API Parcelsapp}}
+        <label class="col-sm-4 control-label">{{Clé API Parcelsapp <a href="https://parcelsapp.com/dashboard/#/login">(lien)</a>}}
             <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API après vous être enregistré sur le site www.parcelsapp.com}}"></i></sup>
         </label>
         <div class="col-sm-4">
