@@ -120,12 +120,12 @@ class parcelTracking extends eqLogic {
     // Fonction exécutée automatiquement avant la mise à jour de l'équipement
     public function preUpdate() {
     
-        if (empty($this->getConfiguration('trackingId'))) {
+        /*if (empty($this->getConfiguration('trackingId'))) {
             throw new Exception('Le numéro de colis ne peut pas être vide');
         }
         if (empty($this->getConfiguration('destinationCountry'))) {
             throw new Exception('Le pays de destination ne peut pas être vide');
-        }
+        }*/
     }
 
     // Fonction exécutée automatiquement après la mise à jour de l'équipement
@@ -188,10 +188,13 @@ class parcelTracking extends eqLogic {
 			$replace['#' . $cmd->getLogicalId() . '_visible#'] = $cmd->getIsVisible();
 		}
 			
-		// On definit le template à appliquer par rapport à la version Jeedom utilisée
-		//if (version_compare(jeedom::version(), '4.0.0') >= 0) { }
-		$template = 'parcelTracking_dashboard_v4';
-		$replace['#template#'] = $template;
+		// On definit le template à appliquer par rapport aux paramètre du plugin
+		/*if ( config::byKey('defaultWidget', 'parcelTracking') == "1" ) { 
+            $template = 'global_parcelTracking_dashboard_v4';
+        }
+		else { $template = 'parcelTracking_dashboard_v4'; }*/
+        $template = 'parcelTracking_dashboard_v4';
+        $replace['#template#'] = $template;
 
 		return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, $template, 'parcelTracking')));
     }
@@ -217,11 +220,13 @@ class parcelTracking extends eqLogic {
 
     /*     * **********************Getteur Setteur*************************** */
 
-    public static function synchronize($trackingId, $destinationCountry, $zipcode)
+    public static function synchronize($trackingId)
     {
         $eqLogic = self::getparcelTrackingEqLogic($trackingId);
         $apiKey = config::byKey('apiKey', 'parcelTracking');
         $language = config::byKey('language', 'parcelTracking');
+        $destinationCountry = $eqLogic->getConfiguration('destinationCountry');
+        $zipcode = $eqLogic->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
                 
         log::add('parcelTracking', 'debug', '┌─Command execution : synchronize');
         $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
@@ -278,7 +283,7 @@ class parcelTracking extends eqLogic {
         $language = config::byKey('language', 'parcelTracking');
         $trackingId = $this->getConfiguration('trackingId');
         $destinationCountry = $this->getConfiguration('destinationCountry');
-        $zipcode = $this->getConfiguration('zipcode');
+        $zipcode = $this->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
 
         $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
@@ -355,8 +360,19 @@ class parcelTracking extends eqLogic {
                 'title' => $title,
                 'message' => $message,
             ];
-            cmd::byString($cmdNotifications)->execCmd($data);
-            log::add('parcelTracking', 'debug', '| Send notification - cmdId : '.$cmdNotifications.' - title : '.$title. ' - message : '.$message );
+
+            if (strpos($cmdNotifications, '&&') !== false) {
+                $cmds = explode(' && ', $cmdNotifications);
+                $cmds = array_map('trim', $cmds);                           // On supprime les espaces autour de chaque valeur
+                foreach ($cmds as $cmd) {
+                    cmd::byString($cmd)->execCmd($data);
+                    log::add('parcelTracking', 'debug', '| Send notification - cmdId : '.$cmd.' - title : '.$title. ' - message : '.$message );
+                }
+            }
+            else {
+                cmd::byString($cmdNotifications)->execCmd($data);
+                log::add('parcelTracking', 'debug', '| Send notification - cmdId : '.$cmdNotifications.' - title : '.$title. ' - message : '.$message );
+            }
         }
     }
 

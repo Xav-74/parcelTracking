@@ -129,7 +129,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										<?php
 										$options = '';
 										foreach ((jeeObject::buildTree(null, false)) as $object) {
-											$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+											if ( config::byKey('defaultObject', 'parcelTracking') == $object->getId() ) { $options .= '<option value="' . $object->getId() . '" selected="selected">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>'; }
+											else { $options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>'; }
 										}
 										echo $options;
 										?>
@@ -165,7 +166,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le numéro de suivi du colis}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="trackingId" placeholder="{{Numéro de suivi du cols}}">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="trackingId">
 								</div>
 							</div>
 
@@ -174,7 +175,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<sup><i class="fas fa-question-circle tooltips" title="{{Choisissez le pays de destination du colis dans la liste suivante}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<select id="sel_country" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="destinationCountry" placeholder="Pays de destination"></select>
+									<select id="sel_country" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="destinationCountry"></select>
 								</div>
 							</div>
 
@@ -183,7 +184,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Renseignez le code postal de la ville de destination du colis}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="zipcode" placeholder="{{Code postal}}">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="zipcode" placeholder="<?php echo config::byKey('defaultZipcode', 'parcelTracking'); ?>">
 								</div>
 							</div>
 
@@ -243,6 +244,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 	</div><!-- /.eqLogic -->
 
 </div><!-- /.row row-overflow -->
+
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'parcelTracking', 'js', 'parcelTracking'); ?>

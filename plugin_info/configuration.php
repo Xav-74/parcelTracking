@@ -54,6 +54,33 @@ if (!isConnect()) {
     <legend><i class="fas fa-cogs"></i> {{Paramètres optionnels du plugin}}</legend>
 
     <div class="form-group">
+        <label class="col-sm-4 control-label">{{Objet parent par défaut}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez l'objet parent par défaut configuré lors de la création d'un colis.<br/> Laissez le champ sur 'Aucun' pour ne pas pré-remplir l'objet par défaut !}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <select class="configKey form-control" data-l1key="defaultObject">
+                <option value="">{{Aucun}}</option>
+                <?php
+                    $options = '';
+                    foreach ((jeeObject::buildTree(null, false)) as $object) {
+                        $options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+                    }
+                    echo $options;
+                ?>
+            </select>        
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Code postal par défaut}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le code postal par défaut configuré lors de la création d'un colis.<br/> Laissez le champ vide pour ne pas pré-remplir le code postal !}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <input id="defaultZipcode" type="number" class="configKey form-control" data-l1key="defaultZipcode"/>
+        </div>
+    </div>
+    
+    <div class="form-group">
         <label class="col-sm-4 control-label">{{Durée de conservation de l'équipement après livraison (en jours)}}
             <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le nombre de jours après lequel le colis livré est supprimé du plugin.<br/> Laissez le champ vide pour conserver les colis !}}"></i></sup>
         </label>
@@ -75,6 +102,20 @@ if (!isConnect()) {
             </div>
         </div>
     </div>
+
+    <legend><i class="fas fa-palette"></i> {{Paramètres du widget}}</legend>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Choix du widget}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Choisissez entre un widget par colis ou un widget unique pour tous les colis}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <select class="configKey form-control" data-l1key="defaultWidget">
+                <option value="0">{{Widget par colis}}</option>
+                <option value="1">{{Widget unique}}</option>
+            </select>        
+        </div>
+    </div>
     <br/><br/>
 
     </fieldset>
@@ -85,9 +126,9 @@ if (!isConnect()) {
     var CommunityButton = document.querySelector('#createCommunityPost > span');
     if(CommunityButton) {CommunityButton.innerHTML = "{{Community}}";}
 
-    $("#bt_selectCmdNotifications").on('click', function () {
-        jeedom.cmd.getSelectModal({ cmd: { type: 'action', subType: 'message' } }, function (result) {
-            $('.configKey[data-l1key=cmdNotifications]').value(result.human);
+    document.getElementById('bt_selectCmdNotifications').addEventListener('click', function() {
+        jeedom.cmd.getSelectModal({ cmd: { type: 'action', subType: 'message' } }, function(result) {
+            document.querySelector('.configKey[data-l1key=cmdNotifications]').value = document.querySelector('.configKey[data-l1key=cmdNotifications]').value + result.human;
         });
     });
     

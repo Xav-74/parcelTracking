@@ -31,7 +31,7 @@ try {
     ajax::init();
 
     if (init('action') == 'synchronize') {
-		$result = parcelTracking::synchronize(init('trackingId'), init('destinationCountry'), init('zipcode'));
+		$result = parcelTracking::synchronize(init('trackingId'));
 		ajax::success($result);
 	}
 

@@ -99,12 +99,12 @@ function synchronize()  {
 	$('#div_alert').showAlert({message: '{{Synchronisation en cours}}', level: 'warning'});	
 	$.ajax({													            // fonction permettant de faire de l'ajax
 		type: "POST", 											            // methode de transmission des données au fichier php
-		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php", 			// url du fichier php
+		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php", 	// url du fichier php
 		data: {
 			action: "synchronize",
 			trackingId: $('.eqLogicAttr[data-l2key=trackingId]').value(),
-            destinationCountry: $('.eqLogicAttr[data-l2key=destinationCountry]').value(),
-			zipcode: $('.eqLogicAttr[data-l2key=zipcode]').value(),
+            //destinationCountry: $('.eqLogicAttr[data-l2key=destinationCountry]').value(),
+			//zipcode: $('.eqLogicAttr[data-l2key=zipcode]').value(),
 			},
 		dataType: 'json',
 			error: function (request, status, error) {
@@ -123,15 +123,15 @@ function synchronize()  {
 	});
 };
 
-$('#bt_Synchronization').on('click',function() {
- 
-	$('.btn[data-action=save]').click();
-	setTimeout(synchronize,2000);
+document.getElementById('bt_Synchronization').addEventListener('click', function() {
+    var button = document.querySelector('.btn[data-action="save"]');
+    button.click();
+    setTimeout(synchronize, 2000);
 });
 
 
 /* Fonction permettant la création d'un post sur le Community */
-$('.eqLogicAction[data-action=createCommunityPost]').on('click', function (event) {
+document.querySelector('.eqLogicAction[data-action=createCommunityPost]').addEventListener('click', function(event) {
     
 	jeedom.plugin.createCommunityPost({
       type: eqType,
@@ -156,9 +156,10 @@ $('.eqLogicAction[data-action=createCommunityPost]').on('click', function (event
 });
 
 
-/* Fonction permettant de remplir le select avec la valeur France par défaut */
-$('.eqLogicAttr[data-l1key=id]').on('change', function () {
+/* Fonction permettant de remplir les éléments avec les valeurs par défaut renseignées */
+document.querySelector('.eqLogicAttr[data-l1key="id"]').addEventListener('change', function() {
 
+	//select countries
 	const countries = [
 		"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", 
 		"Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", 
@@ -184,7 +185,7 @@ $('.eqLogicAttr[data-l1key=id]').on('change', function () {
 		"Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 	];
 
-	const selectElement = document.getElementById('sel_country');
+	const selectCountry = document.getElementById('sel_country');
 
 	countries.forEach(country => {
 		const option = document.createElement('option');
@@ -193,6 +194,14 @@ $('.eqLogicAttr[data-l1key=id]').on('change', function () {
 		if (country === "France") {
 			option.selected = true;
 		}
-		selectElement.appendChild(option);
+		selectCountry.appendChild(option);
 	});
+	
+	//select objects
+	const selectObject = document.getElementById('sel_object');
+	const options = Array.from(selectObject.querySelectorAll('option'));
+	selectObject.options.length = 0;
+	options.forEach(function(option) {
+        selectObject.appendChild(option);
+    });
 });
