@@ -111,6 +111,10 @@ class parcelTracking extends eqLogic {
 
     // Fonction exécutée automatiquement avant la création de l'équipement
     public function preInsert() {
+    
+    $defaultObject = config::byKey('defaultObject', 'parcelTracking');
+    log::add('parcelTracking', 'debug', 'Index :'.$defaultObject);
+    $this->setObject_id($defaultObject);
     }
 
     // Fonction exécutée automatiquement après la création de l'équipement

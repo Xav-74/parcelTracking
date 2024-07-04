@@ -7,7 +7,7 @@
 	},
 	"licence": "AGPL",
 	"author": "Xav-74",
-	"require": "4.2",
+	"require": "4.4",
 	"category": "organization",
 	"hasDependency": false,
 	"hasOwnDeamon": false,

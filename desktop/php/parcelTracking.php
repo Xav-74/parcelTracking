@@ -129,8 +129,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										<?php
 										$options = '';
 										foreach ((jeeObject::buildTree(null, false)) as $object) {
-											if ( config::byKey('defaultObject', 'parcelTracking') == $object->getId() ) { $options .= '<option value="' . $object->getId() . '" selected="selected">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>'; }
-											else { $options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>'; }
+											$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
 										}
 										echo $options;
 										?>

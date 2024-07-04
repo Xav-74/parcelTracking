@@ -156,7 +156,7 @@ document.querySelector('.eqLogicAction[data-action=createCommunityPost]').addEve
 });
 
 
-/* Fonction permettant de remplir les éléments avec les valeurs par défaut renseignées */
+/* Fonction permettant de remplir les éléments avec les valeurs par défaut renseignées lors de la création d'un équipement*/
 document.querySelector('.eqLogicAttr[data-l1key="id"]').addEventListener('change', function() {
 
 	//select countries
@@ -196,12 +196,4 @@ document.querySelector('.eqLogicAttr[data-l1key="id"]').addEventListener('change
 		}
 		selectCountry.appendChild(option);
 	});
-	
-	//select objects
-	const selectObject = document.getElementById('sel_object');
-	const options = Array.from(selectObject.querySelectorAll('option'));
-	selectObject.options.length = 0;
-	options.forEach(function(option) {
-        selectObject.appendChild(option);
-    });
 });
