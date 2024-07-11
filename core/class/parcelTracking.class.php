@@ -106,6 +106,53 @@ class parcelTracking extends eqLogic {
         return $interval->days;
     }
 
+    public static function setIsVisibleEqlogics($mode) {
+
+        $first = true;
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
+            if ( $mode == 'one' ) {
+                if ( $first == true ) {
+                    if ( $parcelTracking->getIsVisible() == 0 ) {
+                        $parcelTracking->setIsVisible(1);
+                        $parcelTracking->save(true);
+                    }
+                    $first = false;
+                }
+                else if ( $first == false && $parcelTracking->getIsVisible() == 1 ) {
+                    $parcelTracking->setIsVisible(0);
+                    $parcelTracking->save(true);
+                    }
+            }
+            else if ( $mode == 'all' && $parcelTracking->getIsVisible() == 0 ) {
+                $parcelTracking->setIsVisible(1);
+                $parcelTracking->save(true);
+            }
+        }
+    }
+
+    public static function buidListWidget() {
+
+        $list = array();
+        $totalParcels = count(eqLogic::byType('parcelTracking', true));
+        $list = [ 
+            'totalParcels' => $totalParcels,
+        ];
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
+            $status = $parcelTracking->getCmd('info','status')->execCmd();
+            $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
+            $list['parcels'][] = [ 
+                'trackingId' => $parcelTracking->getConfiguration('trackingId'),
+                'name' => $parcelTracking->getName(),
+                'status' => $status,
+                'lastDate' => $lastState['states'][0]['date'],
+                'lastHour'=> $lastState['states'][0]['hour'],
+                'lastLocation' => $lastState['states'][0]['location'],
+                'lastState' => $lastState['states'][0]['status']
+            ];
+        }
+        return json_encode($list);   
+    }
+
 
     /*     * *********************Méthodes d'instance************************* */
 
@@ -113,8 +160,9 @@ class parcelTracking extends eqLogic {
     public function preInsert() {
     
     $defaultObject = config::byKey('defaultObject', 'parcelTracking');
-    log::add('parcelTracking', 'debug', 'Index :'.$defaultObject);
     $this->setObject_id($defaultObject);
+    $this->setIsVisible(1);
+    $this->setIsEnable(1);
     }
 
     // Fonction exécutée automatiquement après la création de l'équipement
@@ -193,13 +241,21 @@ class parcelTracking extends eqLogic {
 		}
 			
 		// On definit le template à appliquer par rapport aux paramètre du plugin
-		/*if ( config::byKey('defaultWidget', 'parcelTracking') == "1" ) { 
-            $template = 'global_parcelTracking_dashboard_v4';
-        }
-		else { $template = 'parcelTracking_dashboard_v4'; }*/
-        $template = 'parcelTracking_dashboard_v4';
-        $replace['#template#'] = $template;
+		if ( config::byKey('defaultWidget', 'parcelTracking') == "one" ) { 
+            $this->setIsVisibleEqlogics("one");
+            $replace['#listParcels#'] = $this->buidListWidget();
 
+            $template = 'parcelTracking_global_dashboard_v4';
+        }
+		else if ( config::byKey('defaultWidget', 'parcelTracking') == "all" || config::byKey('defaultWidget', 'parcelTracking') == "" ) {
+            $this->setIsVisibleEqlogics("all");
+            $template = 'parcelTracking_dashboard_v4'; 
+        }
+        else if ( config::byKey('defaultWidget', 'parcelTracking') == "none" ) {
+            $template = 'parcelTracking_hidden_dashboard_v4'; 
+        }
+                
+        $replace['#template#'] = $template;
 		return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, $template, 'parcelTracking')));
     }
     

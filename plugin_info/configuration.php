@@ -43,7 +43,7 @@ if (!isConnect()) {
         </label>
         <div class="col-sm-4">
             <select class="configKey form-control" data-l1key="language">
-            <option value="" disabled selected hidden>{{Choisir dans la liste}}></option>
+            <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
             <option value="fr">Français</option>
             <option value="en">Anglais</option>
             </select>
@@ -111,8 +111,10 @@ if (!isConnect()) {
         </label>
         <div class="col-sm-4">
             <select class="configKey form-control" data-l1key="defaultWidget">
-                <option value="0">{{Widget par colis}}</option>
-                <option value="1">{{Widget unique}}</option>
+                <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
+                <option value="all" selected>{{Widget par colis}}</option>
+                <option value="one">{{Widget unique}}</option>
+                <option value="none">{{Aucun}}</option>
             </select>        
         </div>
     </div>

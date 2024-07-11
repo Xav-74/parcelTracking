@@ -1,0 +1,104 @@
+<div id="parcelTracking_widget_ID" class="eqLogic-widget eqLogic parcelTracking_widget parcelTracking_widget_#id# parcelTracking" style="min-width:518px !important; max-width:518px !important; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
+
+	<div class="text-center widget-name">
+		<span class="reportModeVisible">#name_display#<span class="object_name">#object_name#</span></span>
+	   	<a class="reportModeHidden" style="color:var(--eqTitle-color)!important;">Suivi Colis<span class="object_name">#object_name#</span></a>
+	   	<!--<span class="cmd refresh pull-right cursor" data-cmd_id="#refresh_id#" onclick="jeedom.cmd.execute({id: #refresh_id#});">
+		   <i class="fas fa-sync" style="color:var(--eqTitle-color)!important;"></i>
+	   	</span>-->
+	</div>
+			
+	<div class="container-fluid">
+		
+		<div>
+			
+			<div class="col-xs-12" id="tile" style="width:506px;">
+				<div id="list_states" class="label Cmd#states_id# table_states#id# "></div>				
+			</div>
+					
+		</div>
+		
+	</div>
+	
+	#divGraphInfo#
+	
+	<script>
+    
+		//----- Theme colors & optional parameters
+		function setTheme#id#() {
+			var link = document.createElement('link');
+			link.type = 'text/css';
+			link.rel = 'stylesheet';
+			
+			if ($('body').attr('data-theme').endsWith('Dark')) {
+				link.href = 'plugins/parcelTracking/core/template/dashboard/parcelTracking_global_dashboard_style_dark.css';
+			}
+			else if ($('body').attr('data-theme').endsWith('Light') || $('body').attr('data-theme').endsWith('Legacy')) {
+				link.href = 'plugins/parcelTracking/core/template/dashboard/parcelTracking_global_dashboard_style_light.css';
+			}
+			document.head.appendChild(link);
+		}
+
+		function timedSetTheme#id#(occurence = 0){
+			if ($('.parcelTracking_widget_#id#').length == 0) {
+				return;
+			}
+			if ( $('body')[0].hasAttribute('data-theme') != true )  {
+				occurence++;
+				if (occurence > 40){
+					return;
+				}
+				setTimeout( () => { timedSetTheme#id#(occurence); }, 500 );
+				return;
+			}
+			setTheme#id#();
+		}
+		
+		if ( $('body')[0].hasAttribute('data-theme') == true )  {
+			setTheme#id#();
+		}
+		else  {
+			timedSetTheme#id#(0);
+		}
+			
+		$('body').on('changeThemeEvent', function (event,theme) {
+			setTheme#id#();
+		});
+				
+		//----- List Parcels
+		var list = '#listParcels#';
+		
+		if ( list != null ) {
+			var table = jQuery.parseJSON(list);
+			var totalParcels = table.totalParcels;
+												
+			var table_html= "";
+			table_html += '<ul class="list-group" style="text-align: left">';
+			jQuery.each(table.parcels,function(key,parcel){
+				table_html += '<li class="list-group-item">';
+				if ( parcel.status == 'delivered') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delivered.png" height="20" title="Délivré"/></span>'; }
+				else if ( parcel.status == 'transit') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-transit.png" height="20" title="En transit"/></span>'; }
+				else if ( parcel.status == 'pickup') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="Pris en charge"/></span>'; }
+				else if ( parcel.status == 'arrived') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="Arrivé au centre de tri"/></span>'; }
+				else if ( parcel.status == 'archive') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-archive.png" height="20" title="Archivé"/></span>'; }
+				else { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delayed.png" height="20" title="Retardé"/></span>'; }
+				table_html += '<span class="col-xs-11 label span-item-title">'+parcel.name+' ('+parcel.trackingId+')</span>';
+				table_html += '<span class="col-xs-12 label span-item-value">'+parcel.lastDate+' '+parcel.lastHour+' : '+parcel.lastState+'<br>'+parcel.lastLocation+'</span>';
+				table_html +=  '</li>';
+			});
+			table_html += '</ul>';
+			$('.table_states#id#').empty().append(table_html);
+		}
+
+		//----- Widget height
+		var tileHeight = 5 + 90*totalParcels;
+		var widegtHeight = tileHeight + 35;
+		console.log(tileHeight);
+		console.log(widegtHeight);
+		$('#tile').css('height', tileHeight);
+		$('.parcelTracking_widget').css('min-height', widegtHeight);
+		$('.parcelTracking_widget').css('max-height', widegtHeight);
+				
+	</script>
+
+</div>
