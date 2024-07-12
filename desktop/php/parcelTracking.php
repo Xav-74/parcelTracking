@@ -46,7 +46,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			?>
 		</div>
 
-		<legend><i class="fas fa-table"></i> {{Mes colis}}</legend>
+		<legend><i class="fas fa-table"></i> {{Equipements}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
 			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Template trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
@@ -60,17 +60,42 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			echo '</div>';
 			echo '</div>';
 			// Liste des équipements du plugin
+			echo '<legend><i class="fas fa-box"></i> {{Mes colis}}</legend>';
 			echo '<div class="eqLogicThumbnailContainer">';
 			foreach ($eqLogics as $eqLogic) {
-				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-				echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . $eqLogic->getImage() . '"/>';
-				echo '<br>';
-				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-				echo '<span class="hiddenAsCard displayTableRight hidden">';
-				echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
-				echo '</span>';
-				echo '</div>';
+				if ( $eqLogic->getConfiguration('eqLogicType') == 'parcel' || $eqLogic->getConfiguration('eqLogicType') == '' ) {
+					$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+					echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
+					echo '<img src="' . $eqLogic->getImage() . '"/>';
+					echo '<br>';
+					echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+					echo '<span class="hiddenAsCard displayTableRight hidden">';
+					echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
+					echo '</span>';
+					echo '</div>';
+				}
+			}	
+			echo '</div>';
+		}
+		
+		if (count($eqLogics) == 0) {
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Template trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+		} else {
+			// Liste des widgets du plugin
+			echo '<legend><i class="fas fa-palette"></i> {{Widget dédié géré par le plugin}}</legend>';
+			echo '<div class="eqLogicThumbnailContainer">';
+			foreach ($eqLogics as $eqLogic) {
+				if ( $eqLogic->getConfiguration('eqLogicType') == 'global' ) {	
+					$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+					echo '<div class="eqLogicDisplayCard cursor ' . $opacity . '" data-eqLogic_id="' . $eqLogic->getId() . '">';
+					echo '<img src="' . $eqLogic->getImage() . '"/>';
+					echo '<br>';
+					echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+					echo '<span class="hiddenAsCard displayTableRight hidden">';
+					echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
+					echo '</span>';
+					echo '</div>';
+				}
 			}
 			echo '</div>';
 		}
@@ -158,9 +183,19 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 
-							<legend><i class="fas fa-cogs"></i> {{Paramètres spécifiques}}</legend>
+							<legend id="parcel"><i class="fas fa-cogs"></i> {{Paramètres spécifiques}}</legend>
 							
-							<div class="form-group">
+							<div class="form-group" style="display: none;">
+								<label class="col-sm-4 control-label">{{Type équipement}}</label>
+								<div class="col-sm-6">
+									<select id="hidden_sel_type" class="form-control eqLogicAttr" data-l1key="configuration" data-l2key="eqLogicType">
+										<option value="parcel">Parcel</option>
+										<option value="global">Global</option>
+									</select>
+								</div>
+							</div>
+
+							<div id="parcel" class="form-group">
 								<label class="col-sm-4 control-label">{{Numéro de suivi}}
 									<sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le numéro de suivi du colis}}"></i></sup>
 								</label>
@@ -169,16 +204,46 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 
-							<div class="form-group">
+							<div id="parcel" class="form-group">
 								<label class="col-sm-4 control-label"> {{Pays de destination}}
 									<sup><i class="fas fa-question-circle tooltips" title="{{Choisissez le pays de destination du colis dans la liste suivante}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<select id="sel_country" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="destinationCountry"></select>
+									<select id="sel_country" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="destinationCountry">
+										<?php
+										$countries = array(
+											"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", 
+											"Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", 
+											"Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", 
+											"Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", 
+											"Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", 
+											"Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", 
+											"Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", 
+											"Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Holy See", "Honduras", "Hungary", 
+											"Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", 
+											"Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", 
+											"Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", 
+											"Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", 
+											"Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", 
+											"New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", 
+											"Palau", "Palestine State", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", 
+											"Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", 
+											"Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", 
+											"Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", 
+											"Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", 
+											"Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", 
+											"Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", 
+											"Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+										);
+										foreach($countries as $country) {
+											echo "<option value=\"$country\">$country</option>";
+										}
+										?>
+									</select>
 								</div>
 							</div>
 
-							<div class="form-group">
+							<div id="parcel" class="form-group">
 								<label class="col-sm-4 control-label">{{Code postal}}
 									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Renseignez le code postal de la ville de destination du colis}}"></i></sup>
 								</label>
@@ -187,7 +252,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 
-							<div id="div_actions" class="form-group">						
+							<div id="parcel" class="form-group">						
 									<label class="col-sm-4 control-label help" data-help="{{La synchronisation permet de récupérer les informations du colis sans attendre le prochain cron}}">{{Actions}}</label>	
 									<div class="col-sm-6">
 										<a class="btn btn-primary btn-sm cmdAction" id="bt_Synchronization"><i class="fas fa-sync"></i> {{Synchronisation}}</a>
@@ -200,9 +265,9 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<!-- Affiche un champ de commentaire par défaut mais vous pouvez y mettre ce que vous voulez -->
 						<div class="col-lg-6">
 							
-							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
+							<legend id="parcel"><i class="fas fa-info"></i> {{Informations}}</legend>
 							
-							<div class="form-group">
+							<div id="parcel" class="form-group">
 								<label class="col-sm-4 control-label">{{Commentaire}}</label>
 								<div class="col-sm-6">
 									<textarea class="form-control eqLogicAttr autogrow" data-l1key="comment"></textarea>

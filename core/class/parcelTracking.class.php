@@ -40,13 +40,15 @@ class parcelTracking extends eqLogic {
     public static function cronHourly() {
     
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		// type = parcelTracking et eqLogic enable
-            log::add('parcelTracking', 'debug', 'CronHourly');
-            $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
-            if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
-                continue; 															// continue la boucle
+            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
+                log::add('parcelTracking', 'debug', 'CronHourly');
+                $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
+                if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
+                    continue; 															// continue la boucle
+                }
+                if ( date('Gi') == 0 ) return;                                          // A 0h00 pas de refresh car cronDaily
+                $cmdRefresh->execCmd();
             }
-            if ( date('Gi') == 0 ) return;                                          // A 0h00 pas de refresh car cronDaily
-            $cmdRefresh->execCmd(); 
         }	
     }
 
@@ -57,16 +59,18 @@ class parcelTracking extends eqLogic {
         $nbDays = config::byKey('nbDays', 'parcelTracking');
 
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
-            log::add('parcelTracking', 'debug', '| --> Parcel '.$parcelTracking->getName().' with trackingId '.$parcelTracking->getLogicalId());
-            if ( $nbDays != null ) {
-                $cmd = $parcelTracking->getCmd('info', 'deliveryDate');
-                $deliveryDate = $cmd->execCmd();
-                if ( $deliveryDate != null && $deliveryDate != 'not available') {
-                    if ( $parcelTracking->getDaysDifference($deliveryDate) >= $nbDays ) {
-                        $parcelTracking->remove();
-                        log::add('parcelTracking', 'debug', '| Remove parcel');
+            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
+                log::add('parcelTracking', 'debug', '| --> Parcel '.$parcelTracking->getName().' with trackingId '.$parcelTracking->getLogicalId());
+                if ( $nbDays != null ) {
+                    $cmd = $parcelTracking->getCmd('info', 'deliveryDate');
+                    $deliveryDate = $cmd->execCmd();
+                    if ( $deliveryDate != null && $deliveryDate != 'not available') {
+                        if ( $parcelTracking->getDaysDifference($deliveryDate) >= $nbDays ) {
+                            $parcelTracking->remove();
+                            log::add('parcelTracking', 'debug', '| Remove parcel');
+                        }
+                        else { log::add('parcelTracking', 'debug', '| Parcel not removed'); }
                     }
-                    else { log::add('parcelTracking', 'debug', '| Parcel not removed'); }
                 }
             }
         }
@@ -114,24 +118,30 @@ class parcelTracking extends eqLogic {
 
     public static function setIsVisibleEqlogics($mode) {
 
-        $first = true;
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
-            if ( $mode == 'one' ) {
-                if ( $first == true ) {
+            if ( $mode == 'one' || $mode == 'none' ) {
+                if ( $parcelTracking->getConfiguration('eqLogicType') == 'global' ) {
                     if ( $parcelTracking->getIsVisible() == 0 ) {
                         $parcelTracking->setIsVisible(1);
-                        $parcelTracking->save(true);
+                        $parcelTracking->save();
                     }
-                    $first = false;
                 }
-                else if ( $first == false && $parcelTracking->getIsVisible() == 1 ) {
+                else if ( $parcelTracking->getIsVisible() == 1 ) {
                     $parcelTracking->setIsVisible(0);
-                    $parcelTracking->save(true);
-                    }
+                    $parcelTracking->save();
+                }
             }
-            else if ( $mode == 'all' && $parcelTracking->getIsVisible() == 0 ) {
-                $parcelTracking->setIsVisible(1);
-                $parcelTracking->save(true);
+            else if ( $mode == 'all' ) {
+                if ( $parcelTracking->getConfiguration('eqLogicType') == 'global' ) {
+                    if ( $parcelTracking->getIsVisible() == 1 ) {
+                        $parcelTracking->setIsVisible(0);
+                        $parcelTracking->save();
+                    }
+                }
+                else if ( $parcelTracking->getIsVisible() == 0 ) {
+                    $parcelTracking->setIsVisible(1);
+                    $parcelTracking->save();
+                }
             }
         }
     }
@@ -144,19 +154,34 @@ class parcelTracking extends eqLogic {
             'totalParcels' => $totalParcels,
         ];
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
-            $status = $parcelTracking->getCmd('info','status')->execCmd();
-            $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
-            $list['parcels'][] = [ 
-                'trackingId' => $parcelTracking->getConfiguration('trackingId'),
-                'name' => $parcelTracking->getName(),
-                'status' => $status,
-                'lastDate' => $lastState['states'][0]['date'],
-                'lastHour'=> $lastState['states'][0]['hour'],
-                'lastLocation' => $lastState['states'][0]['location'],
-                'lastState' => $lastState['states'][0]['status']
-            ];
+            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
+                $status = $parcelTracking->getCmd('info','status')->execCmd();
+                $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
+                $list['parcels'][] = [ 
+                    'trackingId' => $parcelTracking->getConfiguration('trackingId'),
+                    'name' => $parcelTracking->getName(),
+                    'status' => $status,
+                    'lastDate' => $lastState['states'][0]['date'],
+                    'lastHour'=> $lastState['states'][0]['hour'],
+                    'lastLocation' => $lastState['states'][0]['location'],
+                    'lastState' => $lastState['states'][0]['status']
+                ];
+            }
         }
         return json_encode($list);   
+    }
+
+    public static function refreshAll() {
+    
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
+                $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
+                if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
+                    continue; 															// continue la boucle
+                }
+                $cmdRefresh->execCmd();
+            }
+        }	
     }
 
 
@@ -165,10 +190,12 @@ class parcelTracking extends eqLogic {
     // Fonction exécutée automatiquement avant la création de l'équipement
     public function preInsert() {
     
-    $defaultObject = config::byKey('defaultObject', 'parcelTracking');
-    $this->setObject_id($defaultObject);
-    $this->setIsVisible(1);
-    $this->setIsEnable(1);
+        $defaultObject = config::byKey('defaultObject', 'parcelTracking');
+        $this->setObject_id($defaultObject);
+        $this->setIsVisible(1);
+        $this->setIsEnable(1);
+        $this->setConfiguration('destinationCountry', 'France');
+        if ( $this->getLogicalId() != 'parcelTracking_widget' ) { $this->setConfiguration('eqLogicType', 'parcel'); }
     }
 
     // Fonction exécutée automatiquement après la création de l'équipement
@@ -193,21 +220,24 @@ class parcelTracking extends eqLogic {
     // Fonction exécutée automatiquement avant la sauvegarde (création ou mise à jour) de l'équipement
     public function preSave() {
     
-        $this->setLogicalId($this->getConfiguration('trackingId'));
+        if ( $this->getLogicalId() != 'parcelTracking_widget' ) { $this->setLogicalId($this->getConfiguration('trackingId')); }
     }
 
     // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
     public function postSave() {
 
-        $this->createCmd('status', 'Statut colis', 1, 'info', 'string');
-        $this->createCmd('carrier', 'Transporteur', 2, 'info', 'string');
-        $this->createCmd('origin', 'Origine', 3, 'info', 'string');
-        $this->createCmd('destination', 'Destination', 4, 'info', 'string');
-        $this->createCmd('states', 'Etats', 5, 'info', 'string');
-        $this->createCmd('lastState', 'Dernier état', 6, 'info', 'string');
-        $this->createCmd('deliveryDate', 'Date de livraison', 7, 'info', 'string');
+        if ( $this->getConfiguration('eqLogicType') != 'global') {
+            $this->createCmd('status', 'Statut colis', 1, 'info', 'string');
+            $this->createCmd('carrier', 'Transporteur', 2, 'info', 'string');
+            $this->createCmd('origin', 'Origine', 3, 'info', 'string');
+            $this->createCmd('destination', 'Destination', 4, 'info', 'string');
+            $this->createCmd('states', 'Etats', 5, 'info', 'string');
+            $this->createCmd('lastState', 'Dernier état', 6, 'info', 'string');
+            $this->createCmd('deliveryDate', 'Date de livraison', 7, 'info', 'string');
 
-        $this->createCmd('refresh', 'Rafraichir', 8, 'action', 'other');
+            $this->createCmd('refresh', 'Rafraichir', 8, 'action', 'other');
+        }
+        else { $this->createCmd('refreshAll', 'Rafraichir', 1, 'action', 'other'); }
     }
 
     // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -250,7 +280,6 @@ class parcelTracking extends eqLogic {
 		if ( config::byKey('defaultWidget', 'parcelTracking') == "one" ) { 
             $this->setIsVisibleEqlogics("one");
             $replace['#listParcels#'] = $this->buidListWidget();
-
             $template = 'parcelTracking_global_dashboard_v4';
         }
 		else if ( config::byKey('defaultWidget', 'parcelTracking') == "all" || config::byKey('defaultWidget', 'parcelTracking') == "" ) {
@@ -527,25 +556,27 @@ class parcelTrackingCmd extends cmd {
     public function execute($_options = array()) {
     
         $eqLogic = $this->getEqLogic(); 										// On récupère l'éqlogic de la commande $this
-            $logicalId = $this->getLogicalId();
-            log::add('parcelTracking', 'debug', '┌─Command execution : '.$logicalId);
+        $logicalId = $this->getLogicalId();
+        log::add('parcelTracking', 'debug', '┌─Command execution : '.$logicalId);
             
-            try {
-        switch ($logicalId) {
-            case 'refresh':
-            $eqLogic->refreshParcelInfo();
-                        break;
-            default:
-            throw new \Exception("Unknown command", 1);
-            break;
+        try {
+            switch ($logicalId) {
+                case 'refresh':
+                    $eqLogic->refreshParcelInfo();
+                    break;
+                case 'refreshAll':
+                    $eqLogic->refreshAll();
+                    break;
+                default:
+                throw new \Exception("Unknown command", 1);
+                break;
             }
-        
         } catch (Exception $e) {
             echo 'Exception : ',  $e->getMessage(), "\n";
             log::add('parcelTracking', 'debug', '└─Command execution error : '.$logicalId.' - '.$e->getMessage());
-            }
+        }
             
-            $eqLogic->refreshWidget();
+        $eqLogic->refreshWidget();
     }
 
     /*     * **********************Getteur Setteur*************************** */
