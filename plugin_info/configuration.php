@@ -88,21 +88,57 @@ if (!isConnect()) {
             <input type="number" class="configKey form-control" data-l1key="nbDays"/>
         </div>
     </div>
+    <br/>
+
+    <legend><i class="fas fa-comments"></i> {{Paramètres des notifications}}</legend>
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Commande à utiliser pour l'envoi de notifications}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Choisissez la commande de notification avec type message (ex. Jeemate, JeedomConnect, Slack, ou autre...).<br/> Laissez le champ vide pour ne pas recevoir de notifications !}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Choisissez la commande de notification de type message (ex. Jeemate, JeedomConnect, Slack, ou autre...).<br/> Laissez le champ vide pour ne pas recevoir de notifications !}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <div class="input-group">
-                <input class="form-control configKey input-sm" data-l1key="cmdNotifications"/>
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input class="form-control configKey" data-l1key="cmdNotifications"/>
                 <span class="input-group-btn">
-                    <a id="bt_selectCmdNotifications" class="btn btn-primary btn-sm listCmdAction"><i class="fa fa-list-alt"></i></a>
+                    <a id="bt_selectCmdNotifications" class="btn btn-primary listCmdAction"><i class="fa fa-list-alt"></i></a>
                 </span>
             </div>
         </div>
     </div>
 
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Format du corps du message}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date#, et #heure#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <input class="form-control configKey" data-l1key="formatNotifications"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Scénario à utiliser pour l'envoi de notifications}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Choisissez le scénario à éxécuter.<br/> Laissez le champ vide pour ne pas recevoir de notifications !}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input class="form-control configKey" data-l1key="scenarioNotifications"/>
+                <span class="input-group-btn">
+                    <a id="bt_selectScenarioNotifications" class="btn btn-primary"><i class="fa fa-list-alt"></i></a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Tags du scénario}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date#, et #heure#. <br/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <input class="form-control configKey" data-l1key="formatTags"/>
+        </div>
+    </div>
+    <br/>
+    
     <legend><i class="fas fa-palette"></i> {{Paramètres du widget}}</legend>
 
     <div class="form-group">
@@ -131,6 +167,12 @@ if (!isConnect()) {
     document.getElementById('bt_selectCmdNotifications').addEventListener('click', function() {
         jeedom.cmd.getSelectModal({ cmd: { type: 'action', subType: 'message' } }, function(result) {
             document.querySelector('.configKey[data-l1key=cmdNotifications]').value = document.querySelector('.configKey[data-l1key=cmdNotifications]').value + result.human;
+        });
+    });
+    
+    document.getElementById('bt_selectScenarioNotifications').addEventListener('click', function() {
+        jeedom.scenario.getSelectModal({}, function(result) {
+            document.querySelector('.configKey[data-l1key=scenarioNotifications]').value = result.human;
         });
     });
     

@@ -80,8 +80,14 @@ class parcelTracking extends eqLogic {
         if ( !empty(config::byKey('apiKey', 'parcelTracking')) ) { $CommunityInfo = $CommunityInfo . 'API Key present' . "\n"; }
         else { $CommunityInfo = $CommunityInfo . 'API Key missing' . "\n"; }
         $CommunityInfo = $CommunityInfo . 'Language : ' . config::byKey('language', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Default object : ' . config::byKey('defaultObject', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Default zip code : ' . config::byKey('defaultZipcode', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Days : ' . config::byKey('nbDays', 'parcelTracking') . "\n";
-        $CommunityInfo = $CommunityInfo . 'Notifications cmd : ' . config::byKey('cmdNotifications', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Notifications cmdId : ' . config::byKey('cmdNotifications', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Notifications format : ' . config::byKey('formatNotifications', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Notifications scenarioId : ' . config::byKey('scenarioNotifications', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Notifications tags : ' . config::byKey('formatTags', 'parcelTracking') . "\n";
+        $CommunityInfo = $CommunityInfo . 'Default widget : ' . config::byKey('defaultWidget', 'parcelTracking') . "\n";
 		$CommunityInfo = $CommunityInfo . "```";
 		return $CommunityInfo;
     }
@@ -344,6 +350,7 @@ class parcelTracking extends eqLogic {
         $trackingId = $this->getConfiguration('trackingId');
         $destinationCountry = $this->getConfiguration('destinationCountry');
         $zipcode = $this->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
+        $notification = false;
 
         $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
@@ -358,7 +365,7 @@ class parcelTracking extends eqLogic {
             
             if ( isset($parcel['shipments'][0]['lastState']['status']) ) { 
                 $lastState = str_replace("'", " ",$parcel['shipments'][0]['lastState']['status']);
-                if ( $this->checklastState($lastState) == true ) { $this->sendNotification($lastState); }
+                if ( $this->checklastState($lastState) == true ) { $notification = true; }
                 $this->checkAndUpdateCmd('lastState', $lastState);
             } else { $this->checkAndUpdateCmd('lastState', 'not available'); }
             
@@ -392,6 +399,7 @@ class parcelTracking extends eqLogic {
             } else { $this->checkAndUpdateCmd('states', 'not available'); }
         }
 
+        if ( $notification == true ) { $this->sendNotification(); }
         log::add('parcelTracking', 'debug', '└─End of parcel info refresh : ['.$result->httpCode.']');
         return $result;
     }
@@ -410,17 +418,35 @@ class parcelTracking extends eqLogic {
         }
     }
     
-    public function sendNotification($message) {
+    public function sendNotification() {
 
-        $cmdNotifications = config::byKey('cmdNotifications', 'parcelTracking');
+        // Information
+        $info = json_decode($this->getCmd('info','states')->execCmd(),true);
+        $name = $this->getName();
+        $trackingId = $this->getConfiguration('trackingId');
+        $carrier = $this->getCmd('info','carrier')->execCmd();
+        $status = $this->getCmd('info','status')->execCmd();
+        $lastState = $info['states'][0]['status'];
+        $lastDate = $info['states'][0]['date'];
+        $lastHour = $info['states'][0]['hour'];
         
+        // Cmd
+        $cmdNotifications = config::byKey('cmdNotifications', 'parcelTracking');
+        $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
         if ( $cmdNotifications != null) {
-            $title = 'Suivi colis '.$this->getConfiguration('trackingId').' - '.$this->getName();
+            if ( $formatNotifications != null ) {
+                $title = 'Suivi colis';
+                $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
+            }
+            else {
+                $title = 'Suivi colis '.$trackingId.' - '.$name;
+                $message = $lastState;
+            }
             $data = [
                 'title' => $title,
                 'message' => $message,
             ];
-
+            
             if (strpos($cmdNotifications, '&&') !== false) {
                 $cmds = explode(' && ', $cmdNotifications);
                 $cmds = array_map('trim', $cmds);                           // On supprime les espaces autour de chaque valeur
@@ -434,6 +460,49 @@ class parcelTracking extends eqLogic {
                 log::add('parcelTracking', 'debug', '| Send notification - cmdId : '.$cmdNotifications.' - title : '.$title. ' - message : '.$message );
             }
         }
+
+        // Scenario
+        $scenarioNotifications = config::byKey('scenarioNotifications', 'parcelTracking');
+        if ( $scenarioNotifications != null) {
+            $tags = $this->buildTags($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
+            $scenario = scenario::byString($scenarioNotifications);
+            $scenario->setTags($tags);
+            $scenario->execute();
+            log::add('parcelTracking', 'debug', '| Send notification - scenarioId : #'.$scenario->getId().'# - tags : '.json_encode($tags) );
+        }
+    }
+
+    public function buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
+
+        $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
+        
+        if ( !$formatNotifications ) {
+            $formatNotifications = $lastState;
+        }
+        else {
+            $formatNotifications = str_replace("#nom#", $name, $formatNotifications);
+            $formatNotifications = str_replace("#numColis#", $trackingId, $formatNotifications);
+            $formatNotifications = str_replace("#transporteur#", $carrier, $formatNotifications);
+            $formatNotifications = str_replace("#statut#", $status, $formatNotifications);
+            $formatNotifications = str_replace("#dernierEtat#", $lastState, $formatNotifications);
+            $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
+            $formatNotifications = str_replace("#heure#", $lastHour, $formatNotifications);
+        }
+        return $formatNotifications;
+    }
+
+    public function buildTags($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
+
+        $formatTags = config::byKey('formatTags', 'parcelTracking');
+        $tags = arg2array($formatTags);
+        $tags = str_replace("#nom#", $name, $tags);
+        $tags = str_replace("#numColis#", $trackingId, $tags);
+        $tags = str_replace("#transporteur#", $carrier, $tags);
+        $tags = str_replace("#statut#", $status, $tags);
+        $tags = str_replace("#dernierEtat#", $lastState, $tags);
+        $tags = str_replace("#date#", $lastDate, $tags);
+        $tags = str_replace("#heure#", $lastHour, $tags);
+        return $tags;
     }
 
 }
