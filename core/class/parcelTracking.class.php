@@ -452,6 +452,7 @@ class parcelTracking extends eqLogic {
         // Information
         $info = json_decode($this->getCmd('info','states')->execCmd(),true);
         $name = $this->getName();
+        $object = $this->getObject_id();
         $trackingId = $this->getConfiguration('trackingId');
         $carrier = $this->getCmd('info','carrier')->execCmd();
         $status = $this->getCmd('info','status')->execCmd();
@@ -493,7 +494,7 @@ class parcelTracking extends eqLogic {
         // Scenario
         $scenarioNotifications = config::byKey('scenarioNotifications', 'parcelTracking');
         if ( $scenarioNotifications != null) {
-            $tags = $this->buildTags($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
+            $tags = $this->buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
             $scenario = scenario::byString($scenarioNotifications);
             $scenario->setTags($tags);
             $scenario->execute();
@@ -520,11 +521,12 @@ class parcelTracking extends eqLogic {
         return $formatNotifications;
     }
 
-    public function buildTags($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
+    public function buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
 
         $formatTags = config::byKey('formatTags', 'parcelTracking');
         $tags = arg2array($formatTags);
         $tags = str_replace("#nom#", $name, $tags);
+        $tags = str_replace("#objet#", $object, $tags);
         $tags = str_replace("#numColis#", $trackingId, $tags);
         $tags = str_replace("#transporteur#", $carrier, $tags);
         $tags = str_replace("#statut#", $status, $tags);
