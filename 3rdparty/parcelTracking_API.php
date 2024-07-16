@@ -151,7 +151,7 @@ class parcelTracking_API {
 			$retry = 10;
 			while ( $retry > 0 && $response2->done != 'true')
 			{
-				sleep(2);
+				sleep(3);
 				$result2 = $this->_request($url.$data_str, $method, null, $headers);
 				$response2 = json_decode($result2->body);
 				log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 2 ('.(11-$retry).') : ['.$result2->httpCode.'] - '.str_replace('\n', '', $result2->body));

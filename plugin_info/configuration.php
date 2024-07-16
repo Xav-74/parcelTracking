@@ -108,7 +108,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Format du corps du message}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date#, et #heure#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatNotifications"/>
@@ -131,7 +131,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Tags du scénario}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #objet# #numColis#, #transporteur#, #statut#, #dernierEtat#, #date#, et #heure#. <br/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #objet#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatTags"/>

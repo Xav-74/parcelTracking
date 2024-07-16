@@ -12,13 +12,13 @@
 	"hasDependency": false,
 	"hasOwnDeamon": false,
 	"maxDependancyInstallTime": 0,
-	"changelog_beta": "",
-	"changelog": "",
-	"documentation_beta": "",
-	"documentation": "",
+	"changelog_beta": "https://xav-74.github.io/Documentation/parcelTracking/#language#/changelog",
+	"changelog": "https://xav-74.github.io/Documentation/parcelTracking/#language#/changelog",
+	"documentation_beta": "https://xav-74.github.io/Documentation/parcelTracking/#language#/",
+	"documentation": "https://xav-74.github.io/Documentation/parcelTracking/#language#/",
 	"link": {
-		"forum": "Lien vers le forum",
-		"video": "Lien vers une video"
+		"forum": "",
+		"video": ""
 	},
 	"language": [
 		"fr_FR"
