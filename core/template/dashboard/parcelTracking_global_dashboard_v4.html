@@ -1,23 +1,20 @@
-<div id="parcelTracking_widget_ID" class="eqLogic-widget eqLogic parcelTracking_widget parcelTracking_widget_#id# parcelTracking" style="min-width:518px !important; max-width:518px !important; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
+<div id="parcelTracking_widget_ID" class="eqLogic-widget eqLogic parcelTracking_widget parcelTracking_widget_#id# parcelTracking" style="min-width:500px !important; max-width:500px !important; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
 
 	<div class="text-center widget-name">
 		<span class="reportModeVisible">#name_display#<span class="object_name">#object_name#</span></span>
 		<a href="#eqLink#" class="reportModeHidden" style="color:var(--eqTitle-color)!important;">#name_display#<span class="object_name">#object_name#</span></a>
-	   	<span class="cmd refresh pull-right cursor" data-cmd_id="#refreshAll_id#" onclick="jeedom.cmd.execute({id: #refreshAll_id#});">
+		<span class="cmd refresh pull-right cursor" data-cmd_id="#refreshAll_id#" onclick="jeedom.cmd.execute({id: #refreshAll_id#});" title="Rafraichir les informations">
 		   <i class="fas fa-sync" style="color:var(--eqTitle-color)!important;"></i>
 	   	</span>
+		   <span class="cmd refresh pull-right cursor" onclick="addParcel()" title="Ajouter un colis">
+			<i class="fas fa-plus" style="color:var(--eqTitle-color)!important;"></i>
+		</span>
 	</div>
 			
 	<div class="container-fluid">
 		
-		<div>
-			
-			<div class="col-xs-12" id="tile" style="width:506px;">
-				<div id="list_states" class="label Cmd#states_id# table_states#id# "></div>				
-			</div>
-					
-		</div>
-		
+		<div id="list_states" class="col-xs-12 label Cmd#states_id# table_states#id# "></div>				
+				
 	</div>
 	
 	#divGraphInfo#
@@ -76,6 +73,7 @@
 			table_html += '<ul class="list-group" style="text-align: left">';
 			jQuery.each(table.parcels,function(key,parcel){
 				if ( parcel.status != null ) { var status = parcel.status;} else { status = ''; }
+				if ( parcel.id != null ) { var id = parcel.id;} else { id = ''; }
 				if ( parcel.name != null ) { var name = parcel.name;} else { name = ''; }
 				if ( parcel.trackingId != null ) { var trackingId = parcel.trackingId;} else { trackingId = ''; }
 				if ( parcel.lastDate != null ) { var lastDate = parcel.lastDate;} else { lastDate = ''; }
@@ -90,7 +88,9 @@
 				else if ( status == 'arrived') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="Arrivé au centre de tri"/></span>'; }
 				else if ( status == 'archive') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-archive.png" height="20" title="Archivé"/></span>'; }
 				else { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delayed.png" height="20" title="Retardé"/></span>'; }
-				table_html += '<span class="col-xs-11 label span-item-title">'+name+' ('+trackingId+')</span>';
+				table_html += '<span class="col-xs-10 label span-item-title">'+name+' ('+trackingId+')</span>';
+				console.log('onclick="removeParcel('+id+',\''+name+'\')"');
+				table_html += '<span class="col-xs-1 fas fa-trash cursor eqLogicAction" onclick="removeParcel('+id+',\''+name+'\')" title="Supprimer le colis"></span>'
 				table_html += '<span class="col-xs-12 label span-item-value">'+lastDate+' '+lastHour+'&nbsp&nbsp&nbsp&nbsp&nbsp'+lastState+'<br>'+lastLocation+'</span>';
 				table_html +=  '</li>';
 			});
@@ -99,12 +99,54 @@
 		}
 
 		//----- Widget height
-		var tileHeight = 5 + 90*totalParcels;
-		var widegtHeight = tileHeight + 35;
-		$('#tile').css('height', tileHeight);
+		var widegtHeight = 96*totalParcels + 30;
 		$('.parcelTracking_widget').css('min-height', widegtHeight);
 		$('.parcelTracking_widget').css('max-height', widegtHeight);
-				
+	
+		//----- Remove parcel
+		function removeParcel(eqLogicId, name) {
+			var check = confirm("Etes-vous sûr de vouloir supprimer le colis " + name + " ?");
+        	if (check == true) {
+				$.ajax({
+					type: "POST",
+					url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+					data: {
+						action: "removeParcel",
+						eqLogicId: eqLogicId,
+					},
+					dataType: 'json',
+					error: function (request, status, error) {
+						handleAjaxError(request, status, error);
+					},
+					success: function (data) { 			
+
+						if (data.state != 'ok') {
+							$('#div_alert').showAlert({message: 'Erreur lors de la suppression du colis', level: 'danger'});
+							return;
+						}
+						else  {
+							$('#div_alert').showAlert({message: 'Colis supprimé', level: 'success'});
+						}
+					}
+				});
+			}
+		}
+
+		//----- Add parcel
+		function addParcel() {
+			$('#mod_addParcel').dialog({title: "Ajout Colis"});
+			$('body').append('<div id="mod_addParcel" style="overflow-x: hidden; overflow-y: hidden;"/>');
+							$("#mod_addParcel").dialog({
+									create: function(event, ui) {
+											$(this).closest(".ui-dialog").find(".ui-dialog-titlebar").remove(); }, // Supprime la barre de titre entière
+									autoOpen: false,
+									modal: true,
+									width: 450,
+									height: 152,
+							});
+			$('#mod_addParcel').load('index.php?v=d&plugin=parcelTracking&modal=addParcel.parcelTracking&eqLogic_id='+'#id#').dialog('open');
+		}
+
 	</script>
 
 </div>

@@ -158,6 +158,7 @@ class parcelTracking extends eqLogic {
                 $status = $parcelTracking->getCmd('info','status')->execCmd();
                 $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
                 $list['parcels'][] = [ 
+                    'id' => $parcelTracking->getId(),
                     'trackingId' => $parcelTracking->getConfiguration('trackingId'),
                     'name' => $parcelTracking->getName(),
                     'status' => $status,
@@ -182,6 +183,44 @@ class parcelTracking extends eqLogic {
                 $cmdRefresh->execCmd();
             }
         }	
+    }
+
+    public static function removeParcel($eqLogicId)
+    {
+        $eqLogic = eqLogic::byId($eqLogicId);
+        if( is_object($eqLogic) ) {
+            $eqLogic->remove();
+            log::add('parcelTracking', 'debug', 'Remove parcel (Id : '.$eqLogicId.' - name : '.$eqLogic->getName().')');
+        }
+
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            if ( $parcelTracking->getConfiguration('eqLogicType') == 'global') {
+                $parcelTracking->refreshWidget();
+                break;		
+            }
+        }	
+    }
+
+    public static function addParcel($name, $trackingId)
+    {
+        $parcel = new parcelTracking();
+        $parcel->setEqType_name('parcelTracking');
+        $parcel->setIsEnable(1);
+        if ( config::byKey('defaultWidget', 'parcelTracking') == "one" || config::byKey('defaultWidget', 'parcelTracking') == "none") { $parcel->setIsVisible(0); }
+        else { $parcel->setIsVisible(1); }
+        $parcel->setName($name);
+        $parcel->setConfiguration('trackingId', $trackingId);
+        $parcel->save();
+        log::add('parcelTracking', 'debug', 'Add parcel (name : '.$name.' - trackingId : '.$trackingId.')');
+
+        parcelTracking::synchronize($trackingId);
+        
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            if ( $parcelTracking->getConfiguration('eqLogicType') == 'global') {
+                $parcelTracking->refreshWidget();
+                break;		
+            }
+        }
     }
 
 

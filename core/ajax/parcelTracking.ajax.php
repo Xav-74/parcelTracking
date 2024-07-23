@@ -19,7 +19,7 @@ try {
     require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
     include_file('core', 'authentification', 'php');
 
-    if (!isConnect('admin')) {
+    if (!isConnect()) {
         throw new Exception(__('401 - Accès non autorisé', __FILE__));
     }
 
@@ -30,6 +30,20 @@ try {
     
     ajax::init();
 
+    if (init('action') == 'removeParcel') {
+		$result = parcelTracking::removeParcel(init('eqLogicId'));
+		ajax::success($result);
+	}
+
+    if (init('action') == 'addParcel') {
+		$result = parcelTracking::addParcel(init('name'), init('trackingId'));
+		ajax::success($result);
+	}
+
+    if (!isConnect('admin')) {
+        throw new Exception(__('401 - Accès non autorisé', __FILE__));
+    }
+    
     if (init('action') == 'synchronize') {
 		$result = parcelTracking::synchronize(init('trackingId'));
 		ajax::success($result);
