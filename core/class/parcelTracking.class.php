@@ -194,10 +194,7 @@ class parcelTracking extends eqLogic {
         }
 
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
-            if ( $parcelTracking->getConfiguration('eqLogicType') == 'global') {
-                $parcelTracking->refreshWidget();
-                break;		
-            }
+            $parcelTracking->refreshWidget();
         }	
     }
 
@@ -216,10 +213,7 @@ class parcelTracking extends eqLogic {
         parcelTracking::synchronize($trackingId);
         
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
-            if ( $parcelTracking->getConfiguration('eqLogicType') == 'global') {
-                $parcelTracking->refreshWidget();
-                break;		
-            }
+            $parcelTracking->refreshWidget();
         }
     }
 

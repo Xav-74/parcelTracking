@@ -28,26 +28,18 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 
 <div class="modal-content">
     
-	<div class="row" style="margin-bottom: 5px; width: 450px">
-		<div class="col-sm-12">
-			<!--<label class="form-label">Nom :</label>-->
-			<input id="name" type="text" class="form-control" placeholder="Nom du colis"/>
-		</div>
+	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+		<input id="name" type="text" class="form-control" placeholder="Nom du colis"/>
 	</div>
-					
-	<div class="row" style="margin-bottom: 25px; width: 450px">
-		<div class="col-sm-12">
-			<!--<label class="form-label">Numéro de suivi :</label>-->
-			<input id="trackingId" type="text" class="form-control" placeholder="Numéro de suivi du colis"/>
-		</div>
+						
+	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 13px;">
+		<input id="trackingId" type="text" class="form-control" placeholder="Numéro de suivi du colis"/>
 	</div>
 					 
-	<div class="row" style="width: 450px;">
-		<div class="col-sm-12">
-			<input id="btn_add" type="submit" class="btn btn-primary" style="float: right; width: 125px" value="Ajouter"/>
-		</div>
+	<div class="col-sm-12" style="padding: 0px !important;">
+		<input id="btn_add" type="submit" class="btn btn-primary" style="float: right; width: 125px" value="Ajouter"/>
 	</div>
-
+	
 </div>
 	
 <script>
