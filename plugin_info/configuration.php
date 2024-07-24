@@ -36,6 +36,15 @@ if (!isConnect()) {
             <input class="configKey form-control" data-l1key="apiKey"/>
         </div>
     </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label">{{Clé API secondaire}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API secondaire (optionnel)}}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <input class="configKey form-control" data-l1key="apiKey2"/>
+        </div>
+    </div>
     
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Langue}}
@@ -44,8 +53,8 @@ if (!isConnect()) {
         <div class="col-sm-4">
             <select class="configKey form-control" data-l1key="language">
             <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
-            <option value="fr">Français</option>
-            <option value="en">Anglais</option>
+                <option value="fr">Français</option>
+                <option value="en">Anglais</option>
             </select>
         </div>    
     </div>

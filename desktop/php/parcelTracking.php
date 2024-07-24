@@ -205,6 +205,18 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<div id="parcel" class="form-group">
+								<label class="col-sm-4 control-label"> {{Clé API utilisée}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{Choisissez la clé API à utiliser pour le suivi de ce colis}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<select id="sel_ApiKey" class="eqLogicAttr form-control" style="margin: 1px 0px 0px 0px;" data-l1key="configuration" data-l2key="apiKey">
+										<option value=1>Principale</option>
+										<option value=2>Secondaire</option>
+									</select>
+								</div>
+							</div>
+
+							<div id="parcel" class="form-group">
 								<label class="col-sm-4 control-label"> {{Pays de destination}}
 									<sup><i class="fas fa-question-circle tooltips" title="{{Choisissez le pays de destination du colis dans la liste suivante}}"></i></sup>
 								</label>

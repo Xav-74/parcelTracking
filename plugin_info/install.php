@@ -24,7 +24,7 @@ function parcelTracking_install() {
     foreach (eqLogic::byType('parcelTracking') as $eqLogic) {
         if ( $eqLogic->getLogicalId() == 'parcelTracking_widget' ) {
             $exist = 1;
-            log::add('parcelTracking', 'debug', 'Widget dédié géré par le plugin déjà existant');
+            log::add('parcelTracking', 'debug', 'Dedicated widget managed by the plugin already existing');
             break;
         }
     }
@@ -37,7 +37,7 @@ function parcelTracking_install() {
         $parcel->setName('Widget Suivi Colis');
         $parcel->setConfiguration('eqLogicType', 'global');
         $parcel->save();
-        log::add('parcelTracking', 'debug', 'Ajout du widget dédié géré par le plugin');
+        log::add('parcelTracking', 'debug', 'Adding dedicated widget managed by the plugin');
     }
     
     message::add('parcelTracking', 'Merci pour l\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !');
@@ -50,7 +50,7 @@ function parcelTracking_update() {
     foreach (eqLogic::byType('parcelTracking') as $eqLogic) {
         if ( $eqLogic->getLogicalId() == 'parcelTracking_widget' ) {
             $exist = 1;
-            log::add('parcelTracking', 'debug', 'Widget dédié géré par le plugin déjà existant');
+            log::add('parcelTracking', 'debug', 'Dedicated widget managed by the plugin already existing');
             break;
         }
     }
@@ -63,15 +63,16 @@ function parcelTracking_update() {
         $parcel->setName('Widget Suivi Colis');
         $parcel->setConfiguration('eqLogicType', 'global');
         $parcel->save();
-        log::add('parcelTracking', 'debug', 'Recréation du widget dédié géré par le plugin');
+        log::add('parcelTracking', 'debug', 'Recreating the dedicated widget managed by the plugin');
     }
     
     // Mise à jour de l'ensemble des commandes pour chaque équipement
-    log::add('parcelTracking', 'debug', 'Mise à jour en cours des commandes du plugin Suivi colis');
+    log::add('parcelTracking', 'debug', 'Updating plugin commands in progress');
     foreach (eqLogic::byType('parcelTracking') as $eqLogic) {
-        if ( $eqLogic->getConfiguration('eqLogicType') == "" ) { $eqLogic->setConfiguration('eqLogicType', 'parcel');  }
+        if ( $eqLogic->getConfiguration('eqLogicType') == "" ) { $eqLogic->setConfiguration('eqLogicType', 'parcel'); }
+        if ( $eqLogic->getConfiguration('apiKey') == "" ) { $eqLogic->setConfiguration('apiKey', 1); }
         $eqLogic->save();
-        log::add('parcelTracking', 'debug', 'Mise à jour des commandes effectuée pour l\'équipement '. $eqLogic->getHumanName());
+        log::add('parcelTracking', 'debug', 'Updating plugin commands done for eqLogic '. $eqLogic->getHumanName());
     }
 	
     message::add('parcelTracking', 'Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !');

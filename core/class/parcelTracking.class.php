@@ -41,12 +41,12 @@ class parcelTracking extends eqLogic {
     
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		// type = parcelTracking et eqLogic enable
             if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
-                log::add('parcelTracking', 'debug', 'CronHourly');
                 $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
                 if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
                     continue; 															// continue la boucle
                 }
                 if ( date('Gi') == 0 ) return;                                          // A 0h00 pas de refresh car cronDaily
+                log::add('parcelTracking', 'debug', 'CronHourly');
                 $cmdRefresh->execCmd();
             }
         }	
@@ -83,6 +83,8 @@ class parcelTracking extends eqLogic {
 		$CommunityInfo = "```\n";
         if ( !empty(config::byKey('apiKey', 'parcelTracking')) ) { $CommunityInfo = $CommunityInfo . 'API Key present' . "\n"; }
         else { $CommunityInfo = $CommunityInfo . 'API Key missing' . "\n"; }
+        if ( !empty(config::byKey('apiKey2', 'parcelTracking')) ) { $CommunityInfo = $CommunityInfo . 'API Key 2 present' . "\n"; }
+        else { $CommunityInfo = $CommunityInfo . 'API Key 2 missing' . "\n"; }
         $CommunityInfo = $CommunityInfo . 'Language : ' . config::byKey('language', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Default object : ' . config::byKey('defaultObject', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Default zip code : ' . config::byKey('defaultZipcode', 'parcelTracking') . "\n";
@@ -202,9 +204,6 @@ class parcelTracking extends eqLogic {
     {
         $parcel = new parcelTracking();
         $parcel->setEqType_name('parcelTracking');
-        $parcel->setIsEnable(1);
-        if ( config::byKey('defaultWidget', 'parcelTracking') == "one" || config::byKey('defaultWidget', 'parcelTracking') == "none") { $parcel->setIsVisible(0); }
-        else { $parcel->setIsVisible(1); }
         $parcel->setName($name);
         $parcel->setConfiguration('trackingId', $trackingId);
         $parcel->save();
@@ -225,9 +224,11 @@ class parcelTracking extends eqLogic {
     
         $defaultObject = config::byKey('defaultObject', 'parcelTracking');
         $this->setObject_id($defaultObject);
-        $this->setIsVisible(1);
         $this->setIsEnable(1);
+        if ( config::byKey('defaultWidget', 'parcelTracking') == "one" || config::byKey('defaultWidget', 'parcelTracking') == "none") { $this->setIsVisible(0); }
+        else { $this->setIsVisible(1); }
         $this->setConfiguration('destinationCountry', 'France');
+        $this->setConfiguration('apiKey', 1);
         if ( $this->getLogicalId() != 'parcelTracking_widget' ) { $this->setConfiguration('eqLogicType', 'parcel'); }
     }
 
@@ -350,13 +351,22 @@ class parcelTracking extends eqLogic {
 
     public static function synchronize($trackingId)
     {
+        log::add('parcelTracking', 'debug', '┌─Command execution : synchronize');
+        
         $eqLogic = self::getparcelTrackingEqLogic($trackingId);
-        $apiKey = config::byKey('apiKey', 'parcelTracking');
+        
+        if ( $eqLogic->getConfiguration('apiKey') != 2 ) {
+            $apiKey = config::byKey('apiKey', 'parcelTracking');
+            log::add('parcelTracking', 'debug', '| API key used : main');
+        }
+        else { 
+            $apiKey = config::byKey('apiKey2', 'parcelTracking');
+            log::add('parcelTracking', 'debug', '| API key used : secondary');
+        }
         $language = config::byKey('language', 'parcelTracking');
         $destinationCountry = $eqLogic->getConfiguration('destinationCountry');
         $zipcode = $eqLogic->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
                 
-        log::add('parcelTracking', 'debug', '┌─Command execution : synchronize');
         $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
         $result = $myParcel->getTrackingResult();
@@ -407,7 +417,15 @@ class parcelTracking extends eqLogic {
 
     public function refreshParcelInfo()
     {
-        $apiKey = config::byKey('apiKey', 'parcelTracking');
+        if ( $this->getConfiguration('apiKey') != 2 ) {
+            $apiKey = config::byKey('apiKey', 'parcelTracking');
+            log::add('parcelTracking', 'debug', '| API key used : main');
+        }
+        else {
+            $apiKey = config::byKey('apiKey2', 'parcelTracking');
+            log::add('parcelTracking', 'debug', '| API key used : secondary');
+        }
+                        
         $language = config::byKey('language', 'parcelTracking');
         $trackingId = $this->getConfiguration('trackingId');
         $destinationCountry = $this->getConfiguration('destinationCountry');
