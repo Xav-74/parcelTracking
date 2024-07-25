@@ -158,17 +158,31 @@ class parcelTracking extends eqLogic {
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
             if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
                 $status = $parcelTracking->getCmd('info','status')->execCmd();
-                $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
-                $list['parcels'][] = [ 
-                    'id' => $parcelTracking->getId(),
-                    'trackingId' => $parcelTracking->getConfiguration('trackingId'),
-                    'name' => $parcelTracking->getName(),
-                    'status' => $status,
-                    'lastDate' => $lastState['states'][0]['date'],
-                    'lastHour'=> $lastState['states'][0]['hour'],
-                    'lastLocation' => $lastState['states'][0]['location'],
-                    'lastState' => $lastState['states'][0]['status']
-                ];
+                if ( $parcelTracking->getCmd('info','states')->execCmd() != 'not available' ) {
+                    $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
+                    $list['parcels'][] = [ 
+                        'id' => $parcelTracking->getId(),
+                        'trackingId' => $parcelTracking->getConfiguration('trackingId'),
+                        'name' => $parcelTracking->getName(),
+                        'status' => $status,
+                        'lastDate' => $lastState['states'][0]['date'],
+                        'lastHour'=> $lastState['states'][0]['hour'],
+                        'lastLocation' => $lastState['states'][0]['location'],
+                        'lastState' => $lastState['states'][0]['status']
+                    ];
+                }
+                else {
+                    $list['parcels'][] = [ 
+                        'id' => $parcelTracking->getId(),
+                        'trackingId' => $parcelTracking->getConfiguration('trackingId'),
+                        'name' => $parcelTracking->getName(),
+                        'status' => $status,
+                        'lastDate' => '',
+                        'lastHour'=> '',
+                        'lastLocation' => '',
+                        'lastState' => ''
+                    ];
+                }
             }
         }
         return json_encode($list);   
