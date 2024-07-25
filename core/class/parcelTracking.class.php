@@ -372,7 +372,10 @@ class parcelTracking extends eqLogic {
         $result = $myParcel->getTrackingResult();
         $parcel = json_decode($result->body, true);
 
-        if ( $parcel['shipments'][0] != 'null' ) {
+        if ( $parcel['error'] == 'SUBSCRIPTION_LIMIT_REACHED') {
+            log::add('parcelTracking', 'error', '| Parcelsapp error : subscription limit reached (10) with this API key');
+        }
+        else if ( $parcel['shipments'][0] != 'null' ) {
             if ( isset($parcel['shipments'][0]['status']) ) { $eqLogic->checkAndUpdateCmd('status', $parcel['shipments'][0]['status']); } else { $eqLogic->checkAndUpdateCmd('status', 'not available'); }
             if ( isset($parcel['shipments'][0]['detectedCarrier']['name']) ) { $eqLogic->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['detectedCarrier']['name']); } else { $eqLogic->checkAndUpdateCmd('carrier', 'not available'); }
             if ( isset($parcel['shipments'][0]['origin']) ) { $eqLogic->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']); } else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }

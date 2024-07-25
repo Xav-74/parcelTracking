@@ -116,7 +116,7 @@ class parcelTracking_API {
 		$result1 = $this->_request($url, $method, $data, $headers);
 		$response1 = json_decode($result1->body);
 		
-		if ( $result1->httpCode == 200 ) {
+		if ( $result1->httpCode == 200 && !isset($response1->error) ) {
 			if ( $response1->done == true ) {
 				log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 1 : ['.$result1->httpCode.'] - '.str_replace('\n', '', $result1->body));
 				return $result1;
