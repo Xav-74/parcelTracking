@@ -390,18 +390,50 @@ class parcelTracking extends eqLogic {
             log::add('parcelTracking', 'error', '| Parcelsapp error : subscription limit reached (10) with this API key');
         }
         else if ( !empty($parcel['shipments']) &&  $parcel['shipments'][0] !== null ) {
+            //status
             if ( isset($parcel['shipments'][0]['status']) ) { $eqLogic->checkAndUpdateCmd('status', $parcel['shipments'][0]['status']); } else { $eqLogic->checkAndUpdateCmd('status', 'not available'); }
-            if ( isset($parcel['shipments'][0]['detectedCarrier']['name']) ) { $eqLogic->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['detectedCarrier']['name']); } else { $eqLogic->checkAndUpdateCmd('carrier', 'not available'); }
-            if ( isset($parcel['shipments'][0]['origin']) ) { $eqLogic->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']); } else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }
-            if ( isset($parcel['shipments'][0]['destination']) ) { $eqLogic->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']); } else { $eqLogic->checkAndUpdateCmd('destination', 'not available'); }
-            if ( isset($parcel['shipments'][0]['lastState']['status']) ) { $eqLogic->checkAndUpdateCmd('lastState', $parcel['shipments'][0]['lastState']['status']); } else { $eqLogic->checkAndUpdateCmd('lastState', 'not available'); }
             
+            //carrier
+            if ( isset($parcel['shipments'][0]['carriers'][0]) ) { $eqLogic->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['carriers'][0]); } else { $eqLogic->checkAndUpdateCmd('carrier', 'not available'); }
+            
+            //origin - destination
+            if ( isset($parcel['shipments'][0]['origin']) ) {
+                $eqLogic->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']);
+            }
+            else if ( isset($parcel['shipments'][0]['attributes']) ) {
+                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
+                    if ( $attribute['l'] == 'origin' || $attribute['l'] == 'from' ) { 
+                        $eqLogic->checkAndUpdateCmd('origin', $attribute['val']);
+                        break;
+                    }
+                    else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }
+                }
+            }
+            else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }
+            
+            if ( isset($parcel['shipments'][0]['destination']) ) {
+                $eqLogic->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']);
+            }
+            else if ( isset($parcel['shipments'][0]['attributes']) ) {
+                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
+                    if ( $attribute['l'] == 'destination' || $attribute['l'] == 'to' ) {
+                        $eqLogic->checkAndUpdateCmd('destination', $attribute['val']);
+                        break;
+                    }
+                    else { $eqLogic->checkAndUpdateCmd('destination', 'not available'); }
+                }
+            }           
+            else { $eqLogic->checkAndUpdateCmd('destination', 'not available'); }
+            
+            //lastState
+            if ( isset($parcel['shipments'][0]['lastState']['status']) ) { $eqLogic->checkAndUpdateCmd('lastState', $parcel['shipments'][0]['lastState']['status']); } else { $eqLogic->checkAndUpdateCmd('lastState', 'not available'); }
             if ( isset($parcel['shipments'][0]['lastState']['date']) ) {
                 if ( $parcel['shipments'][0]['status'] == 'delivered' ) { $eqLogic->checkAndUpdateCmd('deliveryDate', date('d/m/Y H:i:s', strtotime($parcel['shipments'][0]['lastState']['date']))); }
                 else { $eqLogic->checkAndUpdateCmd('deliveryDate', 'not available'); }
             }
             else { $eqLogic->checkAndUpdateCmd('deliveryDate', 'not available'); }
 
+            //states
             if ( isset($parcel['shipments'][0]['states']) ) { 
                 $states = $parcel['shipments'][0]['states'];
                 $table_temp = array();
@@ -455,22 +487,53 @@ class parcelTracking extends eqLogic {
         $parcel = json_decode($result->body, true);
 
         if ( !empty($parcel['shipments']) &&  $parcel['shipments'][0] !== null ) {
+            //status
             if ( isset($parcel['shipments'][0]['status']) ) { $this->checkAndUpdateCmd('status', $parcel['shipments'][0]['status']); } else { $this->checkAndUpdateCmd('status', 'not available'); }
-            if ( isset($parcel['shipments'][0]['detectedCarrier']['name']) ) { $this->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['detectedCarrier']['name']); } else { $this->checkAndUpdateCmd('carrier', 'not available'); }
-            if ( isset($parcel['shipments'][0]['origin']) ) { $this->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']); } else { $this->checkAndUpdateCmd('origin', 'not available'); }
-            if ( isset($parcel['shipments'][0]['destination']) ) { $this->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']); } else { $this->checkAndUpdateCmd('destination', 'not available'); }
             
+            //carrier
+            if ( isset($parcel['shipments'][0]['carriers'][0]) ) { $this->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['carriers'][0]); } else { $this->checkAndUpdateCmd('carrier', 'not available'); }
+
+            //origin - destination
+            if ( isset($parcel['shipments'][0]['origin']) ) {
+                $this->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']);
+            }
+            else if ( isset($parcel['shipments'][0]['attributes']) ) {
+                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
+                    if ( $attribute['l'] == 'origin' || $attribute['l'] == 'from' ) { 
+                        $this->checkAndUpdateCmd('origin', $attribute['val']);
+                        break;
+                    }
+                    else { $this->checkAndUpdateCmd('origin', 'not available'); }
+                }
+            }
+            else { $this->checkAndUpdateCmd('origin', 'not available'); }
+            
+            if ( isset($parcel['shipments'][0]['destination']) ) {
+                $this->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']);
+            }
+            else if ( isset($parcel['shipments'][0]['attributes']) ) {
+                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
+                    if ( $attribute['l'] == 'destination' || $attribute['l'] == 'to' ) {
+                        $this->checkAndUpdateCmd('destination', $attribute['val']);
+                        break;
+                    }
+                    else { $this->checkAndUpdateCmd('destination', 'not available'); }
+                }
+            }           
+            else { $this->checkAndUpdateCmd('destination', 'not available'); }
+
+            //lastState
             if ( isset($parcel['shipments'][0]['lastState']['status']) ) { 
                 $lastState = str_replace("'", " ",$parcel['shipments'][0]['lastState']['status']);
                 if ( $this->checklastState($lastState) == true ) { $notification = true; }
                 $this->checkAndUpdateCmd('lastState', $lastState);
             } else { $this->checkAndUpdateCmd('lastState', 'not available'); }
-            
             if ( isset($parcel['shipments'][0]['lastState']['date']) ) {
                 if ( $parcel['shipments'][0]['status'] == 'delivered' ) { $this->checkAndUpdateCmd('deliveryDate', date('d/m/Y H:i:s', strtotime($parcel['shipments'][0]['lastState']['date']))); }
                 else { $this->checkAndUpdateCmd('deliveryDate', 'not available'); }
             } else { $this->checkAndUpdateCmd('deliveryDate', 'not available'); }
             
+            //states
             if ( isset($parcel['shipments'][0]['states']) ) { 
                 $states = $parcel['shipments'][0]['states'];
                 $table_temp = array();
