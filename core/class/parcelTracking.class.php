@@ -381,7 +381,7 @@ class parcelTracking extends eqLogic {
         $destinationCountry = $eqLogic->getConfiguration('destinationCountry');
         $zipcode = $eqLogic->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
                 
-        $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
+        $myParcel = new parcelTracking_API($apiKey, $language, trim($trackingId), $destinationCountry, $zipcode);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
         $result = $myParcel->getTrackingResult();
         $parcel = json_decode($result->body, true);
@@ -481,7 +481,7 @@ class parcelTracking extends eqLogic {
         $zipcode = $this->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
         $notification = false;
 
-        $myParcel = new parcelTracking_API($apiKey, $language, $trackingId, $destinationCountry, $zipcode);
+        $myParcel = new parcelTracking_API($apiKey, $language, trim($trackingId), $destinationCountry, $zipcode);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
         $result = $myParcel->getTrackingResult();
         $parcel = json_decode($result->body, true);
