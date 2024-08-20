@@ -3,7 +3,12 @@
 	"name": "Suivi Colis",
 	"pluginVersion": "1.0",
 	"description": {
-		"fr_FR": "Ce plugin vous permet de suivre vos colis en provenance des principaux transporteurs français et internationaux (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ...)"
+		"fr_FR": "Ce plugin vous permet de suivre vos colis en provenance des principaux transporteurs français et internationaux (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ...)",
+		"en_US": "This plugin allows you to track your parcels from the main French and international carriers (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ...)",
+		"es_ES": "Este plugin le permite realizar el seguimiento de sus paquetes de los principales transportistas franceses e internacionales (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, etc.)",
+		"de_DE": "Mit diesem Plugin können Sie Ihre Pakete von den wichtigsten französischen und internationalen Transportunternehmen verfolgen (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ...)",
+		"it_IT": "Questo plugin consente di tracciare i pacchi dei principali corrieri francesi e internazionali (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, ecc.)",
+		"pt_PT": "Este plugin permite-lhe seguir as suas encomendas dos principais transportadores franceses e internacionais (La Poste, Mondial Relay, Relais Colis, Colis Privé, Aliexpress, Shein, Amazon, eBay, FedEx, UPS, etc.)"
 	},
 	"licence": "AGPL",
 	"author": "Xav-74",
@@ -21,7 +26,12 @@
 		"video": ""
 	},
 	"language": [
-		"fr_FR"
+		"de_DE",
+		"en_US",
+		"es_ES",
+		"fr_FR",
+		"it_IT",
+		"pt_PT"
 	],
 	"compatibility": [
 		"smart",
