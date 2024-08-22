@@ -344,7 +344,7 @@ class parcelTracking extends eqLogic {
         $html = template_replace($replace, getTemplate('core', $version, $template, 'parcelTracking'));
         $html = translate::exec($html, $filepath);
         return $this->postToHtml($_version, $html);
-    }
+     }
     
     private function createCmd($commandName, $commandDescription, $order, $type, $subType, $isHistorized = 0, $template = [])
     {	
