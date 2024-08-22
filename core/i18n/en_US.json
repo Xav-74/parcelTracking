@@ -13,6 +13,15 @@
         "Statut colis": "Parcel status",
         "Transporteur": "Carrier"
     },
+    "plugins\/parcelTracking\/core\/class\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
+        "Ajouter un colis": "Add a parcel",
+        "Date de livraison": "Delivery date",
+        "Destination": "Destination",
+        "N° Colis": "Tracking Id",
+        "Origine": "Origin",
+        "Retardé": "Delayed",
+        "Transporteur": "Carrier"
+    },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Show",
         "Erreur lors de la synchronisation": "Synchronization error",
