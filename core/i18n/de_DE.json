@@ -10,7 +10,7 @@
         "Etats": "Staaten",
         "Origine": "Herkunft",
         "Statut colis": "Paketstatus",
-        "Transporteur": "Transporteur"
+        "Transporteur": "Träger"
     },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Anzeige",
@@ -114,7 +114,7 @@
         "Scénario à utiliser pour l'envoi de notifications": "Szenario, das für das Senden von Benachrichtigungen verwendet werden soll",
         "Sélectionnez la langue utilisée pour les retours API": "Wählen Sie die Sprache, die für API-Feedback verwendet wird",
         "Tags du scénario": "Szenario-Tags",
-        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "Sie können die Tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# und #hour# verwenden. <br\/> Beispiel: Name=#name# Paketnummer=#trackingId# Transporteur=#Carrier# ...",
+        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "Sie können die Tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# und #hour# verwenden. <br\/> Beispiel: Name=#name# Paketnummer=#trackingId# Träger=#Carrier# ...",
         "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "Sie können die Tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# und #hour# verwenden. <br\/> Lassen Sie das Feld leer, um das Standardformat zu verwenden!",
         "Widget par colis": "Widget nach Paket",
         "Widget unique": "Einzigartiges Widget"

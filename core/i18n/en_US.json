@@ -9,8 +9,8 @@
         "Destination": "Destination",
         "Etats": "Status",
         "Origine": "Origin",
-        "Statut colis": "Package status",
-        "Transporteur": "Transporter"
+        "Statut colis": "Parcel status",
+        "Transporteur": "Carrier"
     },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Show",
@@ -26,11 +26,11 @@
     "plugins\/parcelTracking\/desktop\/modal\/addParcel.parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
         "Ajouter": "Add",
-        "Colis créé": "Package created",
+        "Colis créé": "Parcel created",
         "Erreur ! Les champs ne peuvent pas être vides": "Error! Fields cannot be empty",
-        "Erreur lors la création du colis": "Package creation error",
-        "Nom du colis": "Package name",
-        "Numéro de suivi du colis": "Package tracking number"
+        "Erreur lors la création du colis": "Parcel creation error",
+        "Nom du colis": "Parcel name",
+        "Numéro de suivi du colis": "Parcel tracking Id"
     },
     "plugins\/parcelTracking\/desktop\/php\/parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
@@ -41,10 +41,10 @@
         "Aucun": "None",
         "Aucun équipement Template trouvé, cliquer sur \"Ajouter\" pour commencer": "No Template equipment found, click on \"Add\" to start",
         "Catégorie": "Category",
-        "Choisissez la clé API à utiliser pour le suivi de ce colis": "Choose the API key to use for tracking this package",
+        "Choisissez la clé API à utiliser pour le suivi de ce colis": "Choose the API key to use for tracking this parcel",
         "Choisissez le pays de destination du colis dans la liste suivante": "Choose the destination country from the following list",
         "Clé API utilisée": "API key used",
-        "Code postal": "Postal code",
+        "Code postal": "Zip code",
         "Commandes": "Commands",
         "Commentaire": "Comment",
         "Community": "Community",
@@ -58,21 +58,21 @@
         "Etat": "State",
         "Gestion": "Management",
         "Informations": "Information",
-        "La synchronisation permet de récupérer les informations du colis sans attendre le prochain cron": "Synchronization allows package information to be retrieved without waiting for the next cron",
+        "La synchronisation permet de récupérer les informations du colis sans attendre le prochain cron": "Synchronization allows parcel information to be retrieved without waiting for the next cron",
         "Logical ID": "Logical ID",
         "Mes colis": "My parcels",
         "Nom": "Name",
         "Nom de l'équipement": "Equipment name",
-        "Numéro de suivi": "Tracking number",
+        "Numéro de suivi": "Tracking Id",
         "Objet parent": "Parent object",
-        "Optionnel - Renseignez le code postal de la ville de destination du colis": "Optional - Enter the postal code of the parcel's destination city",
+        "Optionnel - Renseignez le code postal de la ville de destination du colis": "Optional - Enter the zip code of the parcel's destination city",
         "Options": "Options",
         "Ouvrir une demande d\\'aide sur le forum communautaire": "Open a help request on the community forum",
         "Paramètres généraux": "General settings",
         "Paramètres spécifiques": "Specific parameters",
         "Pays de destination": "Country of destination",
         "Rechercher": "Search",
-        "Renseignez le numéro de suivi du colis": "Enter package tracking number",
+        "Renseignez le numéro de suivi du colis": "Enter parcel tracking Id",
         "Sauvegarder": "Save",
         "Supprimer": "Delete",
         "Synchronisation": "Synchronization",
@@ -91,7 +91,7 @@
         "Choix du widget": "Widget selection",
         "Clé API Parcelsapp <a href=\"https:\/\/parcelsapp.com\/dashboard\/#\/login\">(lien)<\/a>": "Parcelsapp API Key <a href=\"https:\/\/parcelsapp.com\/dashboard\/#\/login\">(link)<\/a>",
         "Clé API secondaire": "Secondary PLC key",
-        "Code postal par défaut": "Default postal code",
+        "Code postal par défaut": "Default zip code",
         "Commande à utiliser pour l'envoi de notifications": "Command for sending notifications",
         "Community": "Community",
         "Durée de conservation de l'équipement après livraison (en jours)": "Shelf life of equipment after delivery (in days)",
@@ -106,11 +106,11 @@
         "Paramètres du widget": "Widget settings",
         "Paramètres optionnels du plugin": "Optional plugin parameters",
         "Portugais": "Portuguese",
-        "Renseignez l'objet parent par défaut configuré lors de la création d'un colis.<br\/> Laissez le champ sur 'Aucun' pour ne pas pré-remplir l'objet par défaut !": "Fill in the default parent object configured when creating a package.<br\/> Leave the field set to 'None' to avoid pre-filling the default object!",
+        "Renseignez l'objet parent par défaut configuré lors de la création d'un colis.<br\/> Laissez le champ sur 'Aucun' pour ne pas pré-remplir l'objet par défaut !": "Fill in the default parent object configured when creating a parcel.<br\/> Leave the field set to 'None' to avoid pre-filling the default object!",
         "Renseignez la clé API après vous être enregistré sur le site www.parcelsapp.com": "Enter the API key after registering on www.parcelsapp.com",
         "Renseignez la clé API secondaire (optionnel)": "Enter secondary API key (optional)",
         "Renseignez le code postal par défaut configuré lors de la création d'un colis.<br\/> Laissez le champ vide pour ne pas pré-remplir le code postal !": "Enter the default zip code configured when creating a parcel.<br\/> Leave the field empty to avoid pre-filling the zip code!",
-        "Renseignez le nombre de jours après lequel le colis livré est supprimé du plugin.<br\/> Laissez le champ vide pour conserver les colis !": "Enter the number of days after which the delivered package is deleted from the plugin.<br\/> Leave the field empty to keep packages!",
+        "Renseignez le nombre de jours après lequel le colis livré est supprimé du plugin.<br\/> Laissez le champ vide pour conserver les colis !": "Enter the number of days after which the delivered parcel is deleted from the plugin.<br\/> Leave the field empty to keep parcels!",
         "Scénario à utiliser pour l'envoi de notifications": "Scenario for sending notifications",
         "Sélectionnez la langue utilisée pour les retours API": "Select the language used for API feedback",
         "Tags du scénario": "Scenario tags",
@@ -120,8 +120,8 @@
         "Widget unique": "Unique widget"
     },
     "plugins\/parcelTracking\/plugin_info\/install.php": {
-        "Le plugin Suivi colis a été correctement désinstallé. N\\'hésitez pas à laisser un avis sur le Market Jeedom !": "The Parcel tracking plugin has been successfully uninstalled. Don't hesitate to leave a review on the Jeedom Market!",
-        "Merci pour l\\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for installing the Parcel Tracking plugin. Please read the documentation carefully before use and don't hesitate to leave a review on the Jeedom Market !",
-        "Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for updating the Parcel Tracking plugin. Please read the release notes before use and don't hesitate to leave a review on the Jeedom Market!"
+        "Le plugin Suivi colis a été correctement désinstallé. N\\'hésitez pas à laisser un avis sur le Market Jeedom !": "parcelTracking plugin has been successfully uninstalled. Don't hesitate to leave a review on the Jeedom Market!",
+        "Merci pour l\\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for installing parcelTracking plugin. Please read the documentation carefully before use and don't hesitate to leave a review on the Jeedom Market !",
+        "Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for updating parcelTracking plugin. Please read the release notes before use and don't hesitate to leave a review on the Jeedom Market!"
     }
 }
