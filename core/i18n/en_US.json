@@ -13,14 +13,39 @@
         "Statut colis": "Parcel status",
         "Transporteur": "Carrier"
     },
-    "plugins\/parcelTracking\/core\/class\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
+    "plugins\/parcelTracking\/core\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
         "Ajouter un colis": "Add a parcel",
+        "Archivé": "Archived",
+        "Arrivé au centre de tri": "Arriving at the sorting center",
+        "Colis supprimé": "Parcel deleted",
         "Date de livraison": "Delivery date",
         "Destination": "Destination",
+        "Délivré": "Delivered",
+        "En transit": "In transit",
+        "Erreur lors de la suppression du colis": "Package deletion error",
+        "Etes-vous sûr de vouloir supprimer le colis ": "Are you sure you want to delete the package",
         "N° Colis": "Tracking Id",
         "Origine": "Origin",
-        "Retardé": "Delayed",
+        "Pris en charge": "Supported",
+        "Rafraichir les informations": "Refresh information",
+        "Retardé\"": "Delayed",
+        "Supprimer le colis": "Delete package",
         "Transporteur": "Carrier"
+    },
+    "plugins\/parcelTracking\/core\/template\/dashboard\/parcelTracking_global_dashboard_v4.html": {
+        "Ajout Colis": "Add Package",
+        "Ajouter un colis": "Add a parcel",
+        "Archivé": "Archived",
+        "Arrivé au centre de tri": "Arriving at the sorting center",
+        "Colis supprimé": "Parcel deleted",
+        "Délivré": "Delivered",
+        "En transit": "In transit",
+        "Erreur lors de la suppression du colis": "Package deletion error",
+        "Etes-vous sûr de vouloir supprimer le colis ": "Are you sure you want to delete the package",
+        "Pris en charge": "Supported",
+        "Rafraichir les informations": "Refresh information",
+        "Retardé": "Delayed",
+        "Supprimer le colis": "Delete package"
     },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Show",
