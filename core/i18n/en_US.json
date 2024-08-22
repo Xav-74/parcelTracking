@@ -3,6 +3,15 @@
         "401 - Accès non autorisé": "401 - Unauthorized access",
         "Aucune méthode correspondante à": "No corresponding method for"
     },
+    "plugins\/parcelTracking\/core\/class\/parcelTracking.class.php": {
+        "Date de livraison": "Delivery date",
+        "Dernier état": "Latest status",
+        "Destination": "Destination",
+        "Etats": "Status",
+        "Origine": "Origin",
+        "Statut colis": "Package status",
+        "Transporteur": "Transporter"
+    },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Show",
         "Erreur lors de la synchronisation": "Synchronization error",
@@ -16,7 +25,12 @@
     },
     "plugins\/parcelTracking\/desktop\/modal\/addParcel.parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
-        "Erreur ! Les champs ne peuvent pas être vides": "Error! Fields cannot be empty"
+        "Ajouter": "Add",
+        "Colis créé": "Package created",
+        "Erreur ! Les champs ne peuvent pas être vides": "Error! Fields cannot be empty",
+        "Erreur lors la création du colis": "Package creation error",
+        "Nom du colis": "Package name",
+        "Numéro de suivi du colis": "Package tracking number"
     },
     "plugins\/parcelTracking\/desktop\/php\/parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
@@ -67,6 +81,8 @@
         "Widget dédié géré par le plugin": "Dedicated widget managed by the plugin"
     },
     "plugins\/parcelTracking\/plugin_info\/configuration.php": {
+        "Allemand": "German",
+        "Anglais": "English",
         "Aucun": "None",
         "Choisir dans la liste": "Select from the list",
         "Choisissez entre un widget par colis ou un widget unique pour tous les colis": "Choose between one widget per parcel or a single widget for all parcels",
@@ -79,13 +95,17 @@
         "Commande à utiliser pour l'envoi de notifications": "Command for sending notifications",
         "Community": "Community",
         "Durée de conservation de l'équipement après livraison (en jours)": "Shelf life of equipment after delivery (in days)",
+        "Espagnol": "Spanish",
         "Format du corps du message": "Message body format",
+        "Français": "French",
+        "Italien": "Italian",
         "Langue": "Language",
         "Objet parent par défaut": "Default parent object",
         "Paramètres API Parcelsapp": "Parcelsapp API settings",
         "Paramètres des notifications": "Notification settings",
         "Paramètres du widget": "Widget settings",
         "Paramètres optionnels du plugin": "Optional plugin parameters",
+        "Portugais": "Portuguese",
         "Renseignez l'objet parent par défaut configuré lors de la création d'un colis.<br\/> Laissez le champ sur 'Aucun' pour ne pas pré-remplir l'objet par défaut !": "Fill in the default parent object configured when creating a package.<br\/> Leave the field set to 'None' to avoid pre-filling the default object!",
         "Renseignez la clé API après vous être enregistré sur le site www.parcelsapp.com": "Enter the API key after registering on www.parcelsapp.com",
         "Renseignez la clé API secondaire (optionnel)": "Enter secondary API key (optional)",
@@ -94,9 +114,14 @@
         "Scénario à utiliser pour l'envoi de notifications": "Scenario for sending notifications",
         "Sélectionnez la langue utilisée pour les retours API": "Select the language used for API feedback",
         "Tags du scénario": "Scenario tags",
-        "Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "You can use the tags #name#, #numColis#, #transporter#, #status#, #lastStatus#, #date# and #time#. <br\/> Leave the field empty to use the default format!",
-        "Vous pouvez utiliser les tags #nom#, #objet#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br\/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...": "You can use the tags #name#, #object#, #numColis#, #carrier#, #status#, #lastStatus#, #date# and #time#. <br\/> Example: nom=#nom# numColis=#numColis# transporteur=#transporteur# ...",
+        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "You can use the tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# and #hour#. <br\/> Example: name=#name# numColis=#trackingId# carrier=#carrier# ...",
+        "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "You can use #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# and #hour# tags. <br\/> Leave the field empty to use the default format!",
         "Widget par colis": "Widget by parcel",
         "Widget unique": "Unique widget"
+    },
+    "plugins\/parcelTracking\/plugin_info\/install.php": {
+        "Le plugin Suivi colis a été correctement désinstallé. N\\'hésitez pas à laisser un avis sur le Market Jeedom !": "The Parcel tracking plugin has been successfully uninstalled. Don't hesitate to leave a review on the Jeedom Market!",
+        "Merci pour l\\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for installing the Parcel Tracking plugin. Please read the documentation carefully before use and don't hesitate to leave a review on the Jeedom Market !",
+        "Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Thank you for updating the Parcel Tracking plugin. Please read the release notes before use and don't hesitate to leave a review on the Jeedom Market!"
     }
 }
