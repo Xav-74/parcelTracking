@@ -3,6 +3,15 @@
         "401 - Accès non autorisé": "401 - Acceso no autorizado",
         "Aucune méthode correspondante à": "Ningún método correspondiente a"
     },
+    "plugins\/parcelTracking\/core\/class\/parcelTracking.class.php": {
+        "Date de livraison": "Fecha de entrega",
+        "Dernier état": "Último estado",
+        "Destination": "Destino",
+        "Etats": "Estado",
+        "Origine": "Origen",
+        "Statut colis": "Estado del paquete",
+        "Transporteur": "Transportador"
+    },
     "plugins\/parcelTracking\/desktop\/js\/parcelTracking.js": {
         "Afficher": "Mostrar",
         "Erreur lors de la synchronisation": "Error de sincronización",
@@ -16,7 +25,12 @@
     },
     "plugins\/parcelTracking\/desktop\/modal\/addParcel.parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Acceso no autorizado",
-        "Erreur ! Les champs ne peuvent pas être vides": "¡Error! Los campos no pueden estar vacíos"
+        "Ajouter": "Agregar",
+        "Colis créé": "Paquete creado",
+        "Erreur ! Les champs ne peuvent pas être vides": "¡Error! Los campos no pueden estar vacíos",
+        "Erreur lors la création du colis": "Error de creación de paquete",
+        "Nom du colis": "Nombre del paquete",
+        "Numéro de suivi du colis": "Número de seguimiento del paquete"
     },
     "plugins\/parcelTracking\/desktop\/php\/parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Acceso no autorizado",
@@ -67,6 +81,8 @@
         "Widget dédié géré par le plugin": "Widget dedicado gestionado por el plugin"
     },
     "plugins\/parcelTracking\/plugin_info\/configuration.php": {
+        "Allemand": "Alemán",
+        "Anglais": "Inglés",
         "Aucun": "Ninguno",
         "Choisir dans la liste": "Elija de la lista",
         "Choisissez entre un widget par colis ou un widget unique pour tous les colis": "Elija entre un widget por parcela o un widget único para todas las parcelas",
@@ -79,13 +95,17 @@
         "Commande à utiliser pour l'envoi de notifications": "Mando para enviar notificaciones",
         "Community": "Comunidad",
         "Durée de conservation de l'équipement après livraison (en jours)": "Vida útil de los equipos tras la entrega (en días)",
+        "Espagnol": "Español",
         "Format du corps du message": "Formato del cuerpo del mensaje",
+        "Français": "Francés",
+        "Italien": "Italiano",
         "Langue": "Idioma",
         "Objet parent par défaut": "Objeto padre por defecto",
         "Paramètres API Parcelsapp": "Configuración de la API de Parcelsapp",
         "Paramètres des notifications": "Configuración de notificaciones",
         "Paramètres du widget": "Configuración de widgets",
         "Paramètres optionnels du plugin": "Parámetros opcionales del plugin",
+        "Portugais": "Portugués",
         "Renseignez l'objet parent par défaut configuré lors de la création d'un colis.<br\/> Laissez le champ sur 'Aucun' pour ne pas pré-remplir l'objet par défaut !": "Introduzca el objeto padre predeterminado configurado cuando se creó un paquete.<br\/> ¡Deje el campo establecido en \"Ninguno\" para evitar rellenar previamente el objeto predeterminado!",
         "Renseignez la clé API après vous être enregistré sur le site www.parcelsapp.com": "Introduzca la clave API tras registrarse en el sitio web www.parcelsapp.com",
         "Renseignez la clé API secondaire (optionnel)": "Introduzca la clave API secundaria (opcional)",
@@ -94,9 +114,14 @@
         "Scénario à utiliser pour l'envoi de notifications": "Escenario para el envío de notificaciones",
         "Sélectionnez la langue utilisée pour les retours API": "Seleccione el idioma utilizado para los comentarios de la API",
         "Tags du scénario": "Etiquetas de escenario",
-        "Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "Puede utilizar las etiquetas #nombre#, #numColis#, #transportador#, #estado#, #últimoEstado#, #fecha# y #hora#. <¡Deja el campo vacío para utilizar el formato por defecto!",
-        "Vous pouvez utiliser les tags #nom#, #objet#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br\/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...": "Puede utilizar las etiquetas #name#, #object#, #numColis#, #carrier#, #status#, #lastStatus#, #date# y #time#. <br\/> Ejemplo: name=#name# packagenumber=#packagenumber# carrier=#carrier# ...",
+        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "Puede utilizar las etiquetas #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# y #hour#. <br\/> Ejemplo: name=#name# numColis=#trackingId# carrier=#carrier# ...",
+        "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "Puede utilizar las etiquetas #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# y #hour#. <¡Deja el campo vacío para utilizar el formato por defecto!",
         "Widget par colis": "Widget por paquete",
         "Widget unique": "Widget único"
+    },
+    "plugins\/parcelTracking\/plugin_info\/install.php": {
+        "Le plugin Suivi colis a été correctement désinstallé. N\\'hésitez pas à laisser un avis sur le Market Jeedom !": "El plugin Parcel Tracking ha sido correctamente desinstalado. ¡No dudes en dejar una reseña en el Jeedom Market!",
+        "Merci pour l\\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Gracias por instalar el plugin Parcel Tracking. ¡Lee atentamente la documentación antes de usarlo y no dudes en dejar una reseña en el Jeedom Market!",
+        "Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Gracias por actualizar el plugin Parcel Tracking. ¡Revisa las notas de la versión antes de usarlo y no dudes en dejar una reseña en el Jeedom Market!"
     }
 }
