@@ -210,8 +210,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</label>
 								<div class="col-sm-6">
 									<select id="sel_ApiKey" class="eqLogicAttr form-control" style="margin: 1px 0px 0px 0px;" data-l1key="configuration" data-l2key="apiKey">
-										<option value=1>Principale</option>
-										<option value=2>Secondaire</option>
+										<option value=1>{{Principale}}</option>
+										<option value=2>{{Secondaire}}</option>
 									</select>
 								</div>
 							</div>
