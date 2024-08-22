@@ -9,6 +9,7 @@
         "Destination": "Destination",
         "Etats": "Status",
         "Origine": "Origin",
+        "Rafraichir": "Refresh",
         "Statut colis": "Parcel status",
         "Transporteur": "Carrier"
     },
