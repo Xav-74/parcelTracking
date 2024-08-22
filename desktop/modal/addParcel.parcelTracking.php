@@ -29,15 +29,15 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 <div class="modal-content">
     
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<input id="name" type="text" class="form-control" placeholder="Nom du colis"/>
+		<input id="name" type="text" class="form-control" placeholder="{{Nom du colis}}"/>
 	</div>
 						
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 13px;">
-		<input id="trackingId" type="text" class="form-control" placeholder="Numéro de suivi du colis"/>
+		<input id="trackingId" type="text" class="form-control" placeholder="{{Numéro de suivi du colis}}"/>
 	</div>
 					 
 	<div class="col-sm-12" style="padding: 0px !important;">
-		<input id="btn_add" type="submit" class="btn btn-primary" style="float: right; width: 125px" value="Ajouter"/>
+		<input id="btn_add" type="submit" class="btn btn-primary" style="float: right; width: 125px" value="{{Ajouter}}"/>
 	</div>
 	
 </div>
@@ -68,11 +68,11 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 			},
 			success: function (data) { 			
 				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: 'Erreur lors la création du colis', level: 'danger'});
+					$('#div_alert').showAlert({message: '{{Erreur lors la création du colis}}', level: 'danger'});
 					return;
 				}
 				else  {
-					$('#div_alert').showAlert({message: 'Colis créé', level: 'success'});
+					$('#div_alert').showAlert({message: '{{Colis créé}}', level: 'success'});
 					$('#mod_addParcel').dialog( "close" );
 				}
 			}

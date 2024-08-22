@@ -39,7 +39,7 @@ class parcelTracking extends eqLogic {
 
     public static function cronHourly() {
     
-        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		// type = parcelTracking et eqLogic enable
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		    // type = parcelTracking et eqLogic enable
             if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
                 $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
                 if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
@@ -275,13 +275,13 @@ class parcelTracking extends eqLogic {
     public function postSave() {
 
         if ( $this->getConfiguration('eqLogicType') != 'global') {
-            $this->createCmd('status', 'Statut colis', 1, 'info', 'string');
-            $this->createCmd('carrier', 'Transporteur', 2, 'info', 'string');
-            $this->createCmd('origin', 'Origine', 3, 'info', 'string');
-            $this->createCmd('destination', 'Destination', 4, 'info', 'string');
-            $this->createCmd('states', 'Etats', 5, 'info', 'string');
-            $this->createCmd('lastState', 'Dernier état', 6, 'info', 'string');
-            $this->createCmd('deliveryDate', 'Date de livraison', 7, 'info', 'string');
+            $this->createCmd('status', __('Statut colis', __FILE__), 1, 'info', 'string');
+            $this->createCmd('carrier', __('Transporteur', __FILE__), 2, 'info', 'string');
+            $this->createCmd('origin', __('Origine', __FILE__), 3, 'info', 'string');
+            $this->createCmd('destination', __('Destination', __FILE__), 4, 'info', 'string');
+            $this->createCmd('states', __('Etats', __FILE__), 5, 'info', 'string');
+            $this->createCmd('lastState', __('Dernier état', __FILE__), 6, 'info', 'string');
+            $this->createCmd('deliveryDate', __('Date de livraison', __FILE__), 7, 'info', 'string');
 
             $this->createCmd('refresh', 'Rafraichir', 8, 'action', 'other');
         }
@@ -348,7 +348,7 @@ class parcelTracking extends eqLogic {
         if (!is_object($cmd)) {
             $cmd = new parcelTrackingCmd();
             $cmd->setOrder($order);
-            $cmd->setName(__($commandDescription, __FILE__));
+            $cmd->setName($commandDescription);
             $cmd->setEqLogic_id($this->getId());
             $cmd->setLogicalId($commandName);
             $cmd->setType($type);
@@ -641,13 +641,13 @@ class parcelTracking extends eqLogic {
             $formatNotifications = $lastState;
         }
         else {
-            $formatNotifications = str_replace("#nom#", $name, $formatNotifications);
-            $formatNotifications = str_replace("#numColis#", $trackingId, $formatNotifications);
-            $formatNotifications = str_replace("#transporteur#", $carrier, $formatNotifications);
-            $formatNotifications = str_replace("#statut#", $status, $formatNotifications);
-            $formatNotifications = str_replace("#dernierEtat#", $lastState, $formatNotifications);
+            $formatNotifications = str_replace("#name#", $name, $formatNotifications);
+            $formatNotifications = str_replace("#trackingId#", $trackingId, $formatNotifications);
+            $formatNotifications = str_replace("#carrier#", $carrier, $formatNotifications);
+            $formatNotifications = str_replace("#status#", $status, $formatNotifications);
+            $formatNotifications = str_replace("#lastState#", $lastState, $formatNotifications);
             $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
-            $formatNotifications = str_replace("#heure#", $lastHour, $formatNotifications);
+            $formatNotifications = str_replace("#hour#", $lastHour, $formatNotifications);
         }
         return $formatNotifications;
     }
@@ -656,14 +656,14 @@ class parcelTracking extends eqLogic {
 
         $formatTags = config::byKey('formatTags', 'parcelTracking');
         $tags = arg2array($formatTags);
-        $tags = str_replace("#nom#", $name, $tags);
-        $tags = str_replace("#objet#", $object, $tags);
-        $tags = str_replace("#numColis#", $trackingId, $tags);
-        $tags = str_replace("#transporteur#", $carrier, $tags);
-        $tags = str_replace("#statut#", $status, $tags);
-        $tags = str_replace("#dernierEtat#", $lastState, $tags);
+        $tags = str_replace("#name#", $name, $tags);
+        $tags = str_replace("#object#", $object, $tags);
+        $tags = str_replace("#trackingId#", $trackingId, $tags);
+        $tags = str_replace("#carrier#", $carrier, $tags);
+        $tags = str_replace("#status#", $status, $tags);
+        $tags = str_replace("#lastState#", $lastState, $tags);
         $tags = str_replace("#date#", $lastDate, $tags);
-        $tags = str_replace("#heure#", $lastHour, $tags);
+        $tags = str_replace("#hour#", $lastHour, $tags);
         return $tags;
     }
 

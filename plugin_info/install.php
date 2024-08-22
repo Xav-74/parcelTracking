@@ -40,7 +40,7 @@ function parcelTracking_install() {
         log::add('parcelTracking', 'debug', 'Adding dedicated widget managed by the plugin');
     }
     
-    message::add('parcelTracking', 'Merci pour l\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !');
+    message::add('parcelTracking', __('Merci pour l\'installation du plugin Suivi colis. Lisez bien la documentation avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !',__FILE__));
 }
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
@@ -75,12 +75,12 @@ function parcelTracking_update() {
         log::add('parcelTracking', 'debug', 'Updating plugin commands done for eqLogic '. $eqLogic->getHumanName());
     }
 	
-    message::add('parcelTracking', 'Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !');
+    message::add('parcelTracking', __('Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !',__FILE__));
 }
 
 // Fonction exécutée automatiquement après la suppression du plugin
 function parcelTracking_remove() {
-    message::add('parcelTracking', 'Le plugin Suivi colis a été correctement désinstallé. N\'hésitez pas à laisser un avis sur le Market Jeedom !');
+    message::add('parcelTracking', __('Le plugin Suivi colis a été correctement désinstallé. N\'hésitez pas à laisser un avis sur le Market Jeedom !',__FILE__));
 }
 
 ?>

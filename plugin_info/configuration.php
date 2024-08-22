@@ -53,8 +53,12 @@ if (!isConnect()) {
         <div class="col-sm-4">
             <select class="configKey form-control" data-l1key="language">
             <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
-                <option value="fr">Français</option>
-                <option value="en">Anglais</option>
+                <option value="fr">{{Français}}</option>
+                <option value="en">{{Anglais}}</option>
+                <option value="de">{{Allemand}}</option>
+                <option value="es">{{Espagnol}}</option>
+                <option value="it">{{Italien}}</option>
+                <option value="pt">{{Portugais}}</option>
             </select>
         </div>    
     </div>
@@ -117,7 +121,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Format du corps du message}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatNotifications"/>
@@ -140,7 +144,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Tags du scénario}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #nom#, #objet#, #numColis#, #transporteur#, #statut#, #dernierEtat#, #date# et #heure#. <br/> Exemple : nom=#nom# numColis=#numColis# transporteur=#transporteur# ...}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatTags"/>

@@ -3,13 +3,13 @@
 	<div class="text-center widget-name">
 		<span class="reportModeVisible">#name_display#<span class="object_name">#object_name#</span></span>
 	   	<a href="#eqLink#" class="reportModeHidden" style="color:var(--eqTitle-color)!important;">#name_display#<span class="object_name">#object_name#</span></a>
-	   	<span class="cmd refresh pull-right cursor" data-cmd_id="#refresh_id#" onclick="jeedom.cmd.execute({id: #refresh_id#});" title="Rafraichir les informations">
+	   	<span class="cmd refresh pull-right cursor" data-cmd_id="#refresh_id#" onclick="jeedom.cmd.execute({id: #refresh_id#});" title="{{Rafraichir les informations}}">
 		   <i class="fas fa-sync" style="color:var(--eqTitle-color)!important;"></i>
 	   	</span>
-		<span class="cmd refresh pull-right cursor" onclick="addParcel()" title="Ajouter un colis">
+		<span class="cmd refresh pull-right cursor" onclick="addParcel()" title="{{Ajouter un colis}}">
 			<i class="fas fa-plus" style="color:var(--eqTitle-color)!important;"></i>
 		</span>
-		<span class="cmd refresh pull-right cursor" onclick="removeParcel('#id#', '#name_display#')" title="Supprimer le colis">
+		<span class="cmd refresh pull-right cursor" onclick="removeParcel('#id#', '#name_display#')" title="{{Supprimer le colis}}">
 			<i class="fas fa-trash" style="color:var(--eqTitle-color)!important;"></i>
 		</span>
 	</div>
@@ -23,15 +23,15 @@
 			</div>
 			
 			<div class="col-xs-8" id="tile" style="height:130px; width:350px;">
-				<div class="col-xs-4" id="titre_tile" style="height:25px;">N° Colis</div>
+				<div class="col-xs-4" id="titre_tile" style="height:25px;">{{N° Colis}}</div>
 				<div class="col-xs-8" id="value_tile" style="height:25px;">#trackingId#id##</div>
-				<div class="col-xs-6" id="titre_tile" style="height:25px;">Transporteur</div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">{{Transporteur}}</div>
 				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#carrier_id#"></span></div>
-				<div class="col-xs-6" id="titre_tile" style="height:25px;">Origine</div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">{{Origine}}</div>
 				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#origin_id#"></span></span></div>
-				<div class="col-xs-6" id="titre_tile" style="height:25px;">Destination</div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">{{Destination}}</div>
 				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#destination_id#"></span></div>
-				<div class="col-xs-6" id="titre_tile" style="height:25px;">Date de livraison</div>
+				<div class="col-xs-6" id="titre_tile" style="height:25px;">{{Date de livraison}}</div>
 				<div class="col-xs-6" id="value_tile" style="height:25px;"><span class="Cmd#deliveryDate_id#"></span></div>
 			</div>
 			
@@ -91,12 +91,12 @@
 		//----- Icon status
 		jeedom.cmd.update['#status_id#'] = function(_options) {
 			
-			if ( _options.display_value == 'delivered') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delivered.png" height="80" title="Délivré"/></span>'); }
-			else if ( _options.display_value == 'transit') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="En transit"/></span>'); }
-			else if ( _options.display_value == 'pickup') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="Pris en charge"/></span>'); }
-			else if ( _options.display_value == 'arrived') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="Arrivé au centre de tri"/></span>'); }
-			else if ( _options.display_value == 'archive') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-archive.png" height="80" title="Archivé"/></span>'); }
-			else { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="Retardé"/></span>'); }
+			if ( _options.display_value == 'delivered') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delivered.png" height="80" title="{{Délivré}}"/></span>'); }
+			else if ( _options.display_value == 'transit') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="{{En transit}}"/></span>'); }
+			else if ( _options.display_value == 'pickup') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="{{Pris en charge}}"/></span>'); }
+			else if ( _options.display_value == 'arrived') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="{{Arrivé au centre de tri}}"/></span>'); }
+			else if ( _options.display_value == 'archive') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-archive.png" height="80" title="{{Archivé}}"/></span>'); }
+			else { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="{{Retardé"}}/></span>'); }
 		}
 		jeedom.cmd.update['#status_id#']({display_value:'#status#'});		
 		
@@ -148,7 +148,7 @@
 
 		//----- Remove parcel
 		function removeParcel(eqLogicId, name) {
-			var check = confirm("Etes-vous sûr de vouloir supprimer le colis " + name + " ?");
+			var check = confirm("{{Etes-vous sûr de vouloir supprimer le colis }}" + name + " ?");
         	if (check == true) {
 				$.ajax({
 					type: "POST",
@@ -164,11 +164,11 @@
 					success: function (data) { 			
 
 						if (data.state != 'ok') {
-							$('#div_alert').showAlert({message: 'Erreur lors de la suppression du colis', level: 'danger'});
+							$('#div_alert').showAlert({message: '{{Erreur lors de la suppression du colis}}', level: 'danger'});
 							return;
 						}
 						else  {
-							$('#div_alert').showAlert({message: 'Colis supprimé', level: 'success'});
+							$('#div_alert').showAlert({message: '{{Colis supprimé}}', level: 'success'});
 						}
 					}
 				});
