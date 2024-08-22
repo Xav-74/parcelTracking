@@ -283,9 +283,9 @@ class parcelTracking extends eqLogic {
             $this->createCmd('lastState', __('Dernier état', __FILE__), 6, 'info', 'string');
             $this->createCmd('deliveryDate', __('Date de livraison', __FILE__), 7, 'info', 'string');
 
-            $this->createCmd('refresh', 'Rafraichir', 8, 'action', 'other');
+            $this->createCmd('refresh', __('Rafraichir', __FILE__), 8, 'action', 'other');
         }
-        else { $this->createCmd('refreshAll', 'Rafraichir', 1, 'action', 'other'); }
+        else { $this->createCmd('refreshAll', __('Rafraichir', __FILE__), 1, 'action', 'other'); }
     }
 
     // Fonction exécutée automatiquement avant la suppression de l'équipement

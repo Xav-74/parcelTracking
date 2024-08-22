@@ -5,7 +5,7 @@
     },
     "plugins\/parcelTracking\/core\/class\/parcelTracking.class.php": {
         "Date de livraison": "Delivery date",
-        "Dernier état": "Latest status",
+        "Dernier état": "Last status",
         "Destination": "Destination",
         "Etats": "Status",
         "Origine": "Origin",
