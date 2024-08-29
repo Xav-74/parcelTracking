@@ -112,19 +112,17 @@ function printEqLogic(_eqLogic) {
 }
 
 
-/* Fonction permettant la synchronisation du colis */
-function synchronize()  {
+/* Fonction permettant l'enregistrement du colis chez 17Track */
+function register()  {
 	
-	$('#div_alert').showAlert({message: '{{Synchronisation en cours}}', level: 'warning'});	
-	$.ajax({													            // fonction permettant de faire de l'ajax
-		type: "POST", 											            // methode de transmission des données au fichier php
-		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php", 	// url du fichier php
+	$('#div_alert').showAlert({message: '{{Enregistrement en cours}}', level: 'warning'});	
+	$.ajax({
+		type: "POST",
+		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
 		data: {
-			action: "synchronize",
+			action: "register",
 			trackingId: $('.eqLogicAttr[data-l2key=trackingId]').value(),
-            //destinationCountry: $('.eqLogicAttr[data-l2key=destinationCountry]').value(),
-			//zipcode: $('.eqLogicAttr[data-l2key=zipcode]').value(),
-			},
+            },
 		dataType: 'json',
 			error: function (request, status, error) {
 			handleAjaxError(request, status, error);
@@ -132,20 +130,26 @@ function synchronize()  {
 		success: function (data) { 			
 
 			if (data.state != 'ok') {
-				$('#div_alert').showAlert({message: '{{Erreur lors de la synchronisation}}', level: 'danger'});
+				$('#div_alert').showAlert({message: '{{Erreur lors de l\'enregistrement du colis}}', level: 'danger'});
 				return;
 			}
 			else  {
-				$('#div_alert').showAlert({message: '{{Synchronisation terminée avec succès}}', level: 'success'});
+				if ( data.result.code == 0 && data.result.data?.accepted?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+					$('#div_alert').showAlert({message: '{{Enregistrement terminé avec succès}}', level: 'success'});
+				}
+				else if ( data.result.code == 0 && data.result.data?.rejected?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+					$('#div_alert').showAlert({message: data.result.data.rejected[0].error.message, level: 'warning'});
+				}
+				else { $('#div_alert').showAlert({message: '{{Erreur lors de l\'enregistrement du colis}}', level: 'danger'}); }
 			}
 		}
 	});
 };
 
-document.getElementById('bt_Synchronization').addEventListener('click', function() {
+document.getElementById('bt_register').addEventListener('click', function() {
     var button = document.querySelector('.btn[data-action="save"]');
     button.click();
-    setTimeout(synchronize, 2000);
+    setTimeout(register, 2000);
 });
 
 

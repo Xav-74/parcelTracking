@@ -1,36 +1,31 @@
 <?php
 
 /*
-* A PHP Client for parcelsapp API
+* A PHP Client for 17Track API
 */
 
 
 class parcelTracking_API {
 	
-    const API_URL = 'https://parcelsapp.com/api/v3/shipments/tracking';
+    const API_URL_TRACKING = 'https://api.17track.net/track/v2.2/gettrackinfo';
+	const API_URL_REGISTER = 'https://api.17track.net/track/v2.2/register';
+	const API_URL_DELETE = 'https://api.17track.net/track/v2.2/deletetrack';
+	const API_URL_QUOTA = 'https://api.17track.net/track/v2.2/getquota';
 	
 	/* @var string apiKey */
 	private $apiKey = null;
 	/* @var string trackingId */
-	private $language = null;
-	/* @var string country */
 	private $trackingId = null;
 	/* @var string language */
-	private $destinationCountry = null;
-	/* @var string zipcode */
-	private $zipcode = null;
-	/* @var string uuid */
-	private $uuid = null;
-		
+	private $language = null;
+			
 	
-	public function __construct($apiKey, $language, $trackingId, $destinationCountry, $zipcode) {
+	public function __construct($apiKey, $trackingId, $language) {
 		
 		$this->apiKey = $apiKey;
-		$this->language = $language;
 		$this->trackingId = $trackingId;
-		$this->destinationCountry = $destinationCountry;
-		$this->zipcode = $zipcode;
-		$this->uuid = null;
+		if ( $language == 'default' ) { $this->language = ''; }
+		else { $this->language = $language; }
 	}
 
 
@@ -44,22 +39,21 @@ class parcelTracking_API {
         $headers = [];
 
         // Default CURL options
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_ENCODING, "");
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_VERBOSE, false);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
         // Set data
-        if ($method == 'GET') {
-			//$data_str = '?'.http_build_query($data);
-		}
-		if ($method == 'POST') {
-			$data_str = json_encode($data);
-		}
+        $data_str = json_encode($data);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_str);
         
         // Add extra headers
@@ -95,74 +89,82 @@ class parcelTracking_API {
 
 	public function getTrackingResult() {
 
-		//Step 1 - Initiate tracking request
-		$url = $this::API_URL;
+		$url = $this::API_URL_TRACKING;
 		$method = 'POST';
 		$headers = [
+			'17token: '.$this->apiKey,
 			'Content-Type: application/json'
 		];
 		$data = [
-			'shipments' => [
-							[
-							'trackingId' => $this->trackingId,
-							'destinationCountry' => $this->destinationCountry,
-							//'zipcode' => $this->zipcode
-							]
-			],
-			'language' => $this->language,
-			'apiKey' => $this->apiKey
+			[ 'number' => $this->trackingId	]
 		];
 		
-		$result1 = $this->_request($url, $method, $data, $headers);
-		$response1 = json_decode($result1->body);
-		
-		if ( $result1->httpCode == 200 && !isset($response1->error) ) {
-			if ( $response1->done == true ) {
-				log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 1 : ['.$result1->httpCode.'] - '.str_replace('\n', '', $result1->body));
-				return $result1;
-			}
-			else {
-				log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 1 : ['.$result1->httpCode.'] - '.str_replace('\n', '', $result1->body));
-				$this->uuid = $response1->uuid;
-			}
-		}
-		else {
-			log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 1 : ['.$result1->httpCode.'] - '.str_replace('\n', '', $result1->body));
-			return $result1;
-		}
-		
-		//Step 2 - Read tracking result
-		$url = $this::API_URL;
-		$method = 'GET';
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result getTrackingResult() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
+	}
+
+
+	public function registerTrackingId() {
+
+		$url = $this::API_URL_REGISTER;
+		$method = 'POST';
 		$headers = [
-			'Accept: application/json',
+			'17token: '.$this->apiKey,
+			'Content-Type: application/json'
 		];
 		$data = [
-			'uuid' => $this->uuid,
-			'apiKey' => $this->apiKey
+			[
+				'number' => $this->trackingId,
+				'lang' => $this->language
+			]
 		];
-		$data_str = '?'.http_build_query($data);
 		
-		$result2 = $this->_request($url.$data_str, $method, null, $headers);
-		$response2 = json_decode($result2->body);
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result registerTrackingId() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
+	}
+
+
+	public function deleteTrackingId() {
+
+		$url = $this::API_URL_DELETE;
+		$method = 'POST';
+		$headers = [
+			'17token: '.$this->apiKey,
+			'Content-Type: application/json'
+		];
+		$data = [
+			[ 'number' => $this->trackingId	]
+		];
 		
-		if ( $result2->httpCode == 200 ) {
-			log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 2 (0) : ['.$result2->httpCode.'] - '.str_replace('\n', '', $result2->body));
-			$retry = 10;
-			while ( $retry > 0 && $response2->done != 'true')
-			{
-				sleep(3);
-				$result2 = $this->_request($url.$data_str, $method, null, $headers);
-				$response2 = json_decode($result2->body);
-				log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 2 ('.(11-$retry).') : ['.$result2->httpCode.'] - '.str_replace('\n', '', $result2->body));
-				$retry--;
-			}	
-			return $result2;
-		}
-		else {
-			log::add('parcelTracking', 'debug', '| Result getTrackingResult() request - step 2 (0) : ['.$result2->httpCode.'] - '.str_replace('\n', '', $result2->body));
-			return $result2;
-		}
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result deleteTrackingId() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
+	}
+
+
+	public function getQuota() {
+
+		$url = $this::API_URL_QUOTA;
+		$method = 'POST';
+		$headers = [
+			'17token: '.$this->apiKey,
+			'Content-Type: application/json'
+		];
+		$data = [];
+		
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result getQuota() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
 	}
 
 }

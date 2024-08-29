@@ -44,8 +44,13 @@ try {
         throw new Exception(__('401 - Accès non autorisé', __FILE__));
     }
     
-    if (init('action') == 'synchronize') {
-		$result = parcelTracking::synchronize(init('trackingId'));
+    if (init('action') == 'register') {
+		$result = parcelTracking::registerParcel(init('trackingId'));
+		ajax::success($result);
+	}
+
+    if (init('action') == 'getQuota') {
+		$result = parcelTracking::getQuota(init('apiKey'));
 		ajax::success($result);
 	}
 

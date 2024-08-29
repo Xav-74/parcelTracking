@@ -91,12 +91,16 @@
 		//----- Icon status
 		jeedom.cmd.update['#status_id#'] = function(_options) {
 			
-			if ( _options.display_value == 'delivered') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delivered.png" height="80" title="{{Délivré}}"/></span>'); }
-			else if ( _options.display_value == 'transit') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="{{En transit}}"/></span>'); }
-			else if ( _options.display_value == 'pickup') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="{{Pris en charge}}"/></span>'); }
-			else if ( _options.display_value == 'arrived') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="{{Arrivé au centre de tri}}"/></span>'); }
-			else if ( _options.display_value == 'archive') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-archive.png" height="80" title="{{Archivé}}"/></span>'); }
-			else { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="{{Retardé}}"/></span>'); }
+			if ( _options.display_value == 'Delivered') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delivered.png" height="80" title="{{Délivré}}"/></span>'); }
+			else if ( _options.display_value == 'DeliveryFailure') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="{{Echec de livraison}}"/></span>'); }
+			else if ( _options.display_value == 'Exception') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-exception.png" height="80" title="{{Exception}}"/></span>'); }
+			else if ( _options.display_value == 'OutForDelivery') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="{{En cours de livraison}}"/></span>'); }
+			else if ( _options.display_value == 'AvailableForPickup') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-pickup.png" height="80" title="{{Arrivé au point de retrait}}"/></span>'); }
+			else if ( _options.display_value == 'InTransit') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-transit.png" height="80" title="{{En transit}}"/></span>'); }
+			else if ( _options.display_value == 'InfoReceived') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-info.png" height="80" title="{{Informations de prise en charge reçues}}"/></span>'); }
+			else if ( _options.display_value == 'Expired') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-delayed.png" height="80" title="{{Expiré}}"/></span>'); }
+			else if ( _options.display_value == 'NotFound') { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-exception.png" height="80" title="{{Numéro de tracking inconnu}}"/></span>'); }
+			else { $('.Cmd#status_id#').empty().append('<span><img src="plugins/parcelTracking/core/img/status-exception.png" height="80" title="{{Inconnu}}"/></span>'); }
 		}
 		jeedom.cmd.update['#status_id#']({display_value:'#status#'});		
 		
@@ -138,7 +142,7 @@
 				var table_html= "";
 				table_html += '<ul class="list-group" style="text-align: left">';
 				jQuery.each(table.states,function(key,state){
-					table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;">'+state.date+'<br>'+state.hour+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>'+state.location+'</span></li>'
+					table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;">'+state.date+'<br>'+state.time+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>('+state.location+')</span></li>'
 				});
 				table_html += '</ul>';
 				$('.table_states#id#').empty().append(table_html);

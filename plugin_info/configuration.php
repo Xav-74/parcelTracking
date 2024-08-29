@@ -29,41 +29,44 @@ if (!isConnect()) {
     <legend><i class="fas fa-wrench"></i> {{Paramètres API Parcelsapp}}</legend>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Clé API Parcelsapp <a href="https://parcelsapp.com/dashboard/#/login">(lien)</a>}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API après vous être enregistré sur le site www.parcelsapp.com}}"></i></sup>
+        <label class="col-sm-4 control-label">{{Clé API 17Track <a href="https://api.17track.net/en/admin/dashboard">(lien)</a>}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API après vous être enregistré sur le site www.17track.net/en}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <input class="configKey form-control" data-l1key="apiKey"/>
+            <input id="apiKey" class="configKey form-control" data-l1key="apiKey"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Clé API secondaire}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API secondaire (optionnel)}}"></i></sup>
+        <label class="col-sm-4 control-label">{{Quota restant}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{La vérification permet de récupérer le quota de suivi restant sur vote compte 17Track}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <input class="configKey form-control" data-l1key="apiKey2"/>
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input id="div_quota" class="form-control configKey" data-l1key="quota" placeholder="xxx / xxx" value="" readonly/>
+                <span class="input-group-btn" title="{{Vérifier}}">
+                    <a id="bt_getQuota" class="btn btn-primary"><i class="fas fa-check-square"></i></a>
+                </span>
+            </div>
         </div>
     </div>
-    
+
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Langue}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez la langue utilisée pour les retours API}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez la langue utilisée pour les retours API. Attention, cela décomptera 2 suivis par colis sur votre quota.<br/> Laissez le champ sur 'Langue par défaut' pour conserver la langue par défaut du transporteur ! }}"></i></sup>
         </label>
         <div class="col-sm-4">
             <select class="configKey form-control" data-l1key="language">
-            <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
+                <option value="default" selected>{{Langue par défaut}}</option>
                 <option value="fr">{{Français}}</option>
                 <option value="en">{{Anglais}}</option>
                 <option value="de">{{Allemand}}</option>
                 <option value="es">{{Espagnol}}</option>
-                <option value="it">{{Italien}}</option>
-                <option value="pt">{{Portugais}}</option>
             </select>
         </div>    
     </div>
     <br/>
-
+    
     <legend><i class="fas fa-cogs"></i> {{Paramètres optionnels du plugin}}</legend>
 
     <div class="form-group">
@@ -84,15 +87,6 @@ if (!isConnect()) {
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-sm-4 control-label">{{Code postal par défaut}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le code postal par défaut configuré lors de la création d'un colis.<br/> Laissez le champ vide pour ne pas pré-remplir le code postal !}}"></i></sup>
-        </label>
-        <div class="col-sm-4">
-            <input id="defaultZipcode" type="number" class="configKey form-control" data-l1key="defaultZipcode"/>
-        </div>
-    </div>
-    
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Durée de conservation de l'équipement après livraison (en jours)}}
             <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le nombre de jours après lequel le colis livré est supprimé du plugin.<br/> Laissez le champ vide pour conserver les colis !}}"></i></sup>
@@ -121,7 +115,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Format du corps du message}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatNotifications"/>
@@ -144,7 +138,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Tags du scénario}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #hour#. <br/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatTags"/>
@@ -188,5 +182,42 @@ if (!isConnect()) {
             document.querySelector('.configKey[data-l1key=scenarioNotifications]').value = result.human;
         });
     });
+
+    /* Fonction permettant la récupération du quota restant */
+    document.getElementById('bt_getQuota').addEventListener('click', function() {
+        getQuota();
+    });
+    
+    function getQuota()  {
+        
+        $('#div_alert').showAlert({message: '{{Récupérations des informations}}', level: 'warning'});	
+        $.ajax({
+            type: "POST",
+            url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+            data: {
+                action: "getQuota",
+                apiKey: $('#apiKey').value(),
+                },
+            dataType: 'json',
+                error: function (request, status, error) {
+                handleAjaxError(request, status, error);
+                },
+            success: function (data) { 			
+
+                if (data.state != 'ok') {
+                    $('#div_alert').showAlert({message: '{{Erreur lors de la récupération des informations}}', level: 'danger'});
+                    return;
+                }
+                else  {
+                    if ( data.result.code == 0 && data.result.data?.quota_remain !== undefined && data.result.data?.quota_total !== undefined ) {
+                        quota = data.result.data.quota_remain+' / '+data.result.data.quota_total;
+                        $('#div_quota').val(quota);
+                        $('#div_alert').showAlert({message: '{{Informations récupérées avec succès}}', level: 'success'});
+                    }
+                    else { $('#div_alert').showAlert({message: '{{Erreur lors de la récupération des informations}}', level: 'danger'}); }
+                }
+            }
+        });
+    };
     
 </script>

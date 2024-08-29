@@ -77,21 +77,24 @@
 				if ( parcel.name != null ) { var name = parcel.name;} else { name = ''; }
 				if ( parcel.trackingId != null ) { var trackingId = parcel.trackingId;} else { trackingId = ''; }
 				if ( parcel.lastDate != null ) { var lastDate = parcel.lastDate;} else { lastDate = ''; }
-				if ( parcel.lastHour != null ) { var lastHour = parcel.lastHour;} else { lastHour = ''; }
+				if ( parcel.lastTime != null ) { var lastTime = parcel.lastTime;} else { lastTime = ''; }
 				if ( parcel.lastState != null ) { var lastState = parcel.lastState;} else { lastState = ''; }
 				if ( parcel.lastLocation != null ) { var lastLocation = parcel.lastLocation;} else { lastLocation = ''; }				
 				
 				table_html += '<li class="list-group-item">';
-				if ( status == 'delivered') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delivered.png" height="20" title="{{Délivré}}"/></span>'; }
-				else if ( status == 'transit') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-transit.png" height="20" title="{{En transit}}"/></span>'; }
-				else if ( status == 'pickup') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="{{Pris en charge}}"/></span>'; }
-				else if ( status == 'arrived') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="{{Arrivé au centre de tri}}"/></span>'; }
-				else if ( status == 'archive') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-archive.png" height="20" title="{{Archivé}}"/></span>'; }
-				else { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delayed.png" height="20" title="{{Retardé}}"/></span>'; }
+				if ( status == 'Delivered') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delivered.png" height="20" title="{{Délivré}}"/></span>'; }
+				else if ( status == 'DeliveryFailure') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delayed.png" height="20" title="{{Echec de livraison}}"/></span>'; }
+				else if ( status == 'Exception') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-exception.png" height="20" title="{{Exception}}"/></span>'; }
+				else if ( status == 'OutForDelivery') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-transit.png" height="20" title="{{En cours de livraison}}"/></span>'; }
+				else if ( status == 'AvailableForPickup') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-pickup.png" height="20" title="{{Arrivé au point de retrait}}"/></span>'; }
+				else if ( status == 'InTransit') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-transit.png" height="20" title="{{En transit}}"/></span>'; }
+				else if ( status == 'InfoReceived') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-info.png" height="20" title="{{Informations de prise en charge reçues}}"/></span>'; }
+				else if ( status == 'Expired') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-delayed.png" height="20" title="{{Expiré}}"/></span>'; }
+				else if ( status == 'NotFound') { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-exception.png" height="20" title="{{Numéro de tracking inconnu}}"/></span>'; }
+				else { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-exception.png" height="20" title="{{Inconnu}}"/></span>'; }
 				table_html += '<span class="col-xs-10 label span-item-title">'+name+' ('+trackingId+')</span>';
-				console.log('onclick="removeParcel('+id+',\''+name+'\')"');
 				table_html += '<span class="col-xs-1 fas fa-trash cursor eqLogicAction" onclick="removeParcel('+id+',\''+name+'\')" title="{{Supprimer le colis}}"></span>'
-				table_html += '<span class="col-xs-12 label span-item-value">'+lastDate+' '+lastHour+'&nbsp&nbsp&nbsp&nbsp&nbsp'+lastState+'<br>'+lastLocation+'</span>';
+				table_html += '<span class="col-xs-12 label span-item-value">'+lastDate+' '+lastTime+'&nbsp&nbsp&nbsp&nbsp&nbsp'+lastState+'<br>('+lastLocation+')</span>';
 				table_html +=  '</li>';
 			});
 			table_html += '</ul>';

@@ -64,17 +64,13 @@ class parcelTracking extends eqLogic {
                 if ( $nbDays != null ) {
                     $cmd = $parcelTracking->getCmd('info', 'deliveryDate');
                     $deliveryDate = $cmd->execCmd();
-                    if ( $deliveryDate != null && $deliveryDate != 'not available') {
-                        if ( $parcelTracking->getDaysDifference($deliveryDate) >= $nbDays ) {
-                            $parcelTracking->remove();
-                            log::add('parcelTracking', 'debug', '| Remove parcel');
-                        }
-                        else { log::add('parcelTracking', 'debug', '| Parcel not removed'); }
+                    if ( $parcelTracking->getDaysDifference($deliveryDate) >= $nbDays ) {
+                        $parcelTracking->removeParcel($parcelTracking->getId());
                     }
+                    else { log::add('parcelTracking', 'debug', '| Parcel not removed'); }
                 }
             }
         }
-
         log::add('parcelTracking', 'debug', '└─End of remove parcels');
     }
  
@@ -83,11 +79,9 @@ class parcelTracking extends eqLogic {
 		$CommunityInfo = "```\n";
         if ( !empty(config::byKey('apiKey', 'parcelTracking')) ) { $CommunityInfo = $CommunityInfo . 'API Key present' . "\n"; }
         else { $CommunityInfo = $CommunityInfo . 'API Key missing' . "\n"; }
-        if ( !empty(config::byKey('apiKey2', 'parcelTracking')) ) { $CommunityInfo = $CommunityInfo . 'API Key 2 present' . "\n"; }
-        else { $CommunityInfo = $CommunityInfo . 'API Key 2 missing' . "\n"; }
+        $CommunityInfo = $CommunityInfo . 'Quota : ' . config::byKey('quota', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Language : ' . config::byKey('language', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Default object : ' . config::byKey('defaultObject', 'parcelTracking') . "\n";
-        $CommunityInfo = $CommunityInfo . 'Default zip code : ' . config::byKey('defaultZipcode', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Days : ' . config::byKey('nbDays', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Notifications cmdId : ' . config::byKey('cmdNotifications', 'parcelTracking') . "\n";
         $CommunityInfo = $CommunityInfo . 'Notifications format : ' . config::byKey('formatNotifications', 'parcelTracking') . "\n";
@@ -111,11 +105,17 @@ class parcelTracking extends eqLogic {
 
     public static function getDaysDifference($deliveryDate) {
         
-        $date = DateTime::createFromFormat('d/m/Y H:i:s', $deliveryDate);
-        $today = new \DateTime;
-        $interval = $date->diff($today);
-        log::add('parcelTracking', 'debug', '| Result getDaysDifference() - Interval : '.$interval->days.' days');
-        return $interval->days;
+        if ( is_int(strtotime($deliveryDate)) ) {
+            $date = new \DateTime($deliveryDate);
+            $today = new \DateTime();
+            $interval = $date->diff($today);
+            log::add('parcelTracking', 'debug', '| Result getDaysDifference() - Interval : '.$interval->days.' days');
+            return $interval->days;
+        }
+        else { 
+            log::add('parcelTracking', 'debug', '| Result getDaysDifference() - Unknown delivery date');
+            return 0;
+        }
     }
 
     public static function setIsVisibleEqlogics($mode) {
@@ -166,7 +166,7 @@ class parcelTracking extends eqLogic {
                         'name' => $parcelTracking->getName(),
                         'status' => $status,
                         'lastDate' => $lastState['states'][0]['date'],
-                        'lastHour'=> $lastState['states'][0]['hour'],
+                        'lastTime'=> $lastState['states'][0]['time'],
                         'lastLocation' => $lastState['states'][0]['location'],
                         'lastState' => $lastState['states'][0]['status']
                     ];
@@ -178,7 +178,7 @@ class parcelTracking extends eqLogic {
                         'name' => $parcelTracking->getName(),
                         'status' => $status,
                         'lastDate' => '',
-                        'lastHour'=> '',
+                        'lastTime'=> '',
                         'lastLocation' => '',
                         'lastState' => ''
                     ];
@@ -188,46 +188,38 @@ class parcelTracking extends eqLogic {
         return json_encode($list);   
     }
 
-    public static function refreshAll() {
-    
-        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
-            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
-                $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
-                if (!is_object($cmdRefresh) ) {											// Si la commande n'existe pas ou condition non respectée
-                    continue; 															// continue la boucle
-                }
-                $cmdRefresh->execCmd();
-            }
-        }	
-    }
+    public static function buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime) {
 
-    public static function removeParcel($eqLogicId)
-    {
-        $eqLogic = eqLogic::byId($eqLogicId);
-        if( is_object($eqLogic) ) {
-            $eqLogic->remove();
-            log::add('parcelTracking', 'debug', 'Remove parcel (Id : '.$eqLogicId.' - name : '.$eqLogic->getName().')');
-        }
-
-        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
-            $parcelTracking->refreshWidget();
-        }	
-    }
-
-    public static function addParcel($name, $trackingId)
-    {
-        $parcel = new parcelTracking();
-        $parcel->setEqType_name('parcelTracking');
-        $parcel->setName($name);
-        $parcel->setConfiguration('trackingId', $trackingId);
-        $parcel->save();
-        log::add('parcelTracking', 'debug', 'Add parcel (name : '.$name.' - trackingId : '.$trackingId.')');
-
-        parcelTracking::synchronize($trackingId);
+        $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
         
-        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
-            $parcelTracking->refreshWidget();
+        if ( !$formatNotifications ) {
+            $formatNotifications = $lastState;
         }
+        else {
+            $formatNotifications = str_replace("#name#", $name, $formatNotifications);
+            $formatNotifications = str_replace("#trackingId#", $trackingId, $formatNotifications);
+            $formatNotifications = str_replace("#carrier#", $carrier, $formatNotifications);
+            $formatNotifications = str_replace("#status#", $status, $formatNotifications);
+            $formatNotifications = str_replace("#lastState#", $lastState, $formatNotifications);
+            $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
+            $formatNotifications = str_replace("#time#", $lastTime, $formatNotifications);
+        }
+        return $formatNotifications;
+    }
+
+    public static function buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime) {
+
+        $formatTags = config::byKey('formatTags', 'parcelTracking');
+        $tags = arg2array($formatTags);
+        $tags = str_replace("#name#", $name, $tags);
+        $tags = str_replace("#object#", $object, $tags);
+        $tags = str_replace("#trackingId#", $trackingId, $tags);
+        $tags = str_replace("#carrier#", $carrier, $tags);
+        $tags = str_replace("#status#", $status, $tags);
+        $tags = str_replace("#lastState#", $lastState, $tags);
+        $tags = str_replace("#date#", $lastDate, $tags);
+        $tags = str_replace("#time#", $lastTime, $tags);
+        return $tags;
     }
 
 
@@ -238,11 +230,10 @@ class parcelTracking extends eqLogic {
     
         $defaultObject = config::byKey('defaultObject', 'parcelTracking');
         $this->setObject_id($defaultObject);
+        $this->setCategory('default',1);
         $this->setIsEnable(1);
         if ( config::byKey('defaultWidget', 'parcelTracking') == "one" || config::byKey('defaultWidget', 'parcelTracking') == "none") { $this->setIsVisible(0); }
         else { $this->setIsVisible(1); }
-        $this->setConfiguration('destinationCountry', 'France');
-        $this->setConfiguration('apiKey', 1);
         if ( $this->getLogicalId() != 'parcelTracking_widget' ) { $this->setConfiguration('eqLogicType', 'parcel'); }
     }
 
@@ -252,13 +243,6 @@ class parcelTracking extends eqLogic {
 
     // Fonction exécutée automatiquement avant la mise à jour de l'équipement
     public function preUpdate() {
-    
-        /*if (empty($this->getConfiguration('trackingId'))) {
-            throw new Exception('Le numéro de colis ne peut pas être vide');
-        }
-        if (empty($this->getConfiguration('destinationCountry'))) {
-            throw new Exception('Le pays de destination ne peut pas être vide');
-        }*/
     }
 
     // Fonction exécutée automatiquement après la mise à jour de l'équipement
@@ -280,16 +264,23 @@ class parcelTracking extends eqLogic {
             $this->createCmd('origin', __('Origine', __FILE__), 3, 'info', 'string');
             $this->createCmd('destination', __('Destination', __FILE__), 4, 'info', 'string');
             $this->createCmd('states', __('Etats', __FILE__), 5, 'info', 'string');
-            $this->createCmd('lastState', __('Dernier état', __FILE__), 6, 'info', 'string');
-            $this->createCmd('deliveryDate', __('Date de livraison', __FILE__), 7, 'info', 'string');
+            $this->createCmd('lastEvent', __('Dernier évènement', __FILE__), 6, 'info', 'string');
+            $this->createCmd('lastState', __('Dernier état', __FILE__), 7, 'info', 'string');
+            $this->createCmd('deliveryDate', __('Date de livraison', __FILE__), 8, 'info', 'string');
 
-            $this->createCmd('refresh', __('Rafraichir', __FILE__), 8, 'action', 'other');
+            $this->createCmd('refresh', __('Rafraichir', __FILE__), 9, 'action', 'other');
         }
         else { $this->createCmd('refreshAll', __('Rafraichir', __FILE__), 1, 'action', 'other'); }
     }
 
     // Fonction exécutée automatiquement avant la suppression de l'équipement
     public function preRemove() {
+    
+        log::add('parcelTracking', 'debug', '┌─Remove parcel (Id : '.$this->getId().' - name : '.$this->getName().')');
+        $apiKey = config::byKey('apiKey', 'parcelTracking');
+        $myParcel = new parcelTracking_API($apiKey, trim($this->getConfiguration('trackingId')), null);
+        $delete = $myParcel->deleteTrackingId();
+        log::add('parcelTracking', 'debug', '└─Remove OK');
     }
 
     // Fonction exécutée automatiquement après la suppression de l'équipement
@@ -367,217 +358,121 @@ class parcelTracking extends eqLogic {
 
     /*     * **********************Getteur Setteur*************************** */
 
-    public static function synchronize($trackingId)
+    public static function getQuota($apiKey)
     {
-        log::add('parcelTracking', 'debug', '┌─Command execution : synchronize');
+        log::add('parcelTracking', 'debug', '┌─Command execution : getQuota');
+        $myParcel = new parcelTracking_API($apiKey, null, null);
+        $quota = $myParcel->getQuota();
+        log::add('parcelTracking', 'debug', '└─End of quota recovery : ['.$quota->httpCode.']');
+        return json_decode($quota->body);
+    }
+    
+    public static function registerParcel($trackingId)
+    {
+        log::add('parcelTracking', 'debug', '┌─Command execution : registerParcel');
         
         $eqLogic = self::getparcelTrackingEqLogic($trackingId);
-        
-        if ( $eqLogic->getConfiguration('apiKey') != 2 ) {
-            $apiKey = config::byKey('apiKey', 'parcelTracking');
-            log::add('parcelTracking', 'debug', '| API key used : main');
-        }
-        else { 
-            $apiKey = config::byKey('apiKey2', 'parcelTracking');
-            log::add('parcelTracking', 'debug', '| API key used : secondary');
-        }
+        $apiKey = config::byKey('apiKey', 'parcelTracking');
         $language = config::byKey('language', 'parcelTracking');
-        $destinationCountry = $eqLogic->getConfiguration('destinationCountry');
-        $zipcode = $eqLogic->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
                 
-        $myParcel = new parcelTracking_API($apiKey, $language, trim($trackingId), $destinationCountry, $zipcode);
-        log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
+        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language);
+        log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
+        $register = $myParcel->registerTrackingId();
         $result = $myParcel->getTrackingResult();
-        $parcel = json_decode($result->body, true);
-
-        if ( $parcel['error'] == 'SUBSCRIPTION_LIMIT_REACHED') {
-            log::add('parcelTracking', 'error', '| Parcelsapp error : subscription limit reached (10) with this API key');
-        }
-        else if ( !empty($parcel['shipments']) &&  $parcel['shipments'][0] !== null ) {
-            //status
-            if ( isset($parcel['shipments'][0]['status']) ) { $eqLogic->checkAndUpdateCmd('status', $parcel['shipments'][0]['status']); } else { $eqLogic->checkAndUpdateCmd('status', 'not available'); }
-            
-            //carrier
-            if ( isset($parcel['shipments'][0]['carriers'][0]) ) { $eqLogic->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['carriers'][0]); } else { $eqLogic->checkAndUpdateCmd('carrier', 'not available'); }
-            
-            //origin - destination
-            if ( isset($parcel['shipments'][0]['origin']) ) {
-                $eqLogic->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']);
-            }
-            else if ( isset($parcel['shipments'][0]['attributes']) ) {
-                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
-                    if ( $attribute['l'] == 'origin' || $attribute['l'] == 'from' ) { 
-                        $eqLogic->checkAndUpdateCmd('origin', $attribute['val']);
-                        break;
-                    }
-                    else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }
-                }
-            }
-            else { $eqLogic->checkAndUpdateCmd('origin', 'not available'); }
-            
-            if ( isset($parcel['shipments'][0]['destination']) ) {
-                $eqLogic->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']);
-            }
-            else if ( isset($parcel['shipments'][0]['attributes']) ) {
-                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
-                    if ( $attribute['l'] == 'destination' || $attribute['l'] == 'to' ) {
-                        $eqLogic->checkAndUpdateCmd('destination', $attribute['val']);
-                        break;
-                    }
-                    else { $eqLogic->checkAndUpdateCmd('destination', 'not available'); }
-                }
-            }           
-            else { $eqLogic->checkAndUpdateCmd('destination', 'not available'); }
-            
-            //lastState
-            if ( isset($parcel['shipments'][0]['lastState']['status']) ) { $eqLogic->checkAndUpdateCmd('lastState', $parcel['shipments'][0]['lastState']['status']); } else { $eqLogic->checkAndUpdateCmd('lastState', 'not available'); }
-            if ( isset($parcel['shipments'][0]['lastState']['date']) ) {
-                if ( $parcel['shipments'][0]['status'] == 'delivered' ) { $eqLogic->checkAndUpdateCmd('deliveryDate', date('d/m/Y H:i:s', strtotime($parcel['shipments'][0]['lastState']['date']))); }
-                else { $eqLogic->checkAndUpdateCmd('deliveryDate', 'not available'); }
-            }
-            else { $eqLogic->checkAndUpdateCmd('deliveryDate', 'not available'); }
-
-            //states
-            if ( isset($parcel['shipments'][0]['states']) ) { 
-                $states = $parcel['shipments'][0]['states'];
-                $table_temp = array();
-                $table_states = array();
-                foreach ($states as $state) {
-                    if ( isset($state['date']) ) { 
-                        $datetime = new DateTime($state['date'], new DateTimeZone('UTC'));
-                        $d = $datetime->format('d/m/Y');
-                        $h = $datetime->format('H\hi');
-                        $state_date = $d; 
-                        $state_hour = $h;
-                    }
-                    else { 
-                        $state_date = '';
-                        $state_hour = '';
-                    }
-                    if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ' '; }
-                    if ( isset($state['status']) ) { $state_status = str_replace("'", " ",$state['status']); } else { $state_status = ' '; }
-                    $table_temp[] = array( "date" => $state_date, "hour" => $state_hour, "location" => $state_location, "status" => $state_status );
-                }
-                $table_states['states'] = $table_temp;
-                $eqLogic->checkAndUpdateCmd('states', json_encode($table_states));
-            } 
-            else { $eqLogic->checkAndUpdateCmd('states', 'not available'); }
-        }
-
-        log::add('parcelTracking', 'debug', '└─End of synchronisation : ['.$result->httpCode.']');
-        return $result;
+        $eqLogic->updateCmds($result->body);   
+        log::add('parcelTracking', 'debug', '└─End of parcel registration : ['.$register->httpCode.']');
+        return json_decode($register->body);
     }
 
     public function refreshParcelInfo()
     {
-        if ( $this->getConfiguration('apiKey') != 2 ) {
-            $apiKey = config::byKey('apiKey', 'parcelTracking');
-            log::add('parcelTracking', 'debug', '| API key used : main');
-        }
-        else {
-            $apiKey = config::byKey('apiKey2', 'parcelTracking');
-            log::add('parcelTracking', 'debug', '| API key used : secondary');
-        }
-                        
+        $apiKey = config::byKey('apiKey', 'parcelTracking');
         $language = config::byKey('language', 'parcelTracking');
         $trackingId = $this->getConfiguration('trackingId');
-        $destinationCountry = $this->getConfiguration('destinationCountry');
-        $zipcode = $this->getConfiguration('zipcode', config::byKey('defaultZipcode', 'parcelTracking'));
         $notification = false;
 
-        $myParcel = new parcelTracking_API($apiKey, $language, trim($trackingId), $destinationCountry, $zipcode);
-        log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Destination country : '.$destinationCountry.' - Zipcode : '.$zipcode);
+        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language);
+        log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $result = $myParcel->getTrackingResult();
-        $parcel = json_decode($result->body, true);
-
-        if ( !empty($parcel['shipments']) &&  $parcel['shipments'][0] !== null ) {
-            //status
-            if ( isset($parcel['shipments'][0]['status']) ) { $this->checkAndUpdateCmd('status', $parcel['shipments'][0]['status']); } else { $this->checkAndUpdateCmd('status', 'not available'); }
-            
-            //carrier
-            if ( isset($parcel['shipments'][0]['carriers'][0]) ) { $this->checkAndUpdateCmd('carrier', $parcel['shipments'][0]['carriers'][0]); } else { $this->checkAndUpdateCmd('carrier', 'not available'); }
-
-            //origin - destination
-            if ( isset($parcel['shipments'][0]['origin']) ) {
-                $this->checkAndUpdateCmd('origin', $parcel['shipments'][0]['origin']);
-            }
-            else if ( isset($parcel['shipments'][0]['attributes']) ) {
-                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
-                    if ( $attribute['l'] == 'origin' || $attribute['l'] == 'from' ) { 
-                        $this->checkAndUpdateCmd('origin', $attribute['val']);
-                        break;
-                    }
-                    else { $this->checkAndUpdateCmd('origin', 'not available'); }
-                }
-            }
-            else { $this->checkAndUpdateCmd('origin', 'not available'); }
-            
-            if ( isset($parcel['shipments'][0]['destination']) ) {
-                $this->checkAndUpdateCmd('destination', $parcel['shipments'][0]['destination']);
-            }
-            else if ( isset($parcel['shipments'][0]['attributes']) ) {
-                foreach ($parcel['shipments'][0]['attributes'] as $attribute) {
-                    if ( $attribute['l'] == 'destination' || $attribute['l'] == 'to' ) {
-                        $this->checkAndUpdateCmd('destination', $attribute['val']);
-                        break;
-                    }
-                    else { $this->checkAndUpdateCmd('destination', 'not available'); }
-                }
-            }           
-            else { $this->checkAndUpdateCmd('destination', 'not available'); }
-
-            //lastState
-            if ( isset($parcel['shipments'][0]['lastState']['status']) ) { 
-                $lastState = str_replace("'", " ",$parcel['shipments'][0]['lastState']['status']);
-                if ( $this->checklastState($lastState) == true ) { $notification = true; }
-                $this->checkAndUpdateCmd('lastState', $lastState);
-            } else { $this->checkAndUpdateCmd('lastState', 'not available'); }
-            if ( isset($parcel['shipments'][0]['lastState']['date']) ) {
-                if ( $parcel['shipments'][0]['status'] == 'delivered' ) { $this->checkAndUpdateCmd('deliveryDate', date('d/m/Y H:i:s', strtotime($parcel['shipments'][0]['lastState']['date']))); }
-                else { $this->checkAndUpdateCmd('deliveryDate', 'not available'); }
-            } else { $this->checkAndUpdateCmd('deliveryDate', 'not available'); }
-            
-            //states
-            if ( isset($parcel['shipments'][0]['states']) ) { 
-                $states = $parcel['shipments'][0]['states'];
-                $table_temp = array();
-                $table_states = array();
-                foreach ($states as $state) {
-                    if ( isset($state['date']) ) { 
-                        $datetime = new DateTime($state['date'], new DateTimeZone('UTC'));
-                        $d = $datetime->format('d/m/Y');
-                        $h = $datetime->format('H\hi');
-                        $state_date = $d; 
-                        $state_hour = $h;
-                    }
-                    else { 
-                        $state_date = '';
-                        $state_hour = '';
-                    }
-                    if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ''; }
-                    if ( isset($state['status']) ) { $state_status = str_replace("'", " ",$state['status']); } else { $state_status = ''; }
-                    $table_temp[] = array( "date" => $state_date, "hour" => $state_hour, "location" => $state_location, "status" => $state_status );
-                }
-                $table_states['states'] = $table_temp;
-                $this->checkAndUpdateCmd('states', json_encode($table_states));
-            } else { $this->checkAndUpdateCmd('states', 'not available'); }
-        }
-
-        if ( $notification == true ) { $this->sendNotification(); }
+        $this->updateCmds($result->body);    
         log::add('parcelTracking', 'debug', '└─End of parcel info refresh : ['.$result->httpCode.']');
         return $result;
     }
 
-    public function checklastState($lastState) {
+    public function updateCmds($json) {
 
-        $cmd = $this->getCmd('info', 'lastState');
-        $previousState = $cmd->execCmd();
-        if ( $lastState != $previousState ) { 
-            log::add('parcelTracking', 'debug', '| Result checklastState : change' );
+        $parcel = json_decode($json, true);
+        $notification = false;
+
+        if ( $parcel['code'] == 0 ) {
+            //status
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_status']['status']) ) { $this->checkAndUpdateCmd('status', $parcel['data']['accepted'][0]['track_info']['latest_status']['status']); } else { $this->checkAndUpdateCmd('status', __('Indisponible', __FILE__)); }
+            
+            //carrier
+            if ( isset($parcel['data']['accepted'][0]['track_info']['tracking']['providers'][0]['provider']['name']) ) { $this->checkAndUpdateCmd('carrier', $parcel['data']['accepted'][0]['track_info']['tracking']['providers'][0]['provider']['name']); } else { $this->checkAndUpdateCmd('carrier', __('Indisponible', __FILE__)); }
+
+            //origin - destination
+            if ( isset($parcel['data']['accepted'][0]['track_info']['shipping_info']['shipper_address']['country']) ) { $this->checkAndUpdateCmd('origin', $parcel['data']['accepted'][0]['track_info']['shipping_info']['shipper_address']['country']); } else { $this->checkAndUpdateCmd('origin', __('Indisponible', __FILE__)); }
+            if ( isset($parcel['data']['accepted'][0]['track_info']['shipping_info']['recipient_address']['country']) ) { $this->checkAndUpdateCmd('destination', $parcel['data']['accepted'][0]['track_info']['shipping_info']['recipient_address']['country']); } else { $this->checkAndUpdateCmd('destination', __('Indisponible', __FILE__)); }
+
+            //lastState - lastEvent
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', $parcel['data']['accepted'][0]['track_info']['latest_event']['description']); } else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso']) ) {
+                $lastEvent = $parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso'];
+                if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
+                $this->checkAndUpdateCmd('lastEvent', $lastEvent); 
+            }
+            else { $this->checkAndUpdateCmd('lastEvent', __('Indisponible', __FILE__)); }
+            
+            //deliveryDate
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_status']['status']) ) {
+                if ( $parcel['data']['accepted'][0]['track_info']['latest_status']['status'] == 'Delivered' ) {
+                    $this->checkAndUpdateCmd('deliveryDate', $parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso']);
+                }
+                else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
+            }
+            else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
+            
+            //states
+            if ( isset($parcel['data']['accepted'][0]['track_info']['tracking']['providers'][0]['events']) ) { 
+                $states = $parcel['data']['accepted'][0]['track_info']['tracking']['providers'][0]['events'];
+                $table_temp = array();
+                $table_states = array();
+                foreach ($states as $state) {
+                    if ( isset($state['time_iso']) ) { 
+                        $datetime = new DateTime($state['time_iso']);
+                        $d = $datetime->format('d/m/Y');
+                        $t = $datetime->format('H\hi');
+                        $state_date = $d; 
+                        $state_time = $t;
+                    }
+                    else { 
+                        $state_date = '';
+                        $state_time = '';
+                    }
+                    if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ''; }
+                    if ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); } else { $state_status = ''; }
+                    $table_temp[] = array( "date" => $state_date, "time" => $state_time, "location" => $state_location, "status" => $state_status );
+                }
+                $table_states['states'] = $table_temp;
+                $this->checkAndUpdateCmd('states', json_encode($table_states));
+            } else { $this->checkAndUpdateCmd('states', __('Indisponible', __FILE__)); }
+        }
+
+        if ( $notification == true ) { $this->sendNotification(); }
+    }
+    
+    public function checklastEvent($lastEvent) {
+        
+        $cmd = $this->getCmd('info', 'lastEvent');
+        $previousEvent = $cmd->execCmd();
+        if ( $lastEvent != $previousEvent ) {
+            if ( $previousEvent != null ) { log::add('parcelTracking', 'debug', '| Result checklastEvent : new event - '.$lastEvent.' != '.$previousEvent); }
+            else { log::add('parcelTracking', 'debug', '| Result checklastEvent : new event - '.$lastEvent.' != null'); }
             return true;
         }
         else {
-            log::add('parcelTracking', 'debug', '| Result checklastState : no change' );
+            log::add('parcelTracking', 'debug', '| Result checklastEvent : no change - '.$lastEvent.' == '.$previousEvent );
             return false;
         }
     }
@@ -593,7 +488,7 @@ class parcelTracking extends eqLogic {
         $status = $this->getCmd('info','status')->execCmd();
         $lastState = $info['states'][0]['status'];
         $lastDate = $info['states'][0]['date'];
-        $lastHour = $info['states'][0]['hour'];
+        $lastTime = $info['states'][0]['time'];
         
         // Cmd
         $cmdNotifications = config::byKey('cmdNotifications', 'parcelTracking');
@@ -601,7 +496,7 @@ class parcelTracking extends eqLogic {
         if ( $cmdNotifications != null) {
             if ( $formatNotifications != null ) {
                 $title = 'Suivi colis';
-                $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
+                $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime);
             }
             else {
                 $title = 'Suivi colis '.$trackingId.' - '.$name;
@@ -629,7 +524,7 @@ class parcelTracking extends eqLogic {
         // Scenario
         $scenarioNotifications = config::byKey('scenarioNotifications', 'parcelTracking');
         if ( $scenarioNotifications != null) {
-            $tags = $this->buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour);
+            $tags = $this->buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime);
             $scenario = scenario::byString($scenarioNotifications);
             $scenario->setTags($tags);
             $scenario->execute();
@@ -637,38 +532,45 @@ class parcelTracking extends eqLogic {
         }
     }
 
-    public function buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
-
-        $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
-        
-        if ( !$formatNotifications ) {
-            $formatNotifications = $lastState;
-        }
-        else {
-            $formatNotifications = str_replace("#name#", $name, $formatNotifications);
-            $formatNotifications = str_replace("#trackingId#", $trackingId, $formatNotifications);
-            $formatNotifications = str_replace("#carrier#", $carrier, $formatNotifications);
-            $formatNotifications = str_replace("#status#", $status, $formatNotifications);
-            $formatNotifications = str_replace("#lastState#", $lastState, $formatNotifications);
-            $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
-            $formatNotifications = str_replace("#hour#", $lastHour, $formatNotifications);
-        }
-        return $formatNotifications;
+    public static function refreshAll() {
+    
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
+                $cmdRefresh = $parcelTracking->getCmd(null, 'refresh');		
+                if (!is_object($cmdRefresh) ) {
+                    continue;
+                }
+                $cmdRefresh->execCmd();
+            }
+        }	
     }
 
-    public function buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastHour) {
+    public static function removeParcel($eqLogicId)
+    {
+        $eqLogic = eqLogic::byId($eqLogicId);
+        if( is_object($eqLogic) ) {
+            $eqLogic->remove();
+        }
 
-        $formatTags = config::byKey('formatTags', 'parcelTracking');
-        $tags = arg2array($formatTags);
-        $tags = str_replace("#name#", $name, $tags);
-        $tags = str_replace("#object#", $object, $tags);
-        $tags = str_replace("#trackingId#", $trackingId, $tags);
-        $tags = str_replace("#carrier#", $carrier, $tags);
-        $tags = str_replace("#status#", $status, $tags);
-        $tags = str_replace("#lastState#", $lastState, $tags);
-        $tags = str_replace("#date#", $lastDate, $tags);
-        $tags = str_replace("#hour#", $lastHour, $tags);
-        return $tags;
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            $parcelTracking->refreshWidget();
+        }	
+    }
+
+    public static function addParcel($name, $trackingId)
+    {
+        $parcel = new parcelTracking();
+        $parcel->setEqType_name('parcelTracking');
+        $parcel->setName($name);
+        $parcel->setConfiguration('trackingId', $trackingId);
+        $parcel->save();
+        log::add('parcelTracking', 'debug', 'Add parcel (name : '.$name.' - trackingId : '.$trackingId.')');
+
+        parcelTracking::registerParcel($trackingId);
+        
+        foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		   
+            $parcelTracking->refreshWidget();
+        }
     }
 
 }
