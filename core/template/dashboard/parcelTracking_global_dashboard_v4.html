@@ -94,7 +94,7 @@
 				else { table_html += '<span class="col-xs-1"><img src="plugins/parcelTracking/core/img/status-exception.png" height="20" title="{{Inconnu}}"/></span>'; }
 				table_html += '<span class="col-xs-10 label span-item-title">'+name+' ('+trackingId+')</span>';
 				table_html += '<span class="col-xs-1 fas fa-trash cursor eqLogicAction" onclick="removeParcel('+id+',\''+name+'\')" title="{{Supprimer le colis}}"></span>'
-				table_html += '<span class="col-xs-12 label span-item-value">'+lastDate+' '+lastTime+'&nbsp&nbsp&nbsp&nbsp&nbsp'+lastState+'<br>('+lastLocation+')</span>';
+				table_html += '<span class="col-xs-12 label span-item-value">'+lastDate+' '+lastTime+'&nbsp&nbsp&nbsp&nbsp&nbsp'+lastState+'<br>'+lastLocation+'</span>';
 				table_html +=  '</li>';
 			});
 			table_html += '</ul>';

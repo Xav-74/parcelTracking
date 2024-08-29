@@ -146,10 +146,53 @@ function register()  {
 	});
 };
 
+
+/* Fonction permettant la mise à jour de l'enregistrement du colis chez 17Track */
+function update()  {
+	
+	$('#div_alert').showAlert({message: '{{Mise à jour en cours}}', level: 'warning'});	
+	$.ajax({
+		type: "POST",
+		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+		data: {
+			action: "update",
+			trackingId: $('.eqLogicAttr[data-l2key=trackingId]').value(),
+            },
+		dataType: 'json',
+			error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+			},
+		success: function (data) { 			
+
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour de l\'enregistrement du colis}}', level: 'danger'});
+				return;
+			}
+			else  {
+				if ( data.result.code == 0 && data.result.data?.accepted?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+					$('#div_alert').showAlert({message: '{{Mise à jour terminée avec succès}}', level: 'success'});
+				}
+				else if ( data.result.code == 0 && data.result.data?.rejected?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+					$('#div_alert').showAlert({message: data.result.data.rejected[0].error.message, level: 'warning'});
+				}
+				else { $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour de l\'enregistrement du colis}}', level: 'danger'}); }
+			}
+		}
+	});
+};
+
+
 document.getElementById('bt_register').addEventListener('click', function() {
     var button = document.querySelector('.btn[data-action="save"]');
     button.click();
     setTimeout(register, 2000);
+});
+
+
+document.getElementById('bt_update').addEventListener('click', function() {
+    var button = document.querySelector('.btn[data-action="save"]');
+    button.click();
+    setTimeout(update, 2000);
 });
 
 

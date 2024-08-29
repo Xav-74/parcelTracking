@@ -9,6 +9,7 @@ class parcelTracking_API {
 	
     const API_URL_TRACKING = 'https://api.17track.net/track/v2.2/gettrackinfo';
 	const API_URL_REGISTER = 'https://api.17track.net/track/v2.2/register';
+	const API_URL_UPDATE = 'https://api.17track.net/track/v2.2/changeinfo';
 	const API_URL_DELETE = 'https://api.17track.net/track/v2.2/deletetrack';
 	const API_URL_QUOTA = 'https://api.17track.net/track/v2.2/getquota';
 	
@@ -18,14 +19,21 @@ class parcelTracking_API {
 	private $trackingId = null;
 	/* @var string language */
 	private $language = null;
+	/* @var int carrier */
+	private $carrier = null;
+	/* @var string param */
+	private $param = null;
 			
 	
-	public function __construct($apiKey, $trackingId, $language) {
+	public function __construct($apiKey, $trackingId, $language, $carrier, $param) {
 		
 		$this->apiKey = $apiKey;
 		$this->trackingId = $trackingId;
 		if ( $language == 'default' ) { $this->language = ''; }
 		else { $this->language = $language; }
+		if ( $carrier == '' ) { $this->carrier = ''; }
+		else { $this->carrier = (int)$carrier; }
+		$this->param = $param;
 	}
 
 
@@ -55,6 +63,7 @@ class parcelTracking_API {
         // Set data
         $data_str = json_encode($data);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_str);
+		//log::add('parcelTracking', 'debug', '| Data : '.$data_str);
         
         // Add extra headers
         if (count($extra_headers)) {
@@ -96,7 +105,10 @@ class parcelTracking_API {
 			'Content-Type: application/json'
 		];
 		$data = [
-			[ 'number' => $this->trackingId	]
+			[ 
+				'number' => $this->trackingId,
+				'carrier' => $this->carrier
+			]
 		];
 		
 		$result = $this->_request($url, $method, $data, $headers);
@@ -118,7 +130,9 @@ class parcelTracking_API {
 		$data = [
 			[
 				'number' => $this->trackingId,
-				'lang' => $this->language
+				'lang' => $this->language,
+				'carrier' => $this->carrier,
+				'param' => $this->param
 			]
 		];
 		
@@ -126,6 +140,33 @@ class parcelTracking_API {
 		//$response = json_decode($result->body);
 
 		log::add('parcelTracking', 'debug', '| Result registerTrackingId() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
+	}
+
+
+	public function updateRegistrationInfo() {
+
+		$url = $this::API_URL_UPDATE;
+		$method = 'POST';
+		$headers = [
+			'17token: '.$this->apiKey,
+			'Content-Type: application/json'
+		];
+		$data = [
+			[
+				'number' => $this->trackingId,
+				'carrier' => $this->carrier,
+				'items' => [
+					'lang' => $this->language,
+					'param' => $this->param
+				]				
+			]
+		];
+		
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result updateRegistrationInfo() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
 		return $result;
 	}
 

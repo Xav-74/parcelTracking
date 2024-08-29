@@ -204,10 +204,40 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 
+							<div id="parcel" class="form-group">
+								<label class="col-sm-4 control-label"> {{Transporteur}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Choisissez le transporteur utilisé}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="carrier">
+										<option value="">{{Aucun}}</option>
+										<?php
+											$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
+											$carriers = json_decode($json, true);
+
+											foreach($carriers as $carrier) {
+												//echo "<option value=\"{$carrier['key']}\">{$carrier['_name']}</option>";
+												echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
+											}
+										?>
+									</select>
+								</div>
+							</div>
+
+							<div id="parcel" class="form-group">
+								<label class="col-sm-4 control-label">{{Paramètre additionnel}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Renseignez le paramètre additionnel demandé par le transporteur (code postal, code pays, ...)}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="additionalParameter" placeholder="">
+								</div>
+							</div>
+
 							<div id="parcel" class="form-group">						
-									<label class="col-sm-4 control-label help" data-help="{{La synchronisation permet de récupérer les informations du colis sans attendre le prochain cron}}">{{Actions}}</label>	
+									<label class="col-sm-4 control-label help" data-help="{{L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre optionnel).}}">{{Actions}}</label>	
 									<div class="col-sm-6">
-										<a class="btn btn-primary btn-sm cmdAction" id="bt_register"><i class="fas fa-sync"></i> {{Enregistrement}}</a>
+										<a class="btn btn-primary btn-sm cmdAction" id="bt_register"><i class="fas fa-save"></i> {{Enregistrement}}</a>
+										<a class="btn btn-warning btn-sm cmdAction" id="bt_update"><i class="fas fa-pencil-alt"></i> {{Mise à jour}}</a>
 									</div>	
 							</div>
 					

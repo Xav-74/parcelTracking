@@ -278,7 +278,7 @@ class parcelTracking extends eqLogic {
     
         log::add('parcelTracking', 'debug', '┌─Remove parcel (Id : '.$this->getId().' - name : '.$this->getName().')');
         $apiKey = config::byKey('apiKey', 'parcelTracking');
-        $myParcel = new parcelTracking_API($apiKey, trim($this->getConfiguration('trackingId')), null);
+        $myParcel = new parcelTracking_API($apiKey, trim($this->getConfiguration('trackingId')), null, null, null);
         $delete = $myParcel->deleteTrackingId();
         log::add('parcelTracking', 'debug', '└─Remove OK');
     }
@@ -361,7 +361,7 @@ class parcelTracking extends eqLogic {
     public static function getQuota($apiKey)
     {
         log::add('parcelTracking', 'debug', '┌─Command execution : getQuota');
-        $myParcel = new parcelTracking_API($apiKey, null, null);
+        $myParcel = new parcelTracking_API($apiKey, null, null, null, null);
         $quota = $myParcel->getQuota();
         log::add('parcelTracking', 'debug', '└─End of quota recovery : ['.$quota->httpCode.']');
         return json_decode($quota->body);
@@ -371,16 +371,39 @@ class parcelTracking extends eqLogic {
     {
         log::add('parcelTracking', 'debug', '┌─Command execution : registerParcel');
         
-        $eqLogic = self::getparcelTrackingEqLogic($trackingId);
+        $eqLogic = self::getparcelTrackingEqLogic(trim($trackingId));
         $apiKey = config::byKey('apiKey', 'parcelTracking');
         $language = config::byKey('language', 'parcelTracking');
+        $carrier = $eqLogic->getConfiguration('carrier');
+        $param = $eqLogic->getConfiguration('additionalParameter');
                 
-        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language);
+        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $register = $myParcel->registerTrackingId();
+        sleep(10);
         $result = $myParcel->getTrackingResult();
         $eqLogic->updateCmds($result->body);   
         log::add('parcelTracking', 'debug', '└─End of parcel registration : ['.$register->httpCode.']');
+        return json_decode($register->body);
+    }
+
+    public static function updateParcelRegistration($trackingId)
+    {
+        log::add('parcelTracking', 'debug', '┌─Command execution : updateParcelRegistration');
+        
+        $eqLogic = self::getparcelTrackingEqLogic(trim($trackingId));
+        $apiKey = config::byKey('apiKey', 'parcelTracking');
+        $language = config::byKey('language', 'parcelTracking');
+        $carrier = $eqLogic->getConfiguration('carrier');
+        $param = $eqLogic->getConfiguration('additionalParameter');
+                        
+        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
+        log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
+        $register = $myParcel->updateRegistrationInfo();
+        sleep(10);
+        $result = $myParcel->getTrackingResult();
+        $eqLogic->updateCmds($result->body);   
+        log::add('parcelTracking', 'debug', '└─End of update parcel registration : ['.$register->httpCode.']');
         return json_decode($register->body);
     }
 
@@ -389,9 +412,11 @@ class parcelTracking extends eqLogic {
         $apiKey = config::byKey('apiKey', 'parcelTracking');
         $language = config::byKey('language', 'parcelTracking');
         $trackingId = $this->getConfiguration('trackingId');
+        $carrier = $this->getConfiguration('carrier');
+        $param = $this->getConfiguration('additionalParameter');
         $notification = false;
 
-        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language);
+        $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $result = $myParcel->getTrackingResult();
         $this->updateCmds($result->body);    
@@ -404,7 +429,7 @@ class parcelTracking extends eqLogic {
         $parcel = json_decode($json, true);
         $notification = false;
 
-        if ( $parcel['code'] == 0 ) {
+        if ( $parcel['code'] == 0 && isset($parcel['data']['accepted'][0]['number']) ) {
             //status
             if ( isset($parcel['data']['accepted'][0]['track_info']['latest_status']['status']) ) { $this->checkAndUpdateCmd('status', $parcel['data']['accepted'][0]['track_info']['latest_status']['status']); } else { $this->checkAndUpdateCmd('status', __('Indisponible', __FILE__)); }
             

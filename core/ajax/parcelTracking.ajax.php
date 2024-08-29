@@ -49,6 +49,11 @@ try {
 		ajax::success($result);
 	}
 
+    if (init('action') == 'update') {
+		$result = parcelTracking::updateParcelRegistration(init('trackingId'));
+		ajax::success($result);
+	}
+
     if (init('action') == 'getQuota') {
 		$result = parcelTracking::getQuota(init('apiKey'));
 		ajax::success($result);

@@ -142,7 +142,7 @@
 				var table_html= "";
 				table_html += '<ul class="list-group" style="text-align: left">';
 				jQuery.each(table.states,function(key,state){
-					table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;">'+state.date+'<br>'+state.time+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>('+state.location+')</span></li>'
+					table_html += '<li class="list-group-item"><span class="label span-item" style="width:90px;">'+state.date+'<br>'+state.time+'</span><img src="plugins/parcelTracking/core/img/bullet-point.png" height="60"/><span class="label span-item" style="width:330px; text-align:left;">'+state.status+'<br>'+state.location+'</span></li>'
 				});
 				table_html += '</ul>';
 				$('.table_states#id#').empty().append(table_html);
