@@ -103,7 +103,7 @@
         "Etat": "State",
         "Gestion": "Management",
         "Informations": "Information",
-        "L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre optionnel).": "Registration is a mandatory step for retrieving package information from the 17Track APIs. Updating the registration allows you to modify the options (carrier & optional parameters).",
+        "L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre optionnel).": "Registration is a mandatory step for retrieving parcel information from the 17Track APIs. Updating the registration allows you to modify the options (carrier & additional parameters).",
         "Logical ID": "Logical ID",
         "Mes colis": "My parcels",
         "Mise à jour": "Update",

@@ -59,6 +59,11 @@ try {
 		ajax::success($result);
 	}
 
+    if (init('action') == 'getJSON') {
+		$result = file_get_contents( dirname(__FILE__).'/../../data/apicarrier.param.json');
+		ajax::success($result);
+	}
+
     throw new Exception(__('Aucune méthode correspondante à', __FILE__) . ' : ' . init('action'));
     /*     * *********Catch exeption*************** */
 }

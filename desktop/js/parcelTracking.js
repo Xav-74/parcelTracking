@@ -159,7 +159,7 @@ function update()  {
 			trackingId: $('.eqLogicAttr[data-l2key=trackingId]').value(),
             },
 		dataType: 'json',
-			error: function (request, status, error) {
+		error: function (request, status, error) {
 			handleAjaxError(request, status, error);
 			},
 		success: function (data) { 			
@@ -193,6 +193,40 @@ document.getElementById('bt_update').addEventListener('click', function() {
     var button = document.querySelector('.btn[data-action="save"]');
     button.click();
     setTimeout(update, 2000);
+});
+
+
+/* Récupération des infos concernant les paramètres additionnels */
+var json;
+$.ajax({
+	type: "POST",
+	url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+	data: {
+		action: "getJSON",
+	},
+	dataType: 'json',
+	error: function (request, status, error) {
+		handleAjaxError(request, status, error);
+	},
+	success: function (data) { 		
+		json = data.result;
+	}
+});
+
+document.getElementById('sel_carrier').addEventListener('change', function() {
+	jsonArray = JSON.parse(json);
+	const code = document.getElementById('sel_carrier').value;
+	var htmlContent = '';
+	var info = document.getElementById('info');
+	info.innerHTML = '';
+	
+	jsonArray.forEach(carrier => {
+		if ( carrier['Carrier Code'] === code ) {
+			htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['Type']+' (Example : '+carrier['Example']+')';
+		}		
+	});
+
+	info.innerHTML = htmlContent;
 });
 
 

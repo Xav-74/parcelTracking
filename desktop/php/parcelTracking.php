@@ -216,11 +216,11 @@ $eqLogics = eqLogic::byType($plugin->getId());
 											$carriers = json_decode($json, true);
 
 											foreach($carriers as $carrier) {
-												//echo "<option value=\"{$carrier['key']}\">{$carrier['_name']}</option>";
 												echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
 											}
 										?>
 									</select>
+									<span id="info" style="font-size: 12px"></span>
 								</div>
 							</div>
 
@@ -234,7 +234,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<div id="parcel" class="form-group">						
-									<label class="col-sm-4 control-label help" data-help="{{L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre optionnel).}}">{{Actions}}</label>	
+									<label class="col-sm-4 control-label help" data-help="{{L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre additionel).}}">{{Actions}}</label>	
 									<div class="col-sm-6">
 										<a class="btn btn-primary btn-sm cmdAction" id="bt_register"><i class="fas fa-save"></i> {{Enregistrement}}</a>
 										<a class="btn btn-warning btn-sm cmdAction" id="bt_update"><i class="fas fa-pencil-alt"></i> {{Mise à jour}}</a>
