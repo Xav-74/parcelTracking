@@ -121,7 +121,17 @@
 		jeedom.cmd.update['#destination_id#']({display_value:'#destination#'});
 
 		jeedom.cmd.update['#deliveryDate_id#'] = function(_options) {
-			$('.Cmd#deliveryDate_id#').empty().append('<span>'+_options.display_value+'</span>');
+			if ( !isNaN(Date.parse(_options.display_value)) ) {
+				var date = new Date(_options.display_value);
+				var day = String(date.getDate()).padStart(2, '0');
+				var month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois sont indexés à partir de 0
+				var year = date.getFullYear();
+				var hours = String(date.getHours()).padStart(2, '0');
+				var minutes = String(date.getMinutes()).padStart(2, '0');
+				var formattedDateTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+				$('.Cmd#deliveryDate_id#').empty().append('<span>'+formattedDateTime+'</span>');
+			}
+			else { $('.Cmd#deliveryDate_id#').empty().append('<span>'+_options.display_value+'</span>'); }
 		}
 		jeedom.cmd.update['#deliveryDate_id#']({display_value:'#deliveryDate#'});
 		
