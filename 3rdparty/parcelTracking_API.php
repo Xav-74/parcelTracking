@@ -9,7 +9,8 @@ class parcelTracking_API {
 	
     const API_URL_TRACKING = 'https://api.17track.net/track/v2.2/gettrackinfo';
 	const API_URL_REGISTER = 'https://api.17track.net/track/v2.2/register';
-	const API_URL_UPDATE = 'https://api.17track.net/track/v2.2/changeinfo';
+	const API_URL_UPDATE_CARRIER = 'https://api.17track.net/track/v2.2/changecarrier';
+	const API_URL_UPDATE_INFO = 'https://api.17track.net/track/v2.2/changeinfo';
 	const API_URL_DELETE = 'https://api.17track.net/track/v2.2/deletetrack';
 	const API_URL_QUOTA = 'https://api.17track.net/track/v2.2/getquota';
 	
@@ -144,9 +145,32 @@ class parcelTracking_API {
 	}
 
 
+	public function updateRegistrationCarrier() {
+
+		$url = $this::API_URL_UPDATE_CARRIER;
+		$method = 'POST';
+		$headers = [
+			'17token: '.$this->apiKey,
+			'Content-Type: application/json'
+		];
+		$data = [
+			[
+				'number' => $this->trackingId,
+				'carrier_new' => $this->carrier,
+			]
+		];
+		
+		$result = $this->_request($url, $method, $data, $headers);
+		//$response = json_decode($result->body);
+
+		log::add('parcelTracking', 'debug', '| Result updateRegistrationCarrier() request : ['.$result->httpCode.'] - '.str_replace('\n', '', $result->body));
+		return $result;
+	}
+		
+	
 	public function updateRegistrationInfo() {
 
-		$url = $this::API_URL_UPDATE;
+		$url = $this::API_URL_UPDATE_INFO;
 		$method = 'POST';
 		$headers = [
 			'17token: '.$this->apiKey,

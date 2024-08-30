@@ -380,11 +380,10 @@ class parcelTracking extends eqLogic {
         $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $register = $myParcel->registerTrackingId();
-        sleep(10);
         $result = $myParcel->getTrackingResult();
         $eqLogic->updateCmds($result->body);   
-        log::add('parcelTracking', 'debug', '└─End of parcel registration : ['.$register->httpCode.']');
-        return json_decode($register->body);
+        log::add('parcelTracking', 'debug', '└─End of parcel registration : ['.$result->httpCode.']');
+        return json_decode($result->body);
     }
 
     public static function updateParcelRegistration($trackingId)
@@ -399,12 +398,12 @@ class parcelTracking extends eqLogic {
                         
         $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
-        $register = $myParcel->updateRegistrationInfo();
-        sleep(10);
+        $carrier = $myParcel->updateRegistrationCarrier();
+        $info = $myParcel->updateRegistrationInfo();
         $result = $myParcel->getTrackingResult();
         $eqLogic->updateCmds($result->body);   
-        log::add('parcelTracking', 'debug', '└─End of update parcel registration : ['.$register->httpCode.']');
-        return json_decode($register->body);
+        log::add('parcelTracking', 'debug', '└─End of update parcel registration : ['.$result->httpCode.']');
+        return json_decode($result->body);
     }
 
     public function refreshParcelInfo()
@@ -414,8 +413,7 @@ class parcelTracking extends eqLogic {
         $trackingId = $this->getConfiguration('trackingId');
         $carrier = $this->getConfiguration('carrier');
         $param = $this->getConfiguration('additionalParameter');
-        $notification = false;
-
+        
         $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $result = $myParcel->getTrackingResult();
