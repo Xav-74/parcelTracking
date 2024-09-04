@@ -106,7 +106,7 @@
         "Etat": "State",
         "Gestion": "Management",
         "Informations": "Information",
-        "L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track ": "Registration is a mandatory step for retrieving package information from the 17Track APIs",
+        "L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track ": "Registration is a mandatory step for retrieving parcel information from the 17Track APIs",
         "Logical ID": "Logical ID",
         "Mes colis": "My parcels",
         "Mettre à jour le paramètre additionnel<br\/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !": "Update additional parameter<br\/>ATTENTION: A first registration must have already been successfully completed!",
