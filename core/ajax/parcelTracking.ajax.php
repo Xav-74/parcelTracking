@@ -49,8 +49,13 @@ try {
 		ajax::success($result);
 	}
 
-    if (init('action') == 'update') {
-		$result = parcelTracking::updateParcelRegistration(init('trackingId'));
+    if (init('action') == 'updateCarrier') {
+		$result = parcelTracking::updateParcelCarrier(init('trackingId'));
+		ajax::success($result);
+	}
+
+    if (init('action') == 'updateInfo') {
+		$result = parcelTracking::updateParcelInfo(init('trackingId'));
 		ajax::success($result);
 	}
 

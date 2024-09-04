@@ -45,7 +45,7 @@ if (!isConnect()) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input id="div_quota" class="form-control configKey" data-l1key="quota" placeholder="xxx / xxx" value="" readonly/>
                 <span class="input-group-btn" title="{{Vérifier}}">
-                    <a id="bt_getQuota" class="btn btn-primary"><i class="fas fa-check-square"></i></a>
+                    <a id="bt_getQuota" class="btn btn-warning"><i class="fas fa-check-square"></i></a>
                 </span>
             </div>
         </div>

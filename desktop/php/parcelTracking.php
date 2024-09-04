@@ -209,17 +209,22 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Choisissez le transporteur utilisé}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="carrier">
-										<option value="">{{Aucun}}</option>
-										<?php
-											$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
-											$carriers = json_decode($json, true);
+									<div class="input-group" style="margin-bottom:0px !important">
+										<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="carrier">
+											<option value="">{{Aucun}}</option>
+											<?php
+												$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
+												$carriers = json_decode($json, true);
 
-											foreach($carriers as $carrier) {
-												echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
-											}
-										?>
-									</select>
+												foreach($carriers as $carrier) {
+													echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
+												}
+											?>
+										</select>
+										<span class="input-group-btn">
+											<a class="btn btn-warning cmdAction" id="bt_updateCarrier" title="{{Mettre à jour le transporteur<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
+										</span>
+									</div>
 									<span id="info" style="font-size: 12px"></span>
 								</div>
 							</div>
@@ -229,15 +234,19 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Renseignez le paramètre additionnel demandé par le transporteur (code postal, code pays, ...)}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="additionalParameter" placeholder="">
+									<div class="input-group" style="margin-bottom:0px !important">
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="additionalParameter" placeholder="">
+										<span class="input-group-btn">
+											<a class="btn btn-warning cmdAction" id="bt_updateInfo" title="{{Mettre à jour le paramètre additionnel<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
+										</span>
+									</div>
 								</div>
 							</div>
 
 							<div id="parcel" class="form-group">						
-									<label class="col-sm-4 control-label help" data-help="{{L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track. La mise à jour de l'enregistrement permet de modifier les options (transporteur & paramètre additionel).}}">{{Actions}}</label>	
+									<label class="col-sm-4 control-label help" data-help="{{L'enregistrement est une étape obligatoire pour récupérer les informations du colis depuis les API 17Track }}">{{Actions}}</label>	
 									<div class="col-sm-6">
 										<a class="btn btn-primary btn-sm cmdAction" id="bt_register"><i class="fas fa-save"></i> {{Enregistrement}}</a>
-										<a class="btn btn-warning btn-sm cmdAction" id="bt_update"><i class="fas fa-pencil-alt"></i> {{Mise à jour}}</a>
 									</div>	
 							</div>
 					
