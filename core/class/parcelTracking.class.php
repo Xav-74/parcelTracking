@@ -37,7 +37,7 @@ class parcelTracking extends eqLogic {
 
     /*     * ***********************Methode static*************************** */
 
-    public static function cronHourly() {
+    /*public static function cronHourly() {
     
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {		    // type = parcelTracking et eqLogic enable
             if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
@@ -50,7 +50,7 @@ class parcelTracking extends eqLogic {
                 $cmdRefresh->execCmd();
             }
         }	
-    }
+    }*/
 
     public static function cronDaily() {
         
@@ -497,6 +497,68 @@ class parcelTracking extends eqLogic {
             } else { $this->checkAndUpdateCmd('states', __('Indisponible', __FILE__)); }
         }
 
+        if ( $notification == true ) { $this->sendNotification(); }
+    }
+
+    public function webhookUpdateCmds($json) {
+
+        $parcel = json_decode($json, true);
+        $notification = false;
+        log::add('parcelTracking', 'debug', '| Update cmds - Parcel trackingId : '.$parcel['data']['number']);
+
+        //status
+        if ( isset($parcel['data']['track_info']['latest_status']['status']) ) { $this->checkAndUpdateCmd('status', $parcel['data']['track_info']['latest_status']['status']); } else { $this->checkAndUpdateCmd('status', __('Indisponible', __FILE__)); }
+            
+        //carrier
+        if ( isset($parcel['data']['track_info']['tracking']['providers'][0]['provider']['name']) ) { $this->checkAndUpdateCmd('carrier', $parcel['data']['track_info']['tracking']['providers'][0]['provider']['name']); } else { $this->checkAndUpdateCmd('carrier', __('Indisponible', __FILE__)); }
+
+        //origin - destination
+        if ( isset($parcel['data']['track_info']['shipping_info']['shipper_address']['country']) ) { $this->checkAndUpdateCmd('origin', $parcel['data']['track_info']['shipping_info']['shipper_address']['country']); } else { $this->checkAndUpdateCmd('origin', __('Indisponible', __FILE__)); }
+        if ( isset($parcel['data']['track_info']['shipping_info']['recipient_address']['country']) ) { $this->checkAndUpdateCmd('destination', $parcel['data']['track_info']['shipping_info']['recipient_address']['country']); } else { $this->checkAndUpdateCmd('destination', __('Indisponible', __FILE__)); }
+
+        //lastState - lastEvent
+        if ( isset($parcel['data']['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', $parcel['data']['track_info']['latest_event']['description']); } else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+        if ( isset($parcel['data']['track_info']['latest_event']['time_iso']) ) {
+            $lastEvent = $parcel['data']['track_info']['latest_event']['time_iso'];
+            if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
+            $this->checkAndUpdateCmd('lastEvent', $lastEvent); 
+        }
+        else { $this->checkAndUpdateCmd('lastEvent', __('Indisponible', __FILE__)); }
+            
+        //deliveryDate
+        if ( isset($parcel['data']['track_info']['latest_status']['status']) ) {
+            if ( $parcel['data']['track_info']['latest_status']['status'] == 'Delivered' ) {
+                $this->checkAndUpdateCmd('deliveryDate', $parcel['data']['track_info']['latest_event']['time_iso']);
+            }
+            else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
+        }
+        else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
+            
+        //states
+        if ( isset($parcel['data']['track_info']['tracking']['providers'][0]['events']) ) { 
+            $states = $parcel['data']['track_info']['tracking']['providers'][0]['events'];
+            $table_temp = array();
+            $table_states = array();
+            foreach ($states as $state) {
+                if ( isset($state['time_iso']) ) { 
+                    $datetime = new DateTime($state['time_iso']);
+                    $d = $datetime->format('d/m/Y');
+                    $t = $datetime->format('H\hi');
+                    $state_date = $d; 
+                    $state_time = $t;
+                }
+                else { 
+                    $state_date = '';
+                    $state_time = '';
+                }
+                if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ''; }
+                if ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); } else { $state_status = ''; }
+                $table_temp[] = array( "date" => $state_date, "time" => $state_time, "location" => $state_location, "status" => $state_status );
+            }
+            $table_states['states'] = $table_temp;
+            $this->checkAndUpdateCmd('states', json_encode($table_states));
+        } else { $this->checkAndUpdateCmd('states', __('Indisponible', __FILE__)); }
+        
         if ( $notification == true ) { $this->sendNotification(); }
     }
     
