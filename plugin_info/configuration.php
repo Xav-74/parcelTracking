@@ -105,7 +105,7 @@ if (!isConnect()) {
         </label>
         <div class="col-sm-4">
             <div class="input-group" style="margin-bottom:0px !important">
-                <input class="form-control configKey" data-l1key="cmdNotifications"/>
+                <input id="cmdNotifications" class="form-control configKey" data-l1key="cmdNotifications"/>
                 <span class="input-group-btn">
                     <a id="bt_selectCmdNotifications" class="btn btn-primary listCmdAction"><i class="fa fa-list-alt"></i></a>
                 </span>
@@ -118,7 +118,12 @@ if (!isConnect()) {
             <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <input class="form-control configKey" data-l1key="formatNotifications"/>
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input class="form-control configKey" data-l1key="formatNotifications"/>
+                <span class="input-group-btn" title="{{Test des notifications}}">
+                    <a id="bt_testNotifications" class="btn btn-warning"><i class="fas fa-comment"></i></a>
+                </span>
+            </div>
         </div>
     </div>
 
@@ -130,7 +135,7 @@ if (!isConnect()) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input class="form-control configKey" data-l1key="scenarioNotifications"/>
                 <span class="input-group-btn">
-                    <a id="bt_selectScenarioNotifications" class="btn btn-primary"><i class="fa fa-list-alt"></i></a>
+                    <a id="bt_selectScenarioNotifications" class="btn btn-primary listCmdAction"><i class="fa fa-list-alt"></i></a>
                 </span>
             </div>
         </div>
@@ -215,6 +220,38 @@ if (!isConnect()) {
                         $('#div_alert').showAlert({message: '{{Informations récupérées avec succès}}', level: 'success'});
                     }
                     else { $('#div_alert').showAlert({message: '{{Erreur lors de la récupération des informations}}', level: 'danger'}); }
+                }
+            }
+        });
+    };
+
+    /* Fonction permettant l'envoi d'une notification de test*/
+    document.getElementById('bt_testNotifications').addEventListener('click', function() {
+        testNotifications();
+    });
+    
+    function testNotifications()  {
+        
+        $('#div_alert').showAlert({message: '{{Envoi de la notification}}', level: 'warning'});	
+        $.ajax({
+            type: "POST",
+            url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+            data: {
+                action: "testNotifications",
+                cmdNotifications: $('#cmdNotifications').value(),
+                },
+            dataType: 'json',
+                error: function (request, status, error) {
+                handleAjaxError(request, status, error);
+                },
+            success: function (data) { 			
+
+                if (data.state != 'ok') {
+                    $('#div_alert').showAlert({message: '{{Erreur lors de l\'envoi de la notification}}', level: 'danger'});
+                    return;
+                }
+                else  {
+                    $('#div_alert').showAlert({message: '{{Notification envoyée avec succès}}', level: 'success'});
                 }
             }
         });

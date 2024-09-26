@@ -64,6 +64,27 @@ try {
 		ajax::success($result);
 	}
 
+    if (init('action') == 'testNotifications') {
+		$cmdNotifications = init('cmdNotifications');
+        $data = [
+            'title' => 'Suivi Colis',
+            'message' => 'Ceci est un test des notifications du plugin',
+        ];
+        if (strpos($cmdNotifications, '&&') !== false) {
+            $cmds = explode(' && ', $cmdNotifications);
+            $cmds = array_map('trim', $cmds);                           // On supprime les espaces autour de chaque valeur
+            foreach ($cmds as $cmd) {
+                cmd::byString($cmd)->execCmd($data);
+                log::add('parcelTracking', 'debug', 'Test notification - cmdId : '.$cmd.' - title : Suivi Colis - message : Ceci est un test des notifications du plugin');
+            }
+        }
+        else {
+            cmd::byString($cmdNotifications)->execCmd($data);
+            log::add('parcelTracking', 'debug', 'Test notification - cmdId : '.$cmdNotifications.' - title : Suivi Colis - message : Ceci est un test des notifications du plugin');
+        }
+		ajax::success();
+	}
+
     if (init('action') == 'getJSON') {
 		$result = file_get_contents( dirname(__FILE__).'/../../data/apicarrier.param.json');
 		ajax::success($result);
