@@ -380,9 +380,6 @@ class parcelTracking extends eqLogic {
         $myParcel = new parcelTracking_API($apiKey, trim($trackingId), $language, $carrier, $param);
         log::add('parcelTracking', 'debug', '| Parcel trackingId : '.$trackingId.' - Language : '.$language);
         $register = $myParcel->registerTrackingId();
-        sleep(10);
-        $result = $myParcel->getTrackingResult();
-        $eqLogic->updateCmds($result->body);   
         log::add('parcelTracking', 'debug', '└─End of parcel registration : ['.$register->httpCode.']');
         return json_decode($register->body);
     }
