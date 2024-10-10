@@ -451,7 +451,10 @@ class parcelTracking extends eqLogic {
             if ( isset($parcel['data']['accepted'][0]['track_info']['shipping_info']['recipient_address']['country']) ) { $this->checkAndUpdateCmd('destination', $parcel['data']['accepted'][0]['track_info']['shipping_info']['recipient_address']['country']); } else { $this->checkAndUpdateCmd('destination', __('Indisponible', __FILE__)); }
 
             //lastState - lastEvent
-            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', $parcel['data']['accepted'][0]['track_info']['latest_event']['description']); } else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['description_translation']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['accepted'][0]['track_info']['latest_event']['description_translation']['description'])); }
+            elseif ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['accepted'][0]['track_info']['latest_event']['description'])); }
+            else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+            
             if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso']) ) {
                 $lastEvent = $parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso'];
                 if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
@@ -486,7 +489,11 @@ class parcelTracking extends eqLogic {
                         $state_time = '';
                     }
                     if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ''; }
-                    if ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); } else { $state_status = ''; }
+                    
+                    if ( isset($state['description_translation']['description'] ) ) { $state_status = str_replace("'", " ",$state['description_translation']['description']); }
+                    elseif ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); }
+                    else { $state_status = ''; }
+                                        
                     $table_temp[] = array( "date" => $state_date, "time" => $state_time, "location" => $state_location, "status" => $state_status );
                 }
                 $table_states['states'] = $table_temp;
@@ -514,7 +521,10 @@ class parcelTracking extends eqLogic {
         if ( isset($parcel['data']['track_info']['shipping_info']['recipient_address']['country']) ) { $this->checkAndUpdateCmd('destination', $parcel['data']['track_info']['shipping_info']['recipient_address']['country']); } else { $this->checkAndUpdateCmd('destination', __('Indisponible', __FILE__)); }
 
         //lastState - lastEvent
-        if ( isset($parcel['data']['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', $parcel['data']['track_info']['latest_event']['description']); } else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+        if ( isset($parcel['data']['track_info']['latest_event']['description_translation']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['track_info']['latest_event']['description_translation']['description'])); }
+        else if ( isset($parcel['data']['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['track_info']['latest_event']['description'])); }
+        else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
+                
         if ( isset($parcel['data']['track_info']['latest_event']['time_iso']) ) {
             $lastEvent = $parcel['data']['track_info']['latest_event']['time_iso'];
             if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
@@ -549,7 +559,11 @@ class parcelTracking extends eqLogic {
                     $state_time = '';
                 }
                 if ( isset($state['location']) ) { $state_location = str_replace("'", " ",$state['location']); } else { $state_location = ''; }
-                if ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); } else { $state_status = ''; }
+                
+                if ( isset($state['description_translation']['description'] ) ) { $state_status = str_replace("'", " ",$state['description_translation']['description']); }
+                elseif ( isset($state['description']) ) { $state_status = str_replace("'", " ",$state['description']); }
+                else { $state_status = ''; }
+                               
                 $table_temp[] = array( "date" => $state_date, "time" => $state_time, "location" => $state_location, "status" => $state_status );
             }
             $table_states['states'] = $table_temp;
