@@ -455,8 +455,8 @@ class parcelTracking extends eqLogic {
             elseif ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['accepted'][0]['track_info']['latest_event']['description'])); }
             else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
             
-            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso']) ) {
-                $lastEvent = $parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso'];
+            if ( isset($parcel['data']['accepted'][0]['track_info']['latest_event']['time_utc']) ) {
+                $lastEvent = $this->convertDate($parcel['data']['accepted'][0]['track_info']['latest_event']['time_utc']);
                 if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
                 $this->checkAndUpdateCmd('lastEvent', $lastEvent); 
             }
@@ -465,7 +465,7 @@ class parcelTracking extends eqLogic {
             //deliveryDate
             if ( isset($parcel['data']['accepted'][0]['track_info']['latest_status']['status']) ) {
                 if ( $parcel['data']['accepted'][0]['track_info']['latest_status']['status'] == 'Delivered' ) {
-                    $this->checkAndUpdateCmd('deliveryDate', $parcel['data']['accepted'][0]['track_info']['latest_event']['time_iso']);
+                    $this->checkAndUpdateCmd('deliveryDate', $this->convertDate($parcel['data']['accepted'][0]['track_info']['latest_event']['time_utc']));
                 }
                 else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
             }
@@ -477,8 +477,9 @@ class parcelTracking extends eqLogic {
                 $table_temp = array();
                 $table_states = array();
                 foreach ($states as $state) {
-                    if ( isset($state['time_iso']) ) { 
-                        $datetime = new DateTime($state['time_iso']);
+                    if ( isset($state['time_utc']) ) { 
+                        $datetime = new DateTime($state['time_utc'], new DateTimeZone('UTC'));
+                        $datetime->setTimezone(new DateTimeZone(config::byKey('timezone')));
                         $d = $datetime->format('d/m/Y');
                         $t = $datetime->format('H\hi');
                         $state_date = $d; 
@@ -525,8 +526,8 @@ class parcelTracking extends eqLogic {
         else if ( isset($parcel['data']['track_info']['latest_event']['description']) ) { $this->checkAndUpdateCmd('lastState', str_replace("'", " ", $parcel['data']['track_info']['latest_event']['description'])); }
         else { $this->checkAndUpdateCmd('lastState', __('Indisponible', __FILE__)); }
                 
-        if ( isset($parcel['data']['track_info']['latest_event']['time_iso']) ) {
-            $lastEvent = $parcel['data']['track_info']['latest_event']['time_iso'];
+        if ( isset($parcel['data']['track_info']['latest_event']['time_utc']) ) {
+            $lastEvent = $this->convertDate($parcel['data']['track_info']['latest_event']['time_utc']);
             if ( $this->checklastEvent($lastEvent) == true ) { $notification = true; }
             $this->checkAndUpdateCmd('lastEvent', $lastEvent); 
         }
@@ -535,7 +536,7 @@ class parcelTracking extends eqLogic {
         //deliveryDate
         if ( isset($parcel['data']['track_info']['latest_status']['status']) ) {
             if ( $parcel['data']['track_info']['latest_status']['status'] == 'Delivered' ) {
-                $this->checkAndUpdateCmd('deliveryDate', $parcel['data']['track_info']['latest_event']['time_iso']);
+                $this->checkAndUpdateCmd('deliveryDate', $this->convertDate($parcel['data']['track_info']['latest_event']['time_utc']));
             }
             else { $this->checkAndUpdateCmd('deliveryDate', __('Indisponible', __FILE__)); }
         }
@@ -547,8 +548,9 @@ class parcelTracking extends eqLogic {
             $table_temp = array();
             $table_states = array();
             foreach ($states as $state) {
-                if ( isset($state['time_iso']) ) { 
-                    $datetime = new DateTime($state['time_iso']);
+                if ( isset($state['time_utc']) ) { 
+                    $datetime = new DateTime($state['time_utc'], new DateTimeZone('UTC'));
+                    $datetime->setTimezone(new DateTimeZone(config::byKey('timezone')));
                     $d = $datetime->format('d/m/Y');
                     $t = $datetime->format('H\hi');
                     $state_date = $d; 
@@ -571,6 +573,13 @@ class parcelTracking extends eqLogic {
         } else { $this->checkAndUpdateCmd('states', __('Indisponible', __FILE__)); }
         
         if ( $notification == true ) { $this->sendNotification(); }
+    }
+    
+    public function convertDate($date_utc) {
+
+        $datetime = new DateTime($date_utc, new DateTimeZone('UTC'));
+        $datetime->setTimezone(new DateTimeZone(config::byKey('timezone')));
+        return $datetime->format('Y-m-d\TH:i:sP');
     }
     
     public function checklastEvent($lastEvent) {
