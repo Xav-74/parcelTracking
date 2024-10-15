@@ -77,11 +77,13 @@
     "plugins\/parcelTracking\/desktop\/modal\/addParcel.parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
         "Ajouter": "Add",
+        "Aucun transporteur": "No carrier",
         "Colis créé": "Parcel created",
-        "Erreur ! Les champs ne peuvent pas être vides": "Error! Fields cannot be empty",
+        "Erreur ! Les champs #Nom du colis# et #Numéro de suivi# ne peuvent pas être vides": "Error! The #Package name# and #Tracking number# fields cannot be empty",
         "Erreur lors la création du colis": "Parcel creation error",
         "Nom du colis": "Parcel name",
-        "Numéro de suivi du colis": "Parcel tracking Id"
+        "Numéro de suivi du colis": "Parcel tracking Id",
+        "Paramètre additionnel": "Additional parameter"
     },
     "plugins\/parcelTracking\/desktop\/php\/parcelTracking.php": {
         "401 - Accès non autorisé": "401 - Unauthorized access",
