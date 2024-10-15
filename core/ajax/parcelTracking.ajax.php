@@ -36,7 +36,7 @@ try {
 	}
 
     if (init('action') == 'addParcel') {
-		$result = parcelTracking::addParcel(init('name'), init('trackingId'));
+		$result = parcelTracking::addParcel(init('name'), init('trackingId'), init('carrier'), init('param'));
 		ajax::success($result);
 	}
 

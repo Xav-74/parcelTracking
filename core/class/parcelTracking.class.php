@@ -677,14 +677,20 @@ class parcelTracking extends eqLogic {
         }	
     }
 
-    public static function addParcel($name, $trackingId)
+    public static function addParcel($name, $trackingId, $carrier, $param)
     {
         $parcel = new parcelTracking();
         $parcel->setEqType_name('parcelTracking');
         $parcel->setName($name);
         $parcel->setConfiguration('trackingId', $trackingId);
+        $parcel->setConfiguration('carrier', $carrier);
+        $parcel->setConfiguration('additionalParameter', $param);
         $parcel->save();
-        log::add('parcelTracking', 'debug', 'Add parcel (name : '.$name.' - trackingId : '.$trackingId.')');
+        if ( $carrier == "" ) { $log_carrier = "none"; }
+        else { $log_carrier = $carrier; }
+        if ( $param == "" ) { $log_param = "none"; }
+        else { $log_param = $param; }
+        log::add('parcelTracking', 'debug', 'Add parcel (name : '.$name.' - trackingId : '.$trackingId.' - carrier : '.$log_carrier.' - parameter : '.$log_param.')');
 
         parcelTracking::registerParcel($trackingId);
         
