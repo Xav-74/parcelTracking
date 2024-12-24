@@ -171,8 +171,8 @@
         "Sélectionnez la langue utilisée pour les retours API. Attention, cela décomptera 2 suivis par colis sur votre quota.<br\/> Laissez le champ sur 'Langue par défaut' pour conserver la langue par défaut du transporteur ! ": "Select the language used for API returns. Please note that this will deduct 2 follow-ups per parcel from your quota.<br\/> Leave the field set to 'Default language' to keep the carrier's default language!",
         "Tags du scénario": "Scenario tags",
         "Test des notifications": "Notification test",
-        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "You can use the tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# and #time#. <br\/> Example: name=#name# numColis=#trackingId# carrier=#carrier# ...",
-        "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "You can use #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# and #time# tags. <br\/> Leave the field empty to use the default format!",
+        "Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# et #url#. <br\/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...": "You can use the tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# and #url#. <br\/> Example: name=#name# numColis=#trackingId# carrier=#carrier# ...",
+        "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# et #url#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "You can use the tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# and #url#. <br\/> Leave the field empty to use the default format!",
         "Vérifier": "Check",
         "Widget par colis": "Widget by parcel",
         "Widget unique": "Unique widget"
