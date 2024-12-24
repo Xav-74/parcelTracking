@@ -115,7 +115,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Format du corps du message}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# et #url#. <br/> Laissez le champ vide pour utiliser le format par défaut !}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <div class="input-group" style="margin-bottom:0px !important">
@@ -143,7 +143,7 @@ if (!isConnect()) {
 
     <div class="form-group">
         <label class="col-sm-4 control-label">{{Tags du scénario}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date# et #time#. <br/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...}}"></i></sup>
+            <sup><i class="fas fa-question-circle tooltips" title="{{Vous pouvez utiliser les tags #name#, #object#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# et #url#. <br/> Exemple : nom=#name# numColis=#trackingId# transporteur=#carrier# ...}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <input class="form-control configKey" data-l1key="formatTags"/>

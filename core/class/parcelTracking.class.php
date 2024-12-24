@@ -188,7 +188,7 @@ class parcelTracking extends eqLogic {
         return json_encode($list);   
     }
 
-    public static function buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime) {
+    public static function buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime, $lastLocation, $url) {
 
         $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
         
@@ -203,11 +203,13 @@ class parcelTracking extends eqLogic {
             $formatNotifications = str_replace("#lastState#", $lastState, $formatNotifications);
             $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
             $formatNotifications = str_replace("#time#", $lastTime, $formatNotifications);
+            $formatNotifications = str_replace("#location#", $lastLocation, $formatNotifications);
+            $formatNotifications = str_replace("#url", $url, $formatNotifications);
         }
         return $formatNotifications;
     }
 
-    public static function buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime) {
+    public static function buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime, $lastLocation, $url) {
 
         $formatTags = config::byKey('formatTags', 'parcelTracking');
         $tags = arg2array($formatTags);
@@ -219,6 +221,8 @@ class parcelTracking extends eqLogic {
         $tags = str_replace("#lastState#", $lastState, $tags);
         $tags = str_replace("#date#", $lastDate, $tags);
         $tags = str_replace("#time#", $lastTime, $tags);
+        $tags = str_replace("#location#", $lastLocation, $tags);
+        $tags = str_replace("#url#", $url, $tags);
         return $tags;
     }
 
@@ -609,14 +613,16 @@ class parcelTracking extends eqLogic {
         $lastState = $info['states'][0]['status'];
         $lastDate = $info['states'][0]['date'];
         $lastTime = $info['states'][0]['time'];
-        
+        $lastLocation = $info['states'][0]['location'];
+        $url = network::getNetworkAccess('external').'/index.php?v=d&p=dashboard&object_id='.$object;
+		        
         // Cmd
         $cmdNotifications = config::byKey('cmdNotifications', 'parcelTracking');
         $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
         if ( $cmdNotifications != null) {
             if ( $formatNotifications != null ) {
                 $title = 'Suivi colis';
-                $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime);
+                $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime, $lastLocation, $url);
             }
             else {
                 $title = 'Suivi colis '.$trackingId.' - '.$name;
@@ -644,7 +650,7 @@ class parcelTracking extends eqLogic {
         // Scenario
         $scenarioNotifications = config::byKey('scenarioNotifications', 'parcelTracking');
         if ( $scenarioNotifications != null) {
-            $tags = $this->buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime);
+            $tags = $this->buildTags($name, $object, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime, $lastLocation, $url);
             $scenario = scenario::byString($scenarioNotifications);
             $scenario->setTags($tags);
             $scenario->execute();
