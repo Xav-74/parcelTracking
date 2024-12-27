@@ -204,7 +204,7 @@ class parcelTracking extends eqLogic {
             $formatNotifications = str_replace("#date#", $lastDate, $formatNotifications);
             $formatNotifications = str_replace("#time#", $lastTime, $formatNotifications);
             $formatNotifications = str_replace("#location#", $lastLocation, $formatNotifications);
-            $formatNotifications = str_replace("#url", $url, $formatNotifications);
+            $formatNotifications = str_replace("#url#", $url, $formatNotifications);
         }
         return $formatNotifications;
     }
