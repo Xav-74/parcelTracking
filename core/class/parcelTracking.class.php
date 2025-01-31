@@ -145,6 +145,10 @@ class parcelTracking extends eqLogic {
                     $parcelTracking->save();
                 }
             }
+            else if ( $mode == 'plus' ) {
+                $parcelTracking->setIsVisible(1);
+                $parcelTracking->save();
+            }
         }
     }
 
@@ -328,6 +332,16 @@ class parcelTracking extends eqLogic {
 		else if ( config::byKey('defaultWidget', 'parcelTracking') == "all" || config::byKey('defaultWidget', 'parcelTracking') == "" ) {
             $this->setIsVisibleEqlogics("all");
             $template = 'parcelTracking_dashboard_v4'; 
+        }
+        else if ( config::byKey('defaultWidget', 'parcelTracking') == "plus" ) {
+            $this->setIsVisibleEqlogics("plus");
+            if ( $this->getConfiguration('eqLogicType') == 'global') {
+                $replace['#listParcels#'] = $this->buidListWidget();
+                $template = 'parcelTracking_global_dashboard_v4';
+            }
+            if ( $this->getConfiguration('eqLogicType') == 'parcel') {
+                $template = 'parcelTracking_dashboard_v4';
+            }
         }
         else if ( config::byKey('defaultWidget', 'parcelTracking') == "none" ) {
             $template = 'parcelTracking_hidden_dashboard_v4'; 

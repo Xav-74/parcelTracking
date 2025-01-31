@@ -1,15 +1,15 @@
-.parcelTracking_widget .container-fluid {
+.parcelTracking_widget_global .container-fluid {
 	margin : 3px 3px 3px 3px !important;
 	padding : 0px 0px 0px 0px !important;
 }
 
-.parcelTracking_widget #list_states {
+.parcelTracking_widget_global #list_states {
 	margin : 0px 0px 0px 0px !important;
 	padding : 3px 3px 3px 3px !important;
 	overflow: auto;
 }
 
-.parcelTracking_widget .list-group-item {
+.parcelTracking_widget_global .list-group-item {
 	background-color: transparent !important;
 	height:90px;
 	margin-bottom: 6px;
@@ -22,7 +22,7 @@
 	border-color: rgb(225,225,225);
 }
 
-.parcelTracking_widget .span-item-title {
+.parcelTracking_widget_global .span-item-title {
 	height: 20px;
 	white-space: normal;
 	vertical-align: middle;
@@ -31,7 +31,7 @@
 	text-align: left;
 }
 
-.parcelTracking_widget .span-item-value {
+.parcelTracking_widget_global .span-item-value {
 	white-space: normal;
 	vertical-align: middle;
 	font-size : 12px !important;

@@ -162,6 +162,7 @@ if (!isConnect()) {
                 <option value="" disabled selected hidden>{{Choisir dans la liste}}</option>
                 <option value="all" selected>{{Widget par colis}}</option>
                 <option value="one">{{Widget unique}}</option>
+                <option value="plus" selected>{{Widget par colis + widget unique}}</option>
                 <option value="none">{{Aucun}}</option>
             </select>        
         </div>

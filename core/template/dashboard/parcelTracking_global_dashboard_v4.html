@@ -1,4 +1,4 @@
-<div id="parcelTracking_widget_ID" class="eqLogic-widget eqLogic parcelTracking_widget parcelTracking_widget_#id# parcelTracking" style="min-width:500px !important; max-width:500px !important; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
+<div id="parcelTracking_widget_global_ID" class="eqLogic-widget eqLogic parcelTracking_widget_global parcelTracking_widget_global_#id# parcelTracking" style="min-width:500px !important; max-width:500px !important; text-align:center; border:#border#; border-radius:#border-radius#; background-color:#background-color#; color:#color#; #style#;" data-eqType="#eqType#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="dashboard">
 
 	<div class="text-center widget-name">
 		<span class="reportModeVisible">#name_display#<span class="object_name">#object_name#</span></span>
@@ -37,7 +37,7 @@
 		}
 
 		function timedSetTheme#id#(occurence = 0){
-			if ($('.parcelTracking_widget_#id#').length == 0) {
+			if ($('.parcelTracking_widget_global_#id#').length == 0) {
 				return;
 			}
 			if ( $('body')[0].hasAttribute('data-theme') != true )  {
@@ -103,8 +103,8 @@
 
 		//----- Widget height
 		var widegtHeight = 96*totalParcels + 30;
-		$('.parcelTracking_widget').css('min-height', widegtHeight);
-		$('.parcelTracking_widget').css('max-height', widegtHeight);
+		$('.parcelTracking_widget_global').css('min-height', widegtHeight);
+		$('.parcelTracking_widget_global').css('max-height', widegtHeight);
 	
 		//----- Remove parcel
 		function removeParcel(eqLogicId, name) {
