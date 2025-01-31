@@ -175,6 +175,7 @@
         "Vous pouvez utiliser les tags #name#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# et #url#. <br\/> Laissez le champ vide pour utiliser le format par défaut !": "È possibile utilizzare i tag #name#, #trackingId#, #carrier#, #status#, #lastState#, #date#, #time#, #location# e #url#. <br\/> Lasciare il campo vuoto per utilizzare il formato predefinito!",
         "Vérifier": "Verifica",
         "Widget par colis": "Widget per pacco",
+        "Widget par colis + widget unique": "Widget per pacco + widget singolo",
         "Widget unique": "Widget unico"
     },
     "plugins\/parcelTracking\/plugin_info\/install.php": {
