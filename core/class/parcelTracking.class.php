@@ -635,11 +635,11 @@ class parcelTracking extends eqLogic {
         $formatNotifications = config::byKey('formatNotifications', 'parcelTracking');
         if ( $cmdNotifications != null) {
             if ( $formatNotifications != null ) {
-                $title = 'Suivi colis';
+                $title = 'Suivi colis '.$name;
                 $message = $this->buildNotifications($name, $trackingId, $carrier, $status, $lastState, $lastDate, $lastTime, $lastLocation, $url);
             }
             else {
-                $title = 'Suivi colis '.$trackingId.' - '.$name;
+                $title = 'Suivi colis '.$name.' - '.$trackingId;
                 $message = $lastState;
             }
             $data = [
