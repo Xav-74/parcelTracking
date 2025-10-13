@@ -197,35 +197,71 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="carrier">
 											<option value="">{{Aucun}}</option>
 											<?php
-												$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
-												$carriers = json_decode($json, true);
+                                                                                                $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
+                                                                                                $carriers = json_decode($json, true);
 
-												$french = array_filter($carriers, function($c) {
-													return isset($c['_country_iso']) && strtoupper($c['_country_iso']) === 'FR';
-												});
-												$others = array_filter($carriers, function($c) {
-													return !isset($c['_country_iso']) || strtoupper($c['_country_iso']) !== 'FR';
-												});
+                                                                                                $allowedCountriesRaw = config::byKey('allowedCountries', 'parcelTracking', '');
+                                                                                                if (is_array($allowedCountriesRaw)) {
+                                                                                                        $allowedCountries = $allowedCountriesRaw;
+                                                                                                } else {
+                                                                                                        $allowedCountries = explode(',', (string) $allowedCountriesRaw);
+                                                                                                }
 
-												usort($french, function($a, $b) {
-													return strcasecmp($a['_name'], $b['_name']);
-												});
-												usort($others, function($a, $b) {
-													return strcasecmp($a['_name'], $b['_name']);
-												});
+                                                                                                $allowedCountries = array_values(array_filter(array_map(function ($value) {
+                                                                                                        return strtoupper(trim($value));
+                                                                                                }, $allowedCountries)));
 
-												foreach ($french as $carrier) {
-													echo '<option value="' . $carrier['key'] . '">' . htmlspecialchars($carrier['_name']) . '</option>';
-												}
+                                                                                                $includeUndefined = false;
+                                                                                                if (!empty($allowedCountries)) {
+                                                                                                        $includeUndefined = in_array('UNDEFINED', $allowedCountries, true);
+                                                                                                        if ($includeUndefined) {
+                                                                                                                $allowedCountries = array_values(array_diff($allowedCountries, ['UNDEFINED']));
+                                                                                                        }
+                                                                                                }
 
-												if (count($french) > 0 && count($others) > 0) {
-													echo '<option disabled>--------------------</option>';
-												}
+                                                                                                $carriers = is_array($carriers) ? $carriers : [];
+                                                                                                $filteredCarriers = array_filter($carriers, function ($carrier) use ($allowedCountries, $includeUndefined) {
+                                                                                                        if (!is_array($carrier)) {
+                                                                                                                return false;
+                                                                                                        }
 
-												foreach ($others as $carrier) {
-													echo '<option value="' . $carrier['key'] . '">' . htmlspecialchars($carrier['_name']) . '</option>';
-												}
-											?>
+                                                                                                        $countryIso = isset($carrier['_country_iso']) ? strtoupper(trim($carrier['_country_iso'])) : '';
+
+                                                                                                        if ($countryIso === '') {
+                                                                                                                if (empty($allowedCountries)) {
+                                                                                                                        return true;
+                                                                                                                }
+
+                                                                                                                return $includeUndefined;
+                                                                                                        }
+
+                                                                                                        if (empty($allowedCountries)) {
+                                                                                                                return true;
+                                                                                                        }
+
+                                                                                                        return in_array($countryIso, $allowedCountries, true);
+                                                                                                });
+
+                                                                                                usort($filteredCarriers, function ($a, $b) {
+                                                                                                        $nameA = isset($a['_name']) ? trim($a['_name']) : '';
+                                                                                                        $nameB = isset($b['_name']) ? trim($b['_name']) : '';
+
+                                                                                                        return strcasecmp($nameA, $nameB);
+                                                                                                });
+
+                                                                                                foreach ($filteredCarriers as $carrier) {
+                                                                                                        if (!isset($carrier['key'])) {
+                                                                                                                continue;
+                                                                                                        }
+
+                                                                                                        $name = isset($carrier['_name']) && trim($carrier['_name']) !== '' ? trim($carrier['_name']) : $carrier['key'];
+                                                                                                        $countryIso = isset($carrier['_country_iso']) && trim($carrier['_country_iso']) !== '' ? strtoupper(trim($carrier['_country_iso'])) : '';
+                                                                                                        $suffix = $countryIso !== '' ? ' (' . $countryIso . ')' : '';
+
+                                                                                                        echo '<option value="' . $carrier['key'] . '">' . htmlspecialchars($name . $suffix, ENT_QUOTES) . '</option>';
+                                                                                                }
+                                                                                        ?>
+
 										</select>
 										<span class="input-group-btn">
 											<a class="btn btn-warning cmdAction" id="bt_updateCarrier" title="{{Mettre à jour le transporteur<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
