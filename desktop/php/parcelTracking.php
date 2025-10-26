@@ -1,8 +1,10 @@
 <?php
 
 if (!isConnect('admin')) {
-	throw new Exception('{{401 - Accès non autorisé}}');
+        throw new Exception('{{401 - Accès non autorisé}}');
 }
+
+require_once dirname(__FILE__) . '/../../core/php/parcelTracking.inc.php';
 
 // Déclaration des variables obligatoires
 $plugin = plugin::byId('parcelTracking');
@@ -256,7 +258,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
                                                                                                         $name = isset($carrier['_name']) && trim($carrier['_name']) !== '' ? trim($carrier['_name']) : $carrier['key'];
                                                                                                         $countryIso = isset($carrier['_country_iso']) && trim($carrier['_country_iso']) !== '' ? strtoupper(trim($carrier['_country_iso'])) : '';
-                                                                                                        $suffix = $countryIso !== '' ? ' (' . $countryIso . ')' : '';
+                                                                                                        $countryLabel = $countryIso !== '' ? parcelTracking_getCountryLabel($countryIso, 'fr_FR') : '';
+                                                                                                        $suffix = $countryLabel !== '' ? ' (' . $countryLabel . ')' : '';
 
                                                                                                         echo '<option value="' . $carrier['key'] . '">' . htmlspecialchars($name . $suffix, ENT_QUOTES) . '</option>';
                                                                                                 }

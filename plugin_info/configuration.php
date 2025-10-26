@@ -16,6 +16,7 @@
 */
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
+require_once dirname(__FILE__) . '/../core/php/parcelTracking.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect()) {
     include_file('desktop', '404', 'php');
@@ -52,17 +53,7 @@ if (!isConnect()) {
                 }
 
                 if (!isset($availableCountries[$isoCode])) {
-                    $countryLabel = $isoCode;
-                    if (class_exists('Locale')) {
-                        $label = @Locale::getDisplayRegion('-' . $isoCode, 'fr_FR');
-                        if (empty($label)) {
-                            $label = @Locale::getDisplayRegion('-' . $isoCode, 'en');
-                        }
-                        if (!empty($label)) {
-                            $countryLabel = $label;
-                        }
-                    }
-                    $availableCountries[$isoCode] = $countryLabel;
+                    $availableCountries[$isoCode] = parcelTracking_getCountryLabel($isoCode, 'fr_FR');
                 }
             }
         }
