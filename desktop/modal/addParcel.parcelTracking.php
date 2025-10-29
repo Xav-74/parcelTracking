@@ -37,7 +37,7 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 	</div>
 
         <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-                <select id="carrier" class="eqLogicAttr form-control" style="background-color: rgb(var(--bg-modal-color, var(--bg-color, 255, 255, 255)));">
+                <select id="carrier" class="eqLogicAttr form-control" style="background-color: var(--bg-modal-color, #fff);">
 			<option value="">{{Aucun transporteur}}</option>
                         <?php
                                 $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
