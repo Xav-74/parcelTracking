@@ -35,6 +35,7 @@ if (!isConnect()) {
     $carriersFile = dirname(__FILE__) . '/../data/apicarrier.all.json';
     $availableCountries = [];
     $hasUndefinedCountry = false;
+    $undefinedCountryLabel = null;
 
     if (file_exists($carriersFile)) {
         $carriersContent = file_get_contents($carriersFile);
@@ -60,10 +61,13 @@ if (!isConnect()) {
     }
 
     if ($hasUndefinedCountry) {
-        $availableCountries['UNDEFINED'] = __('Sans code pays', __FILE__);
+        $undefinedCountryLabel = __('Sans code pays (undefined)', __FILE__);
     }
 
     natcasesort($availableCountries);
+    if ($undefinedCountryLabel !== null) {
+        $availableCountries['UNDEFINED'] = $undefinedCountryLabel;
+    }
 ?>
 
 <form class="form-horizontal">
