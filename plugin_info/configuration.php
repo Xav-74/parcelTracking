@@ -144,7 +144,7 @@ if (!isConnect()) {
                 <a class="btn btn-default" id="bt_selectAllCountries">{{Tout sélectionner}}</a>
                 <a class="btn btn-default" id="bt_resetCountries">{{Tout désélectionner}}</a>
             </div>
-            <div class="well" style="max-height:300px;overflow:auto;margin-bottom:0;">
+            <div class="form-control" style="max-height:300px;overflow:auto;margin-bottom:0;">
                 <?php
                     if (empty($availableCountries)) {
                         echo '<span class="label label-warning">' . __('Aucun pays disponible', __FILE__) . '</span>';
