@@ -36,16 +36,16 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 		<input id="trackingId" type="text" class="form-control" placeholder="{{Numéro de suivi du colis}}"/>
 	</div>
 
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<select id="carrier" class="eqLogicAttr form-control">
+        <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+                <select id="carrier" class="eqLogicAttr form-control" style="background-color: rgb(var(--bg-modal-color, var(--bg-color, 255, 255, 255)));">
 			<option value="">{{Aucun transporteur}}</option>
-			<?php
-				$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
-				$carriers = json_decode($json, true);
-				foreach($carriers as $carrier) {
-					echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
-				}
-			?>
+                        <?php
+                                $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
+                                $carriers = json_decode($json, true);
+                                foreach ($carriers as $carrier) {
+                                        echo '<option value="' . $carrier['key'] . '">' . $carrier['_name'] . '</option>';
+                                }
+                        ?>
 		</select>		
 	</div>
 	
