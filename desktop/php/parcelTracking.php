@@ -196,7 +196,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</label>
 								<div class="col-sm-6">
 									<div class="input-group" style="margin-bottom:0px !important">
-                                                                                <select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px; background-color: rgb(var(--bg-modal-color, var(--bg-color, 255, 255, 255)));" data-l1key="configuration" data-l2key="carrier">
+                                                                                <select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px; background-color: var(--bg-modal-color, #fff);" data-l1key="configuration" data-l2key="carrier">
 											<option value="">{{Aucun}}</option>
 											<?php
                                                                                                 $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
