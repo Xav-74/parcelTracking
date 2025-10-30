@@ -69,6 +69,19 @@ if (!isConnect()) {
         $availableCountries['UNDEFINED'] = $undefinedCountryLabel;
     }
 ?>
+        
+<style>
+    #allowedCountriesActions .btn {
+        margin-right: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #allowedCountriesActions .btn:last-child {
+        margin-right: 0;
+    }
+</style>
 
 <form class="form-horizontal">
     <fieldset>
@@ -140,7 +153,7 @@ if (!isConnect()) {
         </label>
         <div class="col-sm-4">
             <input type="hidden" class="configKey" data-l1key="allowedCountries" id="allowedCountriesConfig" value="<?php echo htmlspecialchars(implode(',', $selectedCountries), ENT_QUOTES); ?>" />
-            <div class="btn-group btn-group-xs" role="group" style="margin-bottom:10px;">
+            <div class="btn-group btn-group-xs" id="allowedCountriesActions" role="group" style="margin-bottom:10px;">
                 <a class="btn btn-default" id="bt_selectAllCountries">{{Tout sélectionner}}</a>
                 <a class="btn btn-default" id="bt_resetCountries">{{Tout désélectionner}}</a>
             </div>
