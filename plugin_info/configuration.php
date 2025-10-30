@@ -153,11 +153,11 @@ if (!isConnect()) {
         </label>
         <div class="col-sm-4">
             <input type="hidden" class="configKey" data-l1key="allowedCountries" id="allowedCountriesConfig" value="<?php echo htmlspecialchars(implode(',', $selectedCountries), ENT_QUOTES); ?>" />
-            <div class="btn-group btn-group-xs" id="allowedCountriesActions" role="group" style="margin-bottom:10px;">
+            <div class="btn-group btn-group-xs" id="allowedCountriesActions" role="group" style="margin-bottom:2px;">
                 <a class="btn btn-default" id="bt_selectAllCountries">{{Tout sélectionner}}</a>
                 <a class="btn btn-default" id="bt_resetCountries">{{Tout désélectionner}}</a>
             </div>
-            <div class="form-control" style="height:300px;overflow:auto;margin-bottom:10px;">
+            <div class="form-control" style="height:300px;overflow:auto;margin-bottom:2px;">
                 <?php
                     if (empty($availableCountries)) {
                         echo '<span class="label label-warning">' . __('Aucun pays disponible', __FILE__) . '</span>';
