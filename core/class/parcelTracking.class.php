@@ -17,6 +17,7 @@
 
 /* * ***************************Includes********************************* */
 require_once __DIR__  . '/../../../../core/php/core.inc.php';
+require_once __DIR__ . '/../php/parcelTracking.inc.php';
 
 if (!class_exists('parcelTracking_API')) {
     require_once __DIR__ . '/../../3rdparty/parcelTracking_API.php';
