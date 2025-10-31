@@ -324,8 +324,6 @@ class parcelTracking extends eqLogic {
 			$replace['#' . $cmd->getLogicalId() . '_visible#'] = $cmd->getIsVisible();
 		}
 			
-                $replace['#allowedCountriesLabel#'] = $this->buildAllowedCountriesLabel();
-
                 // On definit le template à appliquer par rapport aux paramètre du plugin
 		if ( config::byKey('defaultWidget', 'parcelTracking') == "one" ) { 
             $this->setIsVisibleEqlogics("one");
@@ -358,63 +356,6 @@ class parcelTracking extends eqLogic {
         return $this->postToHtml($_version, $html);
      }
 
-    private function buildAllowedCountriesLabel()
-    {
-        $allowedCountriesRaw = config::byKey('allowedCountries', 'parcelTracking', '');
-
-        if (is_array($allowedCountriesRaw)) {
-            $allowedCountries = $allowedCountriesRaw;
-        } else {
-            $allowedCountries = explode(',', (string) $allowedCountriesRaw);
-        }
-
-        $allowedCountries = array_values(array_filter(array_map(function ($value) {
-            return strtoupper(trim((string) $value));
-        }, $allowedCountries)));
-
-        $includeUndefined = false;
-        if (!empty($allowedCountries)) {
-            $includeUndefined = in_array('UNDEFINED', $allowedCountries, true);
-            if ($includeUndefined) {
-                $allowedCountries = array_values(array_diff($allowedCountries, ['UNDEFINED']));
-            }
-        }
-
-        $labels = [];
-
-        if (!empty($allowedCountries)) {
-            $locale = config::byKey('language', 'core', 'fr_FR');
-            if (!is_string($locale) || trim($locale) === '') {
-                $locale = 'fr_FR';
-            }
-
-            foreach ($allowedCountries as $isoCode) {
-                $label = parcelTracking_getCountryLabel($isoCode, $locale);
-                if ($label === '') {
-                    $label = $isoCode;
-                }
-                $labels[] = $label . ' (' . $isoCode . ')';
-            }
-
-            natcasesort($labels);
-            $labels = array_values($labels);
-        }
-
-        if ($includeUndefined) {
-            $labels[] = __('Sans code pays (undefined)', __FILE__);
-        }
-
-        if (empty($labels)) {
-            $labels[] = __('Tous les pays disponibles', __FILE__);
-        }
-
-        $escapedLabels = array_map(function ($label) {
-            return htmlspecialchars($label, ENT_QUOTES);
-        }, $labels);
-
-        return implode(', ', $escapedLabels);
-    }
-    
     private function createCmd($commandName, $commandDescription, $order, $type, $subType, $isHistorized = 0, $template = [])
     {	
         $cmd = $this->getCmd(null, $commandName);

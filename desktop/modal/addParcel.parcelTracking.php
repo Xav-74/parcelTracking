@@ -18,6 +18,8 @@
 
 include_file('core', 'authentification', 'php');
 
+require_once dirname(__FILE__) . '/../../core/php/parcelTracking.inc.php';
+
 if (!isConnect()) {
     throw new Exception('{{401 - Accès non autorisé}}');
 }
@@ -38,16 +40,113 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 
         <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
                 <select id="carrier" class="eqLogicAttr form-control" style="background-color: var(--bg-modal-color, #fff);">
-			<option value="">{{Aucun transporteur}}</option>
+                        <option value="">{{Aucun transporteur}}</option>
                         <?php
                                 $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
                                 $carriers = json_decode($json, true);
-                                foreach ($carriers as $carrier) {
-                                        echo '<option value="' . $carrier['key'] . '">' . $carrier['_name'] . '</option>';
+
+                                $allowedCountriesRaw = config::byKey('allowedCountries', 'parcelTracking', '');
+                                if (is_array($allowedCountriesRaw)) {
+                                        $allowedCountries = $allowedCountriesRaw;
+                                } else {
+                                        $allowedCountries = explode(',', (string) $allowedCountriesRaw);
                                 }
+
+                                $allowedCountries = array_values(array_filter(array_map(function ($value) {
+                                        return strtoupper(trim((string) $value));
+                                }, $allowedCountries)));
+
+                                $includeUndefined = false;
+                                if (!empty($allowedCountries)) {
+                                        $includeUndefined = in_array('UNDEFINED', $allowedCountries, true);
+                                        if ($includeUndefined) {
+                                                $allowedCountries = array_values(array_diff($allowedCountries, ['UNDEFINED']));
+                                        }
+                                }
+
+                                $carriers = is_array($carriers) ? $carriers : [];
+                                $filteredCarriers = array_filter($carriers, function ($carrier) use ($allowedCountries, $includeUndefined) {
+                                        if (!is_array($carrier)) {
+                                                return false;
+                                        }
+
+                                        $countryIso = isset($carrier['_country_iso']) ? strtoupper(trim($carrier['_country_iso'])) : '';
+
+                                        if ($countryIso === '') {
+                                                if (empty($allowedCountries)) {
+                                                        return true;
+                                                }
+
+                                                return $includeUndefined;
+                                        }
+
+                                        if (empty($allowedCountries)) {
+                                                return true;
+                                        }
+
+                                        return in_array($countryIso, $allowedCountries, true);
+                                });
+
+                                usort($filteredCarriers, function ($a, $b) {
+                                        $nameA = isset($a['_name']) ? trim($a['_name']) : '';
+                                        $nameB = isset($b['_name']) ? trim($b['_name']) : '';
+
+                                        return strcasecmp($nameA, $nameB);
+                                });
+
+                                foreach ($filteredCarriers as $carrier) {
+                                        if (!isset($carrier['key'])) {
+                                                continue;
+                                        }
+
+                                        $name = isset($carrier['_name']) && trim($carrier['_name']) !== '' ? trim($carrier['_name']) : $carrier['key'];
+                                        $countryIso = isset($carrier['_country_iso']) && trim($carrier['_country_iso']) !== '' ? strtoupper(trim($carrier['_country_iso'])) : '';
+                                        $countryLabel = $countryIso !== '' ? parcelTracking_getCountryLabel($countryIso, 'fr_FR') : '';
+                                        $suffix = $countryLabel !== '' ? ' (' . $countryLabel . ')' : '';
+
+                                        echo '<option value="' . htmlspecialchars($carrier['key'], ENT_QUOTES) . '">' . htmlspecialchars($name . $suffix, ENT_QUOTES) . '</option>';
+                                }
+
+                                $allowedCountryLabels = [];
+
+                                if (!empty($allowedCountries)) {
+                                        $locale = config::byKey('language', 'core', 'fr_FR');
+                                        if (!is_string($locale) || trim($locale) === '') {
+                                                $locale = 'fr_FR';
+                                        }
+
+                                        foreach ($allowedCountries as $isoCode) {
+                                                $label = parcelTracking_getCountryLabel($isoCode, $locale);
+                                                if ($label === '') {
+                                                        $label = $isoCode;
+                                                }
+                                                $allowedCountryLabels[] = $label . ' (' . $isoCode . ')';
+                                        }
+
+                                        natcasesort($allowedCountryLabels);
+                                        $allowedCountryLabels = array_values($allowedCountryLabels);
+                                }
+
+                                if ($includeUndefined) {
+                                        $allowedCountryLabels[] = __('Sans code pays (undefined)', __FILE__);
+                                }
+
+                                if (empty($allowedCountryLabels)) {
+                                        $allowedCountryLabels[] = __('Tous les pays disponibles', __FILE__);
+                                }
+
+                                $allowedCountriesLabel = implode(', ', array_map(function ($label) {
+                                        return htmlspecialchars($label, ENT_QUOTES);
+                                }, $allowedCountryLabels));
                         ?>
-		</select>		
-	</div>
+                </select>
+        </div>
+
+        <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+                <span style="display: block; font-size: 12px; color: var(--txt-color, inherit); text-align: left;">
+                        <strong>{{Pays affichés}} :</strong> <?php echo $allowedCountriesLabel; ?>
+                </span>
+        </div>
 	
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
 		<input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>

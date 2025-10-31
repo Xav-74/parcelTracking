@@ -13,11 +13,6 @@
 			
         <div class="container-fluid">
 
-                <div class="col-xs-12 parcelTracking-allowed-countries">
-                        <span class="parcelTracking-allowed-countries-title">{{Pays affichés}} :</span>
-                        <span class="parcelTracking-allowed-countries-value">#allowedCountriesLabel#</span>
-                </div>
-
                 <div id="list_states" class="col-xs-12 label Cmd#states_id# table_states#id# "></div>
 				
 	</div>
@@ -108,8 +103,7 @@
 		}
 
 		//----- Widget height
-                var countriesHeight = $('.parcelTracking_widget_global_#id# .parcelTracking-allowed-countries').outerHeight(true) || 0;
-                var widegtHeight = 96*totalParcels + 30 + countriesHeight;
+                var widegtHeight = 96*totalParcels + 30;
 		$('.parcelTracking_widget_global').css('min-height', widegtHeight);
 		$('.parcelTracking_widget_global').css('max-height', widegtHeight);
 	

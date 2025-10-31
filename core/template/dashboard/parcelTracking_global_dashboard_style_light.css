@@ -39,23 +39,3 @@
         text-align: left;
 }
 
-.parcelTracking_widget_global .parcelTracking-allowed-countries {
-        margin : 0px 0px 6px 0px !important;
-        padding : 5px 5px 5px 5px !important;
-        text-align: left;
-}
-
-.parcelTracking_widget_global .parcelTracking-allowed-countries-title {
-        display: block;
-        font-size : 12px !important;
-        font-weight: 600;
-        color : var(--txt-color) !important;
-        margin-bottom: 4px;
-}
-
-.parcelTracking_widget_global .parcelTracking-allowed-countries-value {
-        display: block;
-        font-size : 12px !important;
-        color : var(--txt-color) !important;
-        white-space: normal;
-}
