@@ -14,7 +14,6 @@
         "Sans code pays (undefined)": "Senza codice paese (non definito)",
         "Rafraichir": "Aggiorna",
         "Statut colis": "Stato del pacchetto",
-        "Tous les pays disponibles": "Tutti i paesi disponibili",
         "Transporteur": "Trasportatore"
     },
     "plugins\/parcelTracking\/core\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
@@ -56,7 +55,6 @@
         "Inconnu": "Inconnu",
         "Informations de prise en charge reçues": "Informazioni di supporto ricevute",
         "Numéro de tracking inconnu": "Numero di tracciamento sconosciuto",
-        "Pays affichés": "Paesi visualizzati",
         "Rafraichir les informations": "Aggiornare le informazioni",
         "Supprimer le colis": "Cancellare il pacchetto"
     },

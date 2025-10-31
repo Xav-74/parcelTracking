@@ -107,50 +107,13 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
                                         echo '<option value="' . htmlspecialchars($carrier['key'], ENT_QUOTES) . '">' . htmlspecialchars($name . $suffix, ENT_QUOTES) . '</option>';
                                 }
 
-                                $allowedCountryLabels = [];
-
-                                if (!empty($allowedCountries)) {
-                                        $locale = config::byKey('language', 'core', 'fr_FR');
-                                        if (!is_string($locale) || trim($locale) === '') {
-                                                $locale = 'fr_FR';
-                                        }
-
-                                        foreach ($allowedCountries as $isoCode) {
-                                                $label = parcelTracking_getCountryLabel($isoCode, $locale);
-                                                if ($label === '') {
-                                                        $label = $isoCode;
-                                                }
-                                                $allowedCountryLabels[] = $label . ' (' . $isoCode . ')';
-                                        }
-
-                                        natcasesort($allowedCountryLabels);
-                                        $allowedCountryLabels = array_values($allowedCountryLabels);
-                                }
-
-                                if ($includeUndefined) {
-                                        $allowedCountryLabels[] = __('Sans code pays (undefined)', __FILE__);
-                                }
-
-                                if (empty($allowedCountryLabels)) {
-                                        $allowedCountryLabels[] = __('Tous les pays disponibles', __FILE__);
-                                }
-
-                                $allowedCountriesLabel = implode(', ', array_map(function ($label) {
-                                        return htmlspecialchars($label, ENT_QUOTES);
-                                }, $allowedCountryLabels));
                         ?>
                 </select>
         </div>
 
         <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-                <span style="display: block; font-size: 12px; color: var(--txt-color, inherit); text-align: left;">
-                        <strong>{{Pays affichés}} :</strong> <?php echo $allowedCountriesLabel; ?>
-                </span>
+                <input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>
         </div>
-	
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>
-	</div>
 
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 8px; height: 40px;">
 		<span id="info" style="font-size: 12px"></span>

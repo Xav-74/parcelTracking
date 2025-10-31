@@ -14,7 +14,6 @@
         "Sans code pays (undefined)": "Ohne Ländercode (undefiniert)",
         "Rafraichir": "Auffrischen",
         "Statut colis": "Paketstatus",
-        "Tous les pays disponibles": "Alle verfügbaren Länder",
         "Transporteur": "Träger"
     },
     "plugins\/parcelTracking\/core\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
@@ -56,7 +55,6 @@
         "Inconnu": "Unbekannt",
         "Informations de prise en charge reçues": "Erhaltene Informationen zur Übernahme",
         "Numéro de tracking inconnu": "Unbekannte Trackingnummer",
-        "Pays affichés": "Angezeigte Länder",
         "Rafraichir les informations": "Informationen aktualisieren",
         "Supprimer le colis": "Paket löschen"
     },
