@@ -17,6 +17,7 @@
 
 /* * ***************************Includes********************************* */
 require_once __DIR__  . '/../../../../core/php/core.inc.php';
+require_once __DIR__ . '/../php/parcelTracking.inc.php';
 
 if (!class_exists('parcelTracking_API')) {
     require_once __DIR__ . '/../../3rdparty/parcelTracking_API.php';
@@ -323,7 +324,7 @@ class parcelTracking extends eqLogic {
 			$replace['#' . $cmd->getLogicalId() . '_visible#'] = $cmd->getIsVisible();
 		}
 			
-		// On definit le template à appliquer par rapport aux paramètre du plugin
+                // On definit le template à appliquer par rapport aux paramètre du plugin
 		if ( config::byKey('defaultWidget', 'parcelTracking') == "one" ) { 
             $this->setIsVisibleEqlogics("one");
             $replace['#listParcels#'] = $this->buidListWidget();
@@ -354,7 +355,7 @@ class parcelTracking extends eqLogic {
         $html = translate::exec($html, $filepath);
         return $this->postToHtml($_version, $html);
      }
-    
+
     private function createCmd($commandName, $commandDescription, $order, $type, $subType, $isHistorized = 0, $template = [])
     {	
         $cmd = $this->getCmd(null, $commandName);
