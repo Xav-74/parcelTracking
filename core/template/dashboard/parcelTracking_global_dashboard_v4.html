@@ -11,9 +11,14 @@
 		</span>
 	</div>
 			
-	<div class="container-fluid">
-		
-		<div id="list_states" class="col-xs-12 label Cmd#states_id# table_states#id# "></div>				
+        <div class="container-fluid">
+
+                <div class="col-xs-12 parcelTracking-allowed-countries">
+                        <span class="parcelTracking-allowed-countries-title">{{Pays affichés}} :</span>
+                        <span class="parcelTracking-allowed-countries-value">#allowedCountriesLabel#</span>
+                </div>
+
+                <div id="list_states" class="col-xs-12 label Cmd#states_id# table_states#id# "></div>
 				
 	</div>
 	
@@ -64,12 +69,13 @@
 				
 		//----- List Parcels
 		var list = '#listParcels#';
+		var totalParcels = 0;
 		
 		if ( list != null ) {
 			var table = jQuery.parseJSON(list);
-			var totalParcels = table.totalParcels - 1;		//On ne compte pas le widget dédié
+			totalParcels = table.totalParcels - 1;		//On ne compte pas le widget dédié
 												
-			var table_html= "";
+                        var table_html= "";
 			table_html += '<ul class="list-group" style="text-align: left">';
 			jQuery.each(table.parcels,function(key,parcel){
 				if ( parcel.status != null ) { var status = parcel.status;} else { status = ''; }
@@ -102,7 +108,8 @@
 		}
 
 		//----- Widget height
-		var widegtHeight = 96*totalParcels + 30;
+                var countriesHeight = $('.parcelTracking_widget_global_#id# .parcelTracking-allowed-countries').outerHeight(true) || 0;
+                var widegtHeight = 96*totalParcels + 30 + countriesHeight;
 		$('.parcelTracking_widget_global').css('min-height', widegtHeight);
 		$('.parcelTracking_widget_global').css('max-height', widegtHeight);
 	

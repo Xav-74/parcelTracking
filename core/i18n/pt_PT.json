@@ -11,8 +11,10 @@
         "Etats": "Estado",
         "Indisponible": "Não disponível",
         "Origine": "Origem",
+        "Sans code pays (undefined)": "Sem código de país (indefinido)",
         "Rafraichir": "Recarregar",
         "Statut colis": "Estado do pacote",
+        "Tous les pays disponibles": "Todos os países disponíveis",
         "Transporteur": "Transportador"
     },
     "plugins\/parcelTracking\/core\/template\/dashboard\/parcelTracking_dashboard_v4.html": {
@@ -54,6 +56,7 @@
         "Inconnu": "Desconhecido",
         "Informations de prise en charge reçues": "Informações de apoio recebidas",
         "Numéro de tracking inconnu": "Número de rastreio desconhecido",
+        "Pays affichés": "Países apresentados",
         "Rafraichir les informations": "Atualizar informações",
         "Supprimer le colis": "Eliminar pacote"
     },
