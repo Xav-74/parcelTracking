@@ -11,6 +11,7 @@
         "Etats": "Status",
         "Indisponible": "Unavailable",
         "Origine": "Origin",
+        "Sans code pays (undefined)": "No country code (undefined)",
         "Rafraichir": "Refresh",
         "Statut colis": "Parcel status",
         "Transporteur": "Carrier"

@@ -18,6 +18,8 @@
 
 include_file('core', 'authentification', 'php');
 
+require_once dirname(__FILE__) . '/../../core/php/parcelTracking.inc.php';
+
 if (!isConnect()) {
     throw new Exception('{{401 - Accès non autorisé}}');
 }
@@ -36,22 +38,82 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 		<input id="trackingId" type="text" class="form-control" placeholder="{{Numéro de suivi du colis}}"/>
 	</div>
 
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<select id="carrier" class="eqLogicAttr form-control">
-			<option value="">{{Aucun transporteur}}</option>
-			<?php
-				$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
-				$carriers = json_decode($json, true);
-				foreach($carriers as $carrier) {
-					echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
-				}
-			?>
-		</select>		
-	</div>
-	
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>
-	</div>
+        <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+                <select id="carrier" class="eqLogicAttr form-control" style="background-color: var(--bg-modal-color, #fff);">
+                        <option value="">{{Aucun transporteur}}</option>
+                        <?php
+                                $json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
+                                $carriers = json_decode($json, true);
+
+                                $allowedCountriesRaw = config::byKey('allowedCountries', 'parcelTracking', '');
+                                if (is_array($allowedCountriesRaw)) {
+                                        $allowedCountries = $allowedCountriesRaw;
+                                } else {
+                                        $allowedCountries = explode(',', (string) $allowedCountriesRaw);
+                                }
+
+                                $allowedCountries = array_values(array_filter(array_map(function ($value) {
+                                        return strtoupper(trim((string) $value));
+                                }, $allowedCountries)));
+
+                                $includeUndefined = false;
+                                if (!empty($allowedCountries)) {
+                                        $includeUndefined = in_array('UNDEFINED', $allowedCountries, true);
+                                        if ($includeUndefined) {
+                                                $allowedCountries = array_values(array_diff($allowedCountries, ['UNDEFINED']));
+                                        }
+                                }
+
+                                $carriers = is_array($carriers) ? $carriers : [];
+                                $filteredCarriers = array_filter($carriers, function ($carrier) use ($allowedCountries, $includeUndefined) {
+                                        if (!is_array($carrier)) {
+                                                return false;
+                                        }
+
+                                        $countryIso = isset($carrier['_country_iso']) ? strtoupper(trim($carrier['_country_iso'])) : '';
+
+                                        if ($countryIso === '') {
+                                                if (empty($allowedCountries)) {
+                                                        return true;
+                                                }
+
+                                                return $includeUndefined;
+                                        }
+
+                                        if (empty($allowedCountries)) {
+                                                return true;
+                                        }
+
+                                        return in_array($countryIso, $allowedCountries, true);
+                                });
+
+                                usort($filteredCarriers, function ($a, $b) {
+                                        $nameA = isset($a['_name']) ? trim($a['_name']) : '';
+                                        $nameB = isset($b['_name']) ? trim($b['_name']) : '';
+
+                                        return strcasecmp($nameA, $nameB);
+                                });
+
+                                foreach ($filteredCarriers as $carrier) {
+                                        if (!isset($carrier['key'])) {
+                                                continue;
+                                        }
+
+                                        $name = isset($carrier['_name']) && trim($carrier['_name']) !== '' ? trim($carrier['_name']) : $carrier['key'];
+                                        $countryIso = isset($carrier['_country_iso']) && trim($carrier['_country_iso']) !== '' ? strtoupper(trim($carrier['_country_iso'])) : '';
+                                        $countryLabel = $countryIso !== '' ? parcelTracking_getCountryLabel($countryIso, 'fr_FR') : '';
+                                        $suffix = $countryLabel !== '' ? ' (' . $countryLabel . ')' : '';
+
+                                        echo '<option value="' . htmlspecialchars($carrier['key'], ENT_QUOTES) . '">' . htmlspecialchars($name . $suffix, ENT_QUOTES) . '</option>';
+                                }
+
+                        ?>
+                </select>
+        </div>
+
+        <div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+                <input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>
+        </div>
 
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 8px; height: 40px;">
 		<span id="info" style="font-size: 12px"></span>
