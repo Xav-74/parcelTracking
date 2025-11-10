@@ -16,72 +16,12 @@
 */
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
-require_once dirname(__FILE__) . '/../core/php/parcelTracking.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect()) {
     include_file('desktop', '404', 'php');
     die();
 }
-    $allowedCountriesRaw = config::byKey('allowedCountries', 'parcelTracking', '');
-    if (is_array($allowedCountriesRaw)) {
-        $selectedCountries = $allowedCountriesRaw;
-    } else {
-        $selectedCountries = explode(',', (string) $allowedCountriesRaw);
-    }
-    $selectedCountries = array_values(array_filter(array_map(function ($value) {
-        return strtoupper(trim($value));
-    }, $selectedCountries)));
-
-    $carriersFile = dirname(__FILE__) . '/../data/apicarrier.all.json';
-    $availableCountries = [];
-    $hasUndefinedCountry = false;
-    $undefinedCountryLabel = null;
-
-    if (file_exists($carriersFile)) {
-        $carriersContent = file_get_contents($carriersFile);
-        $carriersList = json_decode($carriersContent, true);
-
-        if (is_array($carriersList)) {
-            foreach ($carriersList as $carrier) {
-                if (!isset($carrier['_country_iso']) || trim($carrier['_country_iso']) === '') {
-                    $hasUndefinedCountry = true;
-                    continue;
-                }
-
-                $isoCode = strtoupper(trim($carrier['_country_iso']));
-                if ($isoCode === '') {
-                    continue;
-                }
-
-                if (!isset($availableCountries[$isoCode])) {
-                    $availableCountries[$isoCode] = parcelTracking_getCountryLabel($isoCode, 'fr_FR');
-                }
-            }
-        }
-    }
-
-    if ($hasUndefinedCountry) {
-        $undefinedCountryLabel = __('Sans code pays (undefined)', __FILE__);
-    }
-
-    natcasesort($availableCountries);
-    if ($undefinedCountryLabel !== null) {
-        $availableCountries['UNDEFINED'] = $undefinedCountryLabel;
-    }
 ?>
-        
-<style>
-    #allowedCountriesActions .btn {
-        margin-right: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #allowedCountriesActions .btn:last-child {
-        margin-right: 0;
-    }
-</style>
 
 <form class="form-horizontal">
     <fieldset>
@@ -143,37 +83,7 @@ if (!isConnect()) {
                     }
                     echo $options;
                 ?>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-sm-4 control-label">{{Pays des transporteurs disponibles}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez les pays dont vous souhaitez afficher les transporteurs lors de la création d'un colis. Laissez tout sélectionné pour conserver la liste complète.}}"></i></sup>
-        </label>
-        <div class="col-sm-4">
-            <input type="hidden" class="configKey" data-l1key="allowedCountries" id="allowedCountriesConfig" value="<?php echo htmlspecialchars(implode(',', $selectedCountries), ENT_QUOTES); ?>" />
-            <div class="btn-group btn-group-xs" id="allowedCountriesActions" role="group" style="margin-bottom:2px;">
-                <a class="btn btn-default" id="bt_selectAllCountries">{{Tout sélectionner}}</a>
-                <a class="btn btn-default" id="bt_resetCountries">{{Tout désélectionner}}</a>
-            </div>
-            <div class="form-control" style="height:300px;overflow:auto;margin-bottom:2px;">
-                <?php
-                    if (empty($availableCountries)) {
-                        echo '<span class="label label-warning">' . __('Aucun pays disponible', __FILE__) . '</span>';
-                    } else {
-                        $defaultSelection = empty($selectedCountries);
-                        foreach ($availableCountries as $code => $label) {
-                            $isChecked = $defaultSelection || in_array($code, $selectedCountries, true);
-                            echo '<div class="checkbox">';
-                            echo '<label>';
-                            echo '<input type="checkbox" class="country-filter-checkbox" value="' . $code . '"' . ($isChecked ? ' checked' : '') . '> ' . htmlspecialchars($label) . ' (' . $code . ')';
-                            echo '</label>';
-                            echo '</div>';
-                        }
-                    }
-                ?>
-            </div>
+            </select>        
         </div>
     </div>
 
@@ -263,66 +173,6 @@ if (!isConnect()) {
 </form>
 
 <script>
-
-    function updateAllowedCountriesConfig() {
-        var hiddenInput = document.getElementById('allowedCountriesConfig');
-        if (!hiddenInput) {
-            return;
-        }
-
-        var selectedCountries = [];
-        Array.prototype.forEach.call(document.querySelectorAll('.country-filter-checkbox:checked'), function(checkbox) {
-            selectedCountries.push(checkbox.value);
-        });
-
-        hiddenInput.value = selectedCountries.join(',');
-    }
-
-    function initAllowedCountriesSelection() {
-        var hiddenInput = document.getElementById('allowedCountriesConfig');
-        if (!hiddenInput) {
-            return;
-        }
-
-        var rawValue = hiddenInput.value ? hiddenInput.value.trim() : '';
-        var initialSelection = rawValue.length > 0 ? rawValue.split(',') : null;
-
-        Array.prototype.forEach.call(document.querySelectorAll('.country-filter-checkbox'), function(checkbox) {
-            if (initialSelection === null) {
-                checkbox.checked = true;
-            } else {
-                checkbox.checked = initialSelection.indexOf(checkbox.value) !== -1;
-            }
-
-            checkbox.addEventListener('change', updateAllowedCountriesConfig);
-        });
-
-        updateAllowedCountriesConfig();
-    }
-
-    initAllowedCountriesSelection();
-
-    var selectAllCountriesButton = document.getElementById('bt_selectAllCountries');
-    if (selectAllCountriesButton) {
-        selectAllCountriesButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            Array.prototype.forEach.call(document.querySelectorAll('.country-filter-checkbox'), function(checkbox) {
-                checkbox.checked = true;
-            });
-            updateAllowedCountriesConfig();
-        });
-    }
-
-    var resetCountriesButton = document.getElementById('bt_resetCountries');
-    if (resetCountriesButton) {
-        resetCountriesButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            Array.prototype.forEach.call(document.querySelectorAll('.country-filter-checkbox'), function(checkbox) {
-                checkbox.checked = false;
-            });
-            updateAllowedCountriesConfig();
-        });
-    }
 
     var CommunityButton = document.querySelector('#createCommunityPost > span');
     if(CommunityButton) {CommunityButton.innerHTML = "{{Community}}";}
