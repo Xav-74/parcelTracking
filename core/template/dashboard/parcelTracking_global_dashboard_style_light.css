@@ -32,10 +32,9 @@
 }
 
 .parcelTracking_widget_global .span-item-value {
-        white-space: normal;
-        vertical-align: middle;
-        font-size : 12px !important;
-        color : var(--txt-color) !important;
-        text-align: left;
+	white-space: normal;
+	vertical-align: middle;
+	font-size : 12px !important;
+	color : var(--txt-color) !important;
+	text-align: left;
 }
-
