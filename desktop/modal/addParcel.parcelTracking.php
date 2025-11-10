@@ -37,13 +37,17 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 	</div>
 
 	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+		<div>
+			<i class="fas fa-search" style="position: absolute; left: 10px; top: 10px; pointer-events: none; z-index:5;"></i>
+			<input type="text" id="searchCarrier" class="form-control"  style="padding-left: 35px !important;" placeholder="{{Rechercher...}}">
+		</div>
 		<select id="carrier" class="eqLogicAttr form-control">
 			<option value="">{{Aucun transporteur}}</option>
 			<?php
 				$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
 				$carriers = json_decode($json, true);
 				foreach($carriers as $carrier) {
-					echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
+					echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].' ('.$carrier['_country_iso'].')'.'</option>';
 				}
 			?>
 		</select>		
@@ -65,6 +69,15 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 	
 <script>
 		
+	document.getElementById('searchCarrier').addEventListener('keyup', function() {
+		const search = this.value.toLowerCase();
+		const options = document.querySelectorAll('#carrier option');
+		options.forEach(opt => {
+			const text = opt.textContent.toLowerCase();
+			opt.style.display = text.includes(search) ? '' : 'none';
+		});
+	});
+	
 	/* Récupération des infos concernant les paramètres additionnels */
 	var json;
 	$.ajax({
@@ -91,9 +104,9 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 		info.innerHTML = '';
 		
 		jsonArray.forEach(carrier => {
-			if ( carrier['Carrier Code'] === code ) {
-				htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['Type']+' (Example : '+carrier['Example']+')';
-			}
+			if ( carrier['key'] == code ) {
+				htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['parameters'][0]['description'].replace(/_/g, ' ')+' (Example : '+carrier['parameters'][0]['sample']+')';
+			}		
 		});
 
 		info.innerHTML = htmlContent;

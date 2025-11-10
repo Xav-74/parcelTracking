@@ -162,7 +162,7 @@ class parcelTracking extends eqLogic {
         foreach (eqLogic::byType('parcelTracking', true) as $parcelTracking) {
             if ( $parcelTracking->getConfiguration('eqLogicType') != 'global') {
                 $status = $parcelTracking->getCmd('info','status')->execCmd();
-                if ( $parcelTracking->getCmd('info','states')->execCmd() != 'not available' ) {
+                if ( $parcelTracking->getCmd('info','states')->execCmd() != 'not available' && $parcelTracking->getCmd('info','states')->execCmd() != '') {
                     $lastState = json_decode($parcelTracking->getCmd('info','states')->execCmd(),true);
                     $list['parcels'][] = [ 
                         'id' => $parcelTracking->getId(),

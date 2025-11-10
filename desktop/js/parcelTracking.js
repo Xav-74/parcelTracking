@@ -262,8 +262,8 @@ document.getElementById('sel_carrier').addEventListener('change', function() {
 	info.innerHTML = '';
 	
 	jsonArray.forEach(carrier => {
-		if ( carrier['Carrier Code'] === code ) {
-			htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['Type']+' (Example : '+carrier['Example']+')';
+		if ( carrier['key'] == code ) {
+			htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['parameters'][0]['description'].replace(/_/g, ' ')+' (Example : '+carrier['parameters'][0]['sample']+')';
 		}		
 	});
 

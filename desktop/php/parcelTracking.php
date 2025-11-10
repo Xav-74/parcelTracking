@@ -210,19 +210,23 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</label>
 								<div class="col-sm-6">
 									<div class="input-group" style="margin-bottom:0px !important">
-										<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 1px 0px 1px 0px;" data-l1key="configuration" data-l2key="carrier">
+										<div style="position: relative; margin-bottom: 5px;">
+											<i class="fas fa-search" style="position: absolute; left: 10px; top: 10px; pointer-events: none; z-index:5;"></i>
+											<input type="text" id="searchCarrier" class="form-control"  style="margin: 1px 0px 1px 0px; padding-left: 35px !important;" placeholder="{{Rechercher...}}">
+										</div>
+            							<select id="sel_carrier" class="eqLogicAttr form-control" style="margin: 0px 0px 1px 0px; " data-l1key="configuration" data-l2key="carrier">
 											<option value="">{{Aucun}}</option>
 											<?php
 												$json = file_get_contents('plugins/parcelTracking/data/apicarrier.all.json');
 												$carriers = json_decode($json, true);
 
 												foreach($carriers as $carrier) {
-													echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].'</option>"';
+													echo '<option value="'.$carrier['key'].'">'.$carrier['_name'].' ('.$carrier['_country_iso'].')'.'</option>';
 												}
 											?>
 										</select>
 										<span class="input-group-btn">
-											<a class="btn btn-warning cmdAction" id="bt_updateCarrier" title="{{Mettre à jour le transporteur<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
+											<a class="btn btn-warning cmdAction" id="bt_updateCarrier" style="z-index:5; height:64px;" title="{{Mettre à jour le transporteur<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt" style="padding-top: 18px;"></i></a>
 										</span>
 									</div>
 									<span id="info" style="font-size: 12px"></span>
@@ -237,7 +241,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<div class="input-group" style="margin-bottom:0px !important">
 										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="additionalParameter" placeholder="">
 										<span class="input-group-btn">
-											<a class="btn btn-warning cmdAction" id="bt_updateInfo" title="{{Mettre à jour le paramètre additionnel<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
+											<a class="btn btn-warning cmdAction" id="bt_updateInfo" style="z-index:5;" title="{{Mettre à jour le paramètre additionnel<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
 										</span>
 									</div>
 								</div>
@@ -300,6 +304,16 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 </div><!-- /.row row-overflow -->
 
+<script>
+	document.getElementById('searchCarrier').addEventListener('keyup', function() {
+		const search = this.value.toLowerCase();
+		const options = document.querySelectorAll('#sel_carrier option');
+		options.forEach(opt => {
+			const text = opt.textContent.toLowerCase();
+			opt.style.display = text.includes(search) ? '' : 'none';
+		});
+	});
+</script>
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'parcelTracking', 'js', 'parcelTracking'); ?>

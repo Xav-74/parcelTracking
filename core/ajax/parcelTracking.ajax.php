@@ -86,7 +86,7 @@ try {
 	}
 
     if (init('action') == 'getJSON') {
-		$result = file_get_contents( dirname(__FILE__).'/../../data/apicarrier.param.json');
+		$result = file_get_contents( dirname(__FILE__).'/../../data/additional_parameters.json');
 		ajax::success($result);
 	}
 
