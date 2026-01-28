@@ -21,6 +21,26 @@ if (!isConnect()) {
     include_file('desktop', '404', 'php');
     die();
 }
+
+$carrierFile = dirname(__FILE__) . '/../data/apicarrier.all.json';
+$carrierCount = '--';
+$carrierUpdate = __('Jamais', __FILE__);
+
+if (is_readable($carrierFile)) {
+    $carrierContent = file_get_contents($carrierFile);
+    if ($carrierContent !== false) {
+        $carrierData = json_decode($carrierContent, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($carrierData)) {
+            $carrierCount = count($carrierData).' '.__('entrées', __FILE__);
+        }
+    }
+
+    $carrierTimestamp = filemtime($carrierFile);
+    if ($carrierTimestamp !== false) {
+        $carrierUpdate = date('d-m-Y H:i', $carrierTimestamp);
+    }
+}
+
 ?>
 
 <form class="form-horizontal">
@@ -38,6 +58,21 @@ if (!isConnect()) {
     </div>
 
     <div class="form-group">
+        <label class="col-sm-4 control-label">{{Langue}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez la langue utilisée pour les retours API. Attention, cela décomptera 2 suivis par colis sur votre quota.<br/> Laissez le champ sur 'Langue par défaut' pour conserver la langue par défaut du transporteur ! }}"></i></sup>
+        </label>
+        <div class="col-sm-4">
+            <select class="configKey form-control" data-l1key="language">
+                <option value="default" selected>{{Langue par défaut}}</option>
+                <option value="fr">{{Français}}</option>
+                <option value="en">{{Anglais}}</option>
+                <option value="de">{{Allemand}}</option>
+                <option value="es">{{Espagnol}}</option>
+            </select>
+        </div>    
+    </div>
+
+    <div class="form-group">
         <label class="col-sm-4 control-label">{{Quota restant}}
             <sup><i class="fas fa-question-circle tooltips" title="{{La vérification permet de récupérer le quota de suivi restant sur vote compte 17Track}}"></i></sup>
         </label>
@@ -52,21 +87,20 @@ if (!isConnect()) {
     </div>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Langue}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez la langue utilisée pour les retours API. Attention, cela décomptera 2 suivis par colis sur votre quota.<br/> Laissez le champ sur 'Langue par défaut' pour conserver la langue par défaut du transporteur ! }}"></i></sup>
+        <label class="col-sm-4 control-label">{{Liste des transporteurs}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Actualisez la liste locale des transporteurs depuis 17track}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <select class="configKey form-control" data-l1key="language">
-                <option value="default" selected>{{Langue par défaut}}</option>
-                <option value="fr">{{Français}}</option>
-                <option value="en">{{Anglais}}</option>
-                <option value="de">{{Allemand}}</option>
-                <option value="es">{{Espagnol}}</option>
-            </select>
-        </div>    
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input id="carrier_count" class="form-control" value="<?php echo htmlspecialchars($carrierCount, ENT_QUOTES, 'UTF-8'); ?>" readonly />
+                <span class="input-group-btn" title="{{Actualiser}}">
+                    <a id="bt_refreshCarriers" class="btn btn-primary"><i class="fas fa-sync"></i></a>
+                </span>
+            </div>
+            <span class="help-block"><?php echo __('Dernière mise à jour', __FILE__); ?> : <span id="carrier_last_update"><?php echo htmlspecialchars($carrierUpdate, ENT_QUOTES, 'UTF-8'); ?></span></span>
+        </div>
     </div>
-    <br/>
-    
+        
     <legend><i class="fas fa-cogs"></i> {{Paramètres optionnels du plugin}}</legend>
 
     <div class="form-group">
@@ -253,6 +287,44 @@ if (!isConnect()) {
                 }
                 else  {
                     $('#div_alert').showAlert({message: '{{Notification envoyée avec succès}}', level: 'success'});
+                }
+            }
+        });
+    };
+
+    /* Fonction permettant l'update de la liste des transporteurs*/
+    document.getElementById('bt_refreshCarriers').addEventListener('click', function() {
+        refreshCarriersList();
+    });
+    
+    function refreshCarriersList()  {
+        
+        $('#div_alert').showAlert({message: '{{Mise à jour en cours}}', level: 'warning'});	
+        $.ajax({
+            type: "POST",
+            url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
+            data: {
+                action: "refreshCarriersList",
+                },
+            dataType: 'json',
+                error: function (request, status, error) {
+                handleAjaxError(request, status, error);
+                },
+            success: function (data) { 			
+
+                if (data.state != 'ok') {
+                    $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour de la liste des transporteurs}}', level: 'danger'});
+                    return;
+                }
+                else  {
+                    if ( data.result != null && data.result['success'] == true ) {
+                        $('#carrier_count').text(data.result['count']+'{{ entrées}}');
+                        $('#carrier_last_update').text(data.result['timestamp']);
+                        $('#div_alert').showAlert({message: '{{Mise à jour de la liste des transporteurs réalisée avec succès}}', level: 'success'});
+                    }
+                    else {
+                        $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour de la liste des transporteurs}}', level: 'danger'});
+                    }
                 }
             }
         });

@@ -72,6 +72,9 @@ class parcelTracking extends eqLogic {
             }
         }
         log::add('parcelTracking', 'debug', '└─End of remove parcels');
+        
+        // Refresh carriers list
+        self::refreshCarriersList();
     }
  
     public static function getConfigForCommunity() {
@@ -719,6 +722,104 @@ class parcelTracking extends eqLogic {
         }
     }
 
+    public static function refreshCarriersList() {
+
+        log::add('parcelTracking', 'debug', '┌─Command execution : refreshCarriersList');
+    
+        // Update apicarrier.all.json
+        $result1 = self::updateJsonFile(
+            'https://res.17track.net/asset/carrier/info/apicarrier.all.json',
+            __DIR__ . '/../../data/apicarrier.all.json',
+            ['key', '_name', '_country_iso'],
+            'apicarrier.all.json'
+        );
+        
+        if (!$result1['success']) {
+            log::add('parcelTracking', 'debug', '└─End of refreshCarriersList');
+            return $result1;
+        }
+        
+        // Update additional_parameters.json
+        $result2 = self::updateJsonFile(
+            'https://res.17track.net/asset/carrier/info/additional_parameters.json',
+            __DIR__ . '/../../data/additional_parameters.json',
+            ['key', 'parameters'],
+            'additional_parameters.json',
+            true
+        );
+        
+        if (!$result2['success']) {
+            log::add('parcelTracking', 'debug', '└─End of refreshCarriersList');
+            return $result2;
+        }
+        
+        log::add('parcelTracking', 'debug', '└─End of refreshCarriersList');
+        return $result1;
+    }
+
+    private static function updateJsonFile($url, $target, $requiredKeys, $fileName, $validateParameters = false) {
+        
+        $previous = count(json_decode(file_get_contents($target, true)));
+        
+        $jsonContent = file_get_contents($url);
+        if ($jsonContent === false) {
+            log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Unable to fetch file "'.$fileName.'" from URL');
+            return ['success' => false];
+        }
+        
+        $data = json_decode($jsonContent, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Retrieved content "'.$fileName.'" is not valid JSON : '.json_last_error_msg());
+            return ['success' => false];
+        }
+        
+        if (!is_array($data)) {
+            log::add('parcelTracking', 'debug', '| Result updateJsonFile() - JSON "'.$fileName.'" does not contain an array');
+            return ['success' => false];
+        }
+        
+        foreach ($data as $index => $item) {
+            if (!is_array($item)) {
+                log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Element at index '.$index.' in "'.$fileName.'" is not an array');
+                return ['success' => false];
+            }
+            
+            // apicarrier.all.json
+            foreach ($requiredKeys as $key) {
+                if (!isset($item[$key])) {
+                    log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Element at index '.$index.' in "'.$fileName.'" does not contain required key: '.$key);
+                    return ['success' => false];
+                }
+            }
+            
+            // additional_parameters.json
+            if ($validateParameters) {
+                if (!is_array($item['parameters']) || empty($item['parameters'])) {
+                    log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Element at index '.$index.' in "'.$fileName.'" has invalid parameters array');
+                    return ['success' => false];
+                }
+                
+                if (!isset($item['parameters'][0]['description']) || !isset($item['parameters'][0]['sample'])) {
+                    log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Element at index '.$index.' in "'.$fileName.'" parameters missing description or sample');
+                    return ['success' => false];
+                }
+            }
+        }
+       
+        if (file_put_contents($target, $jsonContent) === false) {
+            log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Unable to write file "'.$fileName.'"');
+            return ['success' => false];
+        }
+        
+        log::add('parcelTracking', 'debug', '| Result updateJsonFile() - File "'.$fileName.'" updated successfully');
+        log::add('parcelTracking', 'debug', '| Result updateJsonFile() - Previous entries: '.$previous.' - Current entries: '.count($data));
+        
+        return [
+            'success' => true,
+            'count' => count($data),
+            'timestamp' => date('Y-m-d H:i', filemtime($target))
+        ];
+    }
 }
 
 
