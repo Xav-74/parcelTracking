@@ -136,6 +136,9 @@
         "Widget dédié géré par le plugin": "Dediziertes Widget, das vom Plugin verwaltet wird"
     },
     "plugins\/parcelTracking\/plugin_info\/configuration.php": {
+        " entrées": " Eingänge",
+        "Actualiser": "Aktualisieren",
+        "Actualisez la liste locale des transporteurs depuis 17track": "Aktualisieren Sie die lokale Liste der Transportunternehmen von 17track",
         "Allemand": "Deutsch",
         "Anglais": "Englisch",
         "Aucun": "Nein",
@@ -147,17 +150,23 @@
         "Clé API 17Track <a href=\"https:\/\/api.17track.net\/en\/admin\/dashboard\">(lien)<\/a>": "API-Schlüssel 17Track <a href=\"https:\/\/api.17track.net\/en\/admin\/dashboard\">(Link)<\/a>",
         "Commande à utiliser pour l'envoi de notifications": "Befehl, der zum Senden von Benachrichtigungen verwendet werden soll",
         "Community": "Community",
+        "Dernière mise à jour": "Letzte Aktualisierung",
         "Durée de conservation de l'équipement après livraison (en jours)": "Haltbarkeitsdauer der Geräte nach der Lieferung (in Tagen)",
         "Envoi de la notification": "Senden der Benachrichtigung",
         "Erreur lors de l\\'envoi de la notification": "Fehler beim Senden der Benachrichtigung",
+        "Erreur lors de la mise à jour de la liste des transporteurs": "Fehler beim Aktualisieren der Liste der Transportunternehmen",
         "Erreur lors de la récupération des informations": "Fehler beim Abrufen von Informationen",
         "Espagnol": "Spanisch",
         "Format du corps du message": "Format des Nachrichtentextes",
         "Français": "Französisch",
         "Informations récupérées avec succès": "Informationen erfolgreich abgerufen",
+        "Jamais": "Niemals",
         "La vérification permet de récupérer le quota de suivi restant sur vote compte 17Track": "Durch die Überprüfung wird die verbleibende Tracking-Quote auf Ihrem 17Track-Konto abgerufen",
         "Langue": "Sprache",
         "Langue par défaut": "Standardsprache",
+        "Liste des transporteurs": "Liste der Transportunternehmen",
+        "Mise à jour de la liste des transporteurs réalisée avec succès": "Aktualisierung der Liste der Transportunternehmen erfolgreich durchgeführt",
+        "Mise à jour en cours": "Aktualisierungen werden durchgeführt",
         "Notification envoyée avec succès": "Benachrichtigung erfolgreich gesendet",
         "Objet parent par défaut": "Übergeordnetes Standardobjekt",
         "Paramètres API Parcelsapp": "Parcelsapp API-Einstellungen",
@@ -178,7 +187,8 @@
         "Vérifier": "überprüfen",
         "Widget par colis": "Widget nach Paket",
         "Widget par colis + widget unique": "Widget nach Paket + einzigartiges Widget",
-        "Widget unique": "Einzigartiges Widget"
+        "Widget unique": "Einzigartiges Widget",
+        "entrées": "Einträge"
     },
     "plugins\/parcelTracking\/plugin_info\/install.php": {
         "Le plugin Suivi colis a été correctement désinstallé. N\\'hésitez pas à laisser un avis sur le Market Jeedom !": "Das Plugin Paketverfolgung wurde korrekt deinstalliert. Zögern Sie nicht, eine Bewertung im Jeedom Market zu hinterlassen!",
