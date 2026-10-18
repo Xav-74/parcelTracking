@@ -36,7 +36,7 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 		<input id="trackingId" type="text" class="form-control" placeholder="{{Numéro de suivi du colis}}"/>
 	</div>
 
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
+	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 13px;">
 		<div>
 			<i class="fas fa-search" style="position: absolute; left: 10px; top: 10px; pointer-events: none; z-index:5;"></i>
 			<input type="text" id="searchCarrier" class="form-control"  style="padding-left: 35px !important;" placeholder="{{Rechercher...}}">
@@ -53,14 +53,6 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 		</select>		
 	</div>
 	
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 5px;">
-		<input id="param" type="text" class="form-control" placeholder="{{Paramètre additionnel}}"/>
-	</div>
-
-	<div class="col-sm-12" style="padding: 0px !important; margin-bottom: 8px; height: 40px;">
-		<span id="info" style="font-size: 12px"></span>
-	</div>
-					 
 	<div class="col-sm-12" style="padding: 0px !important;">
 		<input id="btn_add" type="submit" class="btn btn-primary" style="float: right; width: 125px" value="{{Ajouter}}"/>
 	</div>
@@ -77,49 +69,13 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 			opt.style.display = text.includes(search) ? '' : 'none';
 		});
 	});
-	
-	/* Récupération des infos concernant les paramètres additionnels */
-	var json;
-	$.ajax({
-		type: "POST",
-		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
-		data: {
-			action: "getJSON",
-		},
-		dataType: 'json',
-		error: function (request, status, error) {
-			handleAjaxError(request, status, error);
-		},
-		success: function (data) { 		
-			json = data.result;
-		}
-	});
-
-
-	document.getElementById('carrier').addEventListener('change', function() {
-		jsonArray = JSON.parse(json);
-		const code = document.getElementById('carrier').value;
-		var htmlContent = '';
-		var info = document.getElementById('info');
-		info.innerHTML = '';
 		
-		jsonArray.forEach(carrier => {
-			if ( carrier['key'] == code ) {
-				htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['parameters'][0]['description'].replace(/_/g, ' ')+' (Example : '+carrier['parameters'][0]['sample']+')';
-			}		
-		});
-
-		info.innerHTML = htmlContent;
-	});
-	
-
 	$('#btn_add').click( function(){
 			
 		var name = $('#name').val();
 		var trackingId = $('#trackingId').val();
 		var carrier = $('#carrier').val();
-		var param = $('#param').val();
-					
+							
 		if ( name == '' || trackingId == '' )  {
 			$('#div_alert').showAlert({message: '{{Erreur ! Les champs #Nom du colis# et #Numéro de suivi# ne peuvent pas être vides}}', level: 'danger'});
 			return;
@@ -133,7 +89,6 @@ $eqLogic = eqLogic::byId(init('eqLogic_id'));
 				name: name,
 				trackingId: trackingId,
 				carrier: carrier,
-				param: param
 			},
 			dataType: 'json',
 			error: function (request, status, error) {

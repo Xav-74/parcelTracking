@@ -46,10 +46,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			?>
 		</div>
 
-		<legend><i class="fas fa-table"></i> {{Equipements}}</legend>
+		<legend><i class="fas fa-box"></i> {{Mes colis}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
-			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Template trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun colis trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
 		} else {
 			// Champ de recherche
 			echo '<div class="input-group" style="margin:5px;">';
@@ -60,7 +60,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			echo '</div>';
 			echo '</div>';
 			// Liste des équipements du plugin
-			echo '<legend><i class="fas fa-box"></i> {{Mes colis}}</legend>';
 			echo '<div class="eqLogicThumbnailContainer">';
 			foreach ($eqLogics as $eqLogic) {
 				if ( $eqLogic->getConfiguration('eqLogicType') == 'parcel' || $eqLogic->getConfiguration('eqLogicType') == '' ) {
@@ -78,8 +77,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			echo '</div>';
 		}
 		
-		if (count($eqLogics) == 0) {
-			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Template trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+		/*if (count($eqLogics) == 0) {
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun colis trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
 		} else {
 			// Liste des widgets du plugin
 			echo '<legend><i class="fas fa-palette"></i> {{Widget dédié géré par le plugin}}</legend>';
@@ -98,7 +97,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				}
 			}
 			echo '</div>';
-		}
+		}*/
 		?>
 	</div> <!-- /.eqLogicThumbnailDisplay -->
 
@@ -227,21 +226,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</select>
 										<span class="input-group-btn">
 											<a class="btn btn-warning cmdAction" id="bt_updateCarrier" style="z-index:5; height:64px;" title="{{Mettre à jour le transporteur<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt" style="padding-top: 18px;"></i></a>
-										</span>
-									</div>
-									<span id="info" style="font-size: 12px"></span>
-								</div>
-							</div>
-
-							<div id="parcel" class="form-group">
-								<label class="col-sm-4 control-label">{{Paramètre additionnel}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{Optionnel - Renseignez le paramètre additionnel demandé par le transporteur (code postal, code pays, ...)}}"></i></sup>
-								</label>
-								<div class="col-sm-6">
-									<div class="input-group" style="margin-bottom:0px !important">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="additionalParameter" placeholder="">
-										<span class="input-group-btn">
-											<a class="btn btn-warning cmdAction" id="bt_updateInfo" style="z-index:5;" title="{{Mettre à jour le paramètre additionnel<br/>ATTENTION ! Un premier enregistrement doit obligatoirement déjà avoir été effectué et réussi !}}"><i class="fa fa-pencil-alt"></i></a>
 										</span>
 									</div>
 								</div>

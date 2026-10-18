@@ -134,13 +134,10 @@ function register()  {
 				return;
 			}
 			else  {
-				if ( data.result.code == 0 && data.result.data?.accepted?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+				if ( data.result?.Code == 0 ) {
 					$('#div_alert').showAlert({message: '{{Enregistrement terminé avec succès}}', level: 'success'});
 				}
-				else if ( data.result.code == 0 && data.result.data?.rejected?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
-					$('#div_alert').showAlert({message: data.result.data.rejected[0].error.message, level: 'warning'});
-				}
-				else { $('#div_alert').showAlert({message: '{{Erreur lors de l\'enregistrement du colis}}', level: 'danger'}); }
+				else { $('#div_alert').showAlert({message: '{{Erreur lors de l\'enregistrement du colis}} (code '+data.result?.Code+')', level: 'danger'}); }
 			}
 		}
 	});
@@ -169,47 +166,13 @@ function updateCarrier()  {
 				return;
 			}
 			else  {
-				if ( data.result.code == 0 && data.result.data?.accepted?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
+				if ( data.result == null ) {
+					$('#div_alert').showAlert({message: '{{Colis introuvable dans le compte 17Track : effectuez d\'abord son enregistrement}}', level: 'warning'});
+				}
+				else if ( data.result.Code == 0 ) {
 					$('#div_alert').showAlert({message: '{{Mise à jour du transporteur terminée avec succès}}', level: 'success'});
 				}
-				else if ( data.result.code == 0 && data.result.data?.rejected?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
-					$('#div_alert').showAlert({message: data.result.data.rejected[0].error.message, level: 'warning'});
-				}
-				else { $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour du transporteur}}', level: 'danger'}); }
-			}
-		}
-	});
-};
-
-
-function updateInfo()  {
-	
-	$('#div_alert').showAlert({message: '{{Mise à jour en cours}}', level: 'warning'});	
-	$.ajax({
-		type: "POST",
-		url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
-		data: {
-			action: "updateInfo",
-			trackingId: $('.eqLogicAttr[data-l2key=trackingId]').value(),
-            },
-		dataType: 'json',
-		error: function (request, status, error) {
-			handleAjaxError(request, status, error);
-			},
-		success: function (data) { 			
-
-			if (data.state != 'ok') {
-				$('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour du paramètre additionnel}}', level: 'danger'});
-				return;
-			}
-			else  {
-				if ( data.result.code == 0 && data.result.data?.accepted?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
-					$('#div_alert').showAlert({message: '{{Mise à jour du paramètre additionnel terminée avec succès}}', level: 'success'});
-				}
-				else if ( data.result.code == 0 && data.result.data?.rejected?.[0]?.number == $('.eqLogicAttr[data-l2key=trackingId]').value() ) {
-					$('#div_alert').showAlert({message: data.result.data.rejected[0].error.message, level: 'warning'});
-				}
-				else { $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour du paramètre additionne}}', level: 'danger'}); }
+				else { $('#div_alert').showAlert({message: '{{Erreur lors de la mise à jour du transporteur}} (code '+data.result.Code+')', level: 'danger'}); }
 			}
 		}
 	});
@@ -223,51 +186,10 @@ document.getElementById('bt_register').addEventListener('click', function() {
 });
 
 
-document.getElementById('bt_updateInfo').addEventListener('click', function() {
-    var button = document.querySelector('.btn[data-action="save"]');
-    button.click();
-    setTimeout(updateInfo, 2000);
-});
-
-
 document.getElementById('bt_updateCarrier').addEventListener('click', function() {
     var button = document.querySelector('.btn[data-action="save"]');
     button.click();
     setTimeout(updateCarrier, 2000);
-});
-
-
-/* Récupération des infos concernant les paramètres additionnels */
-var json;
-$.ajax({
-	type: "POST",
-	url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
-	data: {
-		action: "getJSON",
-	},
-	dataType: 'json',
-	error: function (request, status, error) {
-		handleAjaxError(request, status, error);
-	},
-	success: function (data) { 		
-		json = data.result;
-	}
-});
-
-document.getElementById('sel_carrier').addEventListener('change', function() {
-	jsonArray = JSON.parse(json);
-	const code = document.getElementById('sel_carrier').value;
-	var htmlContent = '';
-	var info = document.getElementById('info');
-	info.innerHTML = '';
-	
-	jsonArray.forEach(carrier => {
-		if ( carrier['key'] == code ) {
-			htmlContent = '<i class="fas fa-exclamation-triangle"></i> Additional parameter required : <br>'+carrier['parameters'][0]['description'].replace(/_/g, ' ')+' (Example : '+carrier['parameters'][0]['sample']+')';
-		}		
-	});
-
-	info.innerHTML = htmlContent;
 });
 
 

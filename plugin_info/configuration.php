@@ -46,41 +46,40 @@ if (is_readable($carrierFile)) {
 <form class="form-horizontal">
     <fieldset>
     
-    <legend><i class="fas fa-wrench"></i> {{Paramètres API Parcelsapp}}</legend>
+    <legend><i class="fas fa-wrench"></i> {{Paramètres 17track}}</legend>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Clé API 17Track <a href="https://api.17track.net/en/admin/dashboard">(lien)</a>}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la clé API après vous être enregistré sur le site www.17track.net/en}}"></i></sup>
+        <label class="col-sm-4 control-label">{{Email}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez l'adresse email de votre compte 17track}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <input id="apiKey" class="configKey form-control" data-l1key="apiKey"/>
+            <input id="email" class="configKey form-control" data-l1key="email"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Langue}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez la langue utilisée pour les retours API. Attention, cela décomptera 2 suivis par colis sur votre quota.<br/> Laissez le champ sur 'Langue par défaut' pour conserver la langue par défaut du transporteur ! }}"></i></sup>
+        <label class="col-sm-4 control-label">{{Mot de passe}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le mot de passe de votre compte 17track}}"></i></sup>
         </label>
         <div class="col-sm-4">
-            <select class="configKey form-control" data-l1key="language">
-                <option value="default" selected>{{Langue par défaut}}</option>
-                <option value="fr">{{Français}}</option>
-                <option value="en">{{Anglais}}</option>
-                <option value="de">{{Allemand}}</option>
-                <option value="es">{{Espagnol}}</option>
-            </select>
-        </div>    
+            <div class="input-group" style="margin-bottom:0px !important">
+                <input id="password" class="inputPassword configKey form-control" data-l1key="password"/>
+                <span class="input-group-btn">
+					<a class="btn btn-default form-control bt_showPass" style="height: 32px; width: 28px"><i class="fas fa-eye"></i></a>
+                </span>
+            </div>
+        </div>
     </div>
-
+    
     <div class="form-group">
-        <label class="col-sm-4 control-label">{{Quota restant}}
-            <sup><i class="fas fa-question-circle tooltips" title="{{La vérification permet de récupérer le quota de suivi restant sur vote compte 17Track}}"></i></sup>
+        <label class="col-sm-4 control-label">{{Nombre de colis suivis en cours}}
+            <sup><i class="fas fa-question-circle tooltips" title="{{La vérification permet de récupérer le nombre de colis suivis en cours sur votre compte 17Track}}"></i></sup>
         </label>
         <div class="col-sm-4">
             <div class="input-group" style="margin-bottom:0px !important">
                 <input id="div_quota" class="form-control configKey" data-l1key="quota" placeholder="xxx / xxx" value="" readonly/>
-                <span class="input-group-btn" title="{{Vérifier}}">
-                    <a id="bt_getQuota" class="btn btn-warning"><i class="fas fa-check-square"></i></a>
+                <span class="input-group-btn" title="{{Teste la connexion et vérifie le nombre de colis suivis en cours}}">
+                    <a id="bt_testConnection" class="btn btn-warning" style="height: 32px; width: 28px"><i class="fas fa-check-square"></i></a>
                 </span>
             </div>
         </div>
@@ -94,7 +93,7 @@ if (is_readable($carrierFile)) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input id="carrier_count" class="form-control" value="<?php echo htmlspecialchars($carrierCount, ENT_QUOTES, 'UTF-8'); ?>" readonly />
                 <span class="input-group-btn" title="{{Actualiser}}">
-                    <a id="bt_refreshCarriers" class="btn btn-primary"><i class="fas fa-sync"></i></a>
+                    <a id="bt_refreshCarriers" class="btn btn-primary" style="height: 32px; width: 28px"><i class="fas fa-sync"></i></a>
                 </span>
             </div>
             <span class="help-block"><?php echo __('Dernière mise à jour', __FILE__); ?> : <span id="carrier_last_update"><?php echo htmlspecialchars($carrierUpdate, ENT_QUOTES, 'UTF-8'); ?></span></span>
@@ -141,7 +140,7 @@ if (is_readable($carrierFile)) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input id="cmdNotifications" class="form-control configKey" data-l1key="cmdNotifications"/>
                 <span class="input-group-btn">
-                    <a id="bt_selectCmdNotifications" class="btn btn-primary listCmdAction"><i class="fa fa-list-alt"></i></a>
+                    <a id="bt_selectCmdNotifications" class="btn btn-primary listCmdAction" style="height: 32px; width: 28px"><i class="fa fa-list-alt"></i></a>
                 </span>
             </div>
         </div>
@@ -155,7 +154,7 @@ if (is_readable($carrierFile)) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input class="form-control configKey" data-l1key="formatNotifications"/>
                 <span class="input-group-btn" title="{{Test des notifications}}">
-                    <a id="bt_testNotifications" class="btn btn-warning"><i class="fas fa-comment"></i></a>
+                    <a id="bt_testNotifications" class="btn btn-warning" style="height: 32px; width: 28px"><i class="fas fa-comment"></i></a>
                 </span>
             </div>
         </div>
@@ -169,7 +168,7 @@ if (is_readable($carrierFile)) {
             <div class="input-group" style="margin-bottom:0px !important">
                 <input class="form-control configKey" data-l1key="scenarioNotifications"/>
                 <span class="input-group-btn">
-                    <a id="bt_selectScenarioNotifications" class="btn btn-primary listCmdAction"><i class="fa fa-list-alt"></i></a>
+                    <a id="bt_selectScenarioNotifications" class="btn btn-primary listCmdAction" style="height: 32px; width: 28px"><i class="fa fa-list-alt"></i></a>
                 </span>
             </div>
         </div>
@@ -223,20 +222,22 @@ if (is_readable($carrierFile)) {
         });
     });
 
-    /* Fonction permettant la récupération du quota restant */
-    document.getElementById('bt_getQuota').addEventListener('click', function() {
-        getQuota();
+    /* Fonction permettant la récupération du nombre de colis suivis */
+    document.getElementById('bt_testConnection').addEventListener('click', function() {
+        testConnection();
     });
     
-    function getQuota()  {
-        
-        $('#div_alert').showAlert({message: '{{Récupérations des informations}}', level: 'warning'});	
+    /* Fonction permettant de tester la connexion au compte 17Track et de récupérer le nombre de colis suivis */
+    function testConnection()  {
+    
+        $('#div_alert').showAlert({message: '{{Connexion au compte 17Track}}', level: 'warning'});	
         $.ajax({
             type: "POST",
             url: "plugins/parcelTracking/core/ajax/parcelTracking.ajax.php",
             data: {
-                action: "getQuota",
-                apiKey: $('#apiKey').value(),
+                action: "testConnection",
+                email: $('#email').value(),
+                password: $('#password').value(),
                 },
             dataType: 'json',
                 error: function (request, status, error) {
@@ -245,16 +246,15 @@ if (is_readable($carrierFile)) {
             success: function (data) { 			
 
                 if (data.state != 'ok') {
-                    $('#div_alert').showAlert({message: '{{Erreur lors de la récupération des informations}}', level: 'danger'});
+                    $('#div_alert').showAlert({message: '{{Erreur lors de la connexion au compte 17Track}}', level: 'danger'});
                     return;
                 }
                 else  {
-                    if ( data.result.code == 0 && data.result.data?.quota_remain !== undefined && data.result.data?.quota_total !== undefined ) {
-                        quota = data.result.data.quota_remain+' / '+data.result.data.quota_total;
-                        $('#div_quota').val(quota);
-                        $('#div_alert').showAlert({message: '{{Informations récupérées avec succès}}', level: 'success'});
+                    if ( data.result.success == true ) {
+                        $('#div_quota').val(data.result.used+' / '+data.result.capacity);
+                        $('#div_alert').showAlert({message: '{{Connexion réussie}}', level: 'success'});
                     }
-                    else { $('#div_alert').showAlert({message: '{{Erreur lors de la récupération des informations}}', level: 'danger'}); }
+                    else { $('#div_alert').showAlert({message: '{{Identifiants du compte 17Track incorrects}}', level: 'danger'}); }
                 }
             }
         });

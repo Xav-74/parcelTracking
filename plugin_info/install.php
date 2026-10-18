@@ -70,11 +70,12 @@ function parcelTracking_update() {
     log::add('parcelTracking', 'debug', 'Updating plugin commands in progress');
     foreach (eqLogic::byType('parcelTracking') as $eqLogic) {
         if ( $eqLogic->getConfiguration('eqLogicType') == "" ) { $eqLogic->setConfiguration('eqLogicType', 'parcel'); }
-        if ( $eqLogic->getConfiguration('apiKey') == "" ) { $eqLogic->setConfiguration('apiKey', 1); }
         $eqLogic->save();
         log::add('parcelTracking', 'debug', 'Updating plugin commands done for eqLogic '. $eqLogic->getHumanName());
     }
 	
+    config::remove('apiKey', 'parcelTracking');
+    config::remove('language', 'parcelTracking');
     message::add('parcelTracking', __('Merci pour la mise à jour du plugin Suivi colis. Consultez les notes de version avant utilisation et n\'hésitez pas à laisser un avis sur le Market Jeedom !',__FILE__));
 }
 

@@ -36,7 +36,7 @@ try {
 	}
 
     if (init('action') == 'addParcel') {
-		$result = parcelTracking::addParcel(init('name'), init('trackingId'), init('carrier'), init('param'));
+		$result = parcelTracking::addParcel(init('name'), init('trackingId'), init('carrier'));
 		ajax::success($result);
 	}
 
@@ -54,15 +54,10 @@ try {
 		ajax::success($result);
 	}
 
-    if (init('action') == 'updateInfo') {
-		$result = parcelTracking::updateParcelInfo(init('trackingId'));
-		ajax::success($result);
-	}
-
-    if (init('action') == 'getQuota') {
-		$result = parcelTracking::getQuota(init('apiKey'));
-		ajax::success($result);
-	}
+    if (init('action') == 'testConnection') {
+        $result = parcelTracking::testConnection(init('email'), init('password'));
+        ajax::success($result);
+    }
 
     if (init('action') == 'testNotifications') {
 		$cmdNotifications = init('cmdNotifications');
@@ -83,11 +78,6 @@ try {
             log::add('parcelTracking', 'debug', 'Test notification - cmdId : '.$cmdNotifications.' - title : Suivi Colis - message : Ceci est un test des notifications du plugin');
         }
 		ajax::success();
-	}
-
-    if (init('action') == 'getJSON') {
-		$result = file_get_contents( dirname(__FILE__).'/../../data/additional_parameters.json');
-		ajax::success($result);
 	}
 
     if (init('action') == 'refreshCarriersList') {
